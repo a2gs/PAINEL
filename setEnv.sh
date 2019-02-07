@@ -25,3 +25,5 @@
 export PAINEL_HOME=`pwd`
 
 export PATH=$PATH:$PAINEL_HOME/scripts
+
+chmod +x ./scripts/*
