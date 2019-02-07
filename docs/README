@@ -1,0 +1,44 @@
+# Script de limpeza de logs
+BkpLimparLogs.sh
+
+# Registros de DRTs
+DRTs.text
+
+# Textos sobre lock no SQLite
+About_Sqlite_LOCKES.text
+
+# Gerenciador de Servlist
+ManageServList.sh
+
+# Estrutura da tabela
+TABELA
+
+# Diretorio de DB (e dir com bkp populado)
+database
+database_dataBackup
+
+# edita todos os fontes
+ec
+eh
+edb (litecli)
+
+# Diretorio de HTML
+html
+
+# Mata todos os processos
+killAll.sh
+
+# List todos os PIDs dos processos no ar
+listPIDs.sh
+
+# Dir de log
+log
+
+# Loop-List todos os PIDs dos processos no ar
+loop_listPIDs.sh
+
+# Coloca todos os processos no ar (valores default)
+runAll.sh
+
+# sha-256 lib
+sha-256

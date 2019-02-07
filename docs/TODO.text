@@ -1,0 +1,27 @@
+1) Carregar as variaveis de paths com a variavel de ambiente $PAINEL_HOME. Sao elas (hoje defines):
+DB_PATH
+HTML_PATH
+LOG_SERV_FILE
+DRT_FILE
+DATABASE_FILE
+EXCEL_FILE
+LOG_PATH
+RUNNING_DIR
+LOCK_FILE
+
+Fazer uma funcao como:
+
+#include <stdlib.h>
+int loadPAINEL_HOMEwith(char *fullpathOut, size_t fullpathOutSz, char *path)
+{
+	char *c = NULL;
+	c = getenv(PAINEL_HOME);
+	if(c == NULL){
+		return(NOK);
+	}
+	snprintf(fullpathOut, fullpathOutSz, "%s/%s", c, path);
+
+	return(OK);
+}
+
+2) ...
