@@ -23,8 +23,9 @@
 #include <string.h>
 #include <sqlite3.h>
 
-#include "serv.h"
 #include "SG_serv.h"
+#include "util.h"
+#include "db.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -34,7 +35,8 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-sqlite3 *SG_db = NULL;
+static sqlite3 *SG_db = NULL;
+static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 
 
 /* *** FUNCTIONS *********************************************************************** */
@@ -167,53 +169,53 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
 
-	log_write(LOG_SERV_FILE, "Inserindo registro:\n"
-	                    "\tdrt[%s]\n"
-	                    "\tdata[%s]\n"
-	                    "\tloginout[%s]\n"
-	                    "\tfuncao[%s]\n"
-	                    "\tpanela[%s]\n"
-	                    "\tws[%s]\n"
-	                    "\tfornEletr[%s]\n"
-	                    "\tnumMaquina[%s]\n"
-	                    "\tdiamNom[%s]\n"
-	                    "\tclasse[%s]\n"
-	                    "\ttemp[%s]\n"
-	                    "\tpercFeSi[%s]\n"
-	                    "\tpercMg[%s]\n"
-	                    "\tpercC[%s]\n"
-	                    "\tpercS[%s]\n"
-	                    "\tpercP[%s]\n"
-	                    "\tpercInoculante[%s]\n"
-	                    "\tenerEletTon[%s]\n"
-	                    "\tcadencia[%s]\n"
-	                    "\toee[%s]\n"
-	                    "\taspecto[%s]\n"
-	                    "\trefugo[%s]\n"
-	                    "\tipport[%s]\n",
-	                    data->drt,
-	                    data->data,
-	                    data->loginout,
-	                    data->funcao,
-	                    data->panela,
-	                    data->ws,
-	                    data->fornEletr,
-	                    data->numMaquina,
-	                    data->diamNom,
-	                    data->classe,
-	                    data->temp,
-	                    data->percFeSi,
-	                    data->percMg,
-	                    data->percC,
-	                    data->percS,
-	                    data->percP,
-	                    data->percInoculante,
-	                    data->enerEletTon,
-	                    data->cadencia,
-	                    data->oee,
-	                    data->aspecto,
-	                    data->refugo,
-	                    data->ipport);
+	log_write("Inserindo registro:\n"
+	          "\tdrt[%s]\n"
+	          "\tdata[%s]\n"
+	          "\tloginout[%s]\n"
+	          "\tfuncao[%s]\n"
+	          "\tpanela[%s]\n"
+	          "\tws[%s]\n"
+	          "\tfornEletr[%s]\n"
+	          "\tnumMaquina[%s]\n"
+	          "\tdiamNom[%s]\n"
+	          "\tclasse[%s]\n"
+	          "\ttemp[%s]\n"
+	          "\tpercFeSi[%s]\n"
+	          "\tpercMg[%s]\n"
+	          "\tpercC[%s]\n"
+	          "\tpercS[%s]\n"
+	          "\tpercP[%s]\n"
+	          "\tpercInoculante[%s]\n"
+	          "\tenerEletTon[%s]\n"
+	          "\tcadencia[%s]\n"
+	          "\toee[%s]\n"
+	          "\taspecto[%s]\n"
+	          "\trefugo[%s]\n"
+	          "\tipport[%s]\n",
+	          data->drt,
+	          data->data,
+	          data->loginout,
+	          data->funcao,
+	          data->panela,
+	          data->ws,
+	          data->fornEletr,
+	          data->numMaquina,
+	          data->diamNom,
+	          data->classe,
+	          data->temp,
+	          data->percFeSi,
+	          data->percMg,
+	          data->percC,
+	          data->percS,
+	          data->percP,
+	          data->percInoculante,
+	          data->enerEletTon,
+	          data->cadencia,
+	          data->oee,
+	          data->aspecto,
+	          data->refugo,
+	          data->ipport);
 
 	return(OK);
 }
@@ -226,37 +228,39 @@ int SG_db_open_or_create(void)
 	char *sql = NULL;
 	char *err_msg = NULL;
 
+	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
+
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+		log_write("Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(SG_db));
 		return(NOK);
 	}
 
-	/*rc = sqlite3_open_v2(DATABASE_FILE, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
-	rc = sqlite3_open_v2(DATABASE_FILE, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+	/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
+	rc = sqlite3_open_v2(DBPath, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write(LOG_SERV_FILE, "Cannot open database [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+		log_write("Cannot open database [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		sqlite3_close(SG_db);
 
 		return(NOK);
@@ -321,16 +325,16 @@ int SG_db_open_or_create(void)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write(LOG_SERV_FILE, "SQL create error [%s]: [%s].\n", sql, err_msg);
+		log_write("SQL create error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -342,16 +346,16 @@ int SG_db_open_or_create(void)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write(LOG_SERV_FILE, "SQL create index error [%s]: [%s].\n", sql, err_msg);
+		log_write("SQL create index error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -375,22 +379,22 @@ int SG_db_inserting(SG_registroDB_t *data)
 	         data->drt, data->data, data->loginout, data->funcao, data->panela, data->ws, data->fornEletr, data->numMaquina, data->diamNom, data->classe, data->temp, data->percFeSi,
 	         data->percMg, data->percC, data->percS, data->percP, data->percInoculante, data->enerEletTon, data->cadencia, data->oee, data->aspecto, data->refugo, data->ipport);
 
-	/* log_write(LOG_SERV_FILE, "Tentando INSERT: [%s]\n", sqlCmd); */
+	/* log_write("Tentando INSERT: [%s]\n", sqlCmd); */
 
 	rc = sqlite3_exec(SG_db, sqlCmd, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write(LOG_SERV_FILE, "SQL insert error [%s]: %s\n", sqlCmd, err_msg);
+		log_write("SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -403,19 +407,21 @@ int SG_db_close(void)
 {
 	int rc = 0;
 
+	memset(DBPath, 0, sizeof(DBPath));
+
 	rc = sqlite3_close_v2(SG_db);
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write(LOG_SERV_FILE, "SQLITE_BUSY [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write(LOG_SERV_FILE, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write(LOG_SERV_FILE, "Another error [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write(LOG_SERV_FILE, "SQL close error!\n");
+		log_write("SQL close error!\n");
 		return(NOK);
 	}
 
