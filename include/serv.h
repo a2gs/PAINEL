@@ -23,16 +23,9 @@
 
 
 /* *** INCLUDES ****************************************************** */
-#include "sc.h"
 
 
 /* *** DEFINES ******************************************************* */
-#define DB_PATH				"./database/" /* sem () */
-#define HTML_PATH				"./html/"     /* sem () */
-
-#define LOG_SERV_FILE		(LOG_PATH"server.log")
-#define DATABASE_FILE		(DB_PATH"database.db")
-#define EXCEL_FILE			(DB_PATH"database.xls")
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
