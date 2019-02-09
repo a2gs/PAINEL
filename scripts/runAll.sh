@@ -15,23 +15,54 @@
 #          |            |
 #
 
-$PAINEL_HOME/bin/serv 9998
 
+# ------------------------------------------------
+$PAINEL_HOME/bin/serv 9998
+ALERT_ERROR 'serv 9998'
+
+
+# ------------------------------------------------
 #Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML>
 $PAINEL_HOME/bin/select_html OperadorMaquina        1            5 2> $PAINEL_HOME/log/select_html_OperadorMaquina.log &
+ALERT_ERROR 'select_html OperadorMaquina select_html_OperadorMaquina.log'
+
 $PAINEL_HOME/bin/select_html SupervisorMaquina      1            5 2> $PAINEL_HOME/log/select_html_SupervisorMaquina.log &
+ALERT_ERROR 'select_html SupervisorMaquina select_html_SupervisorMaquina.log'
+
 $PAINEL_HOME/bin/select_html FornoEletrico          1            5 2> $PAINEL_HOME/log/select_html_FornoEletrico.log &
+ALERT_ERROR 'select_html FornoEletrico select_html_FornoEletrico.log'
+
 $PAINEL_HOME/bin/select_html All                    1            5 2> $PAINEL_HOME/log/select_html_All.log &
+ALERT_ERROR 'select_html All select_html_All.log'
 
+
+# ------------------------------------------------
 $PAINEL_HOME/bin/servList 9997 $PAINEL_HOME/html/All_Refresh.html               2> $PAINEL_HOME/log/allRefresh.log
-$PAINEL_HOME/bin/servList 9996 $PAINEL_HOME/html/All_Static.html                2> $PAINEL_HOME/log/all.log
-$PAINEL_HOME/bin/servList 9995 $PAINEL_HOME/html/FornoEletrico_Refresh.html     2> $PAINEL_HOME/log/FornoEletricoRefresh.log
-$PAINEL_HOME/bin/servList 9994 $PAINEL_HOME/html/FornoEletrico_Static.html      2> $PAINEL_HOME/log/FornoEletrico.log
-$PAINEL_HOME/bin/servList 9993 $PAINEL_HOME/html/OperadorMaquina_Refresh.html   2> $PAINEL_HOME/log/OperadorMaquinaRefresh.log
-$PAINEL_HOME/bin/servList 9992 $PAINEL_HOME/html/OperadorMaquina_Static.html    2> $PAINEL_HOME/log/OperadorMaquina.log
-$PAINEL_HOME/bin/servList 9991 $PAINEL_HOME/html/SupervisorMaquina_Refresh.html 2> $PAINEL_HOME/log/SupervisorMaquinaRefresh.log
-$PAINEL_HOME/bin/servList 9990 $PAINEL_HOME/html/SupervisorMaquina_Static.html  2> $PAINEL_HOME/log/SupervisorMaquina.log
+ALERT_ERROR 'servList 9997 allRefresh.log'
 
+$PAINEL_HOME/bin/servList 9996 $PAINEL_HOME/html/All_Static.html                2> $PAINEL_HOME/log/all.log
+ALERT_ERROR 'servList 9996 all.log'
+
+$PAINEL_HOME/bin/servList 9995 $PAINEL_HOME/html/FornoEletrico_Refresh.html     2> $PAINEL_HOME/log/FornoEletricoRefresh.log
+ALERT_ERROR 'servList 9995 FornoEletricoRefresh.log'
+
+$PAINEL_HOME/bin/servList 9994 $PAINEL_HOME/html/FornoEletrico_Static.html      2> $PAINEL_HOME/log/FornoEletrico.log
+ALERT_ERROR 'servList 9994 FornoEletrico.log'
+
+$PAINEL_HOME/bin/servList 9993 $PAINEL_HOME/html/OperadorMaquina_Refresh.html   2> $PAINEL_HOME/log/OperadorMaquinaRefresh.log
+ALERT_ERROR 'servList 9993 OperadorMaquinaRefresh.log'
+
+$PAINEL_HOME/bin/servList 9992 $PAINEL_HOME/html/OperadorMaquina_Static.html    2> $PAINEL_HOME/log/OperadorMaquina.log
+ALERT_ERROR 'servList 9992 OperadorMaquina.log'
+
+$PAINEL_HOME/bin/servList 9991 $PAINEL_HOME/html/SupervisorMaquina_Refresh.html 2> $PAINEL_HOME/log/SupervisorMaquinaRefresh.log
+ALERT_ERROR 'servList 9991 SupervisorMaquinaRefresh.log'
+
+$PAINEL_HOME/bin/servList 9990 $PAINEL_HOME/html/SupervisorMaquina_Static.html  2> $PAINEL_HOME/log/SupervisorMaquina.log
+ALERT_ERROR 'servList 9990 SupervisorMaquina.log'
+
+
+# ------------------------------------------------
 ps -ef | grep select_html
 netstat -nap --tcp --listening 2>/dev/null | grep 999
 echo '--------------------------------------'
