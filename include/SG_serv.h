@@ -23,21 +23,11 @@
 
 
 /* *** INCLUDES ****************************************************** */
-#include "sc.h"
+#include "util.h"
 #include "SG.h"
 
 
 /* *** DEFINES ******************************************************* */
-/*
-#define HTML_ALL_REF_FILE					(HTML_PATH"allRefresh.html")
-#define HTML_SUPERVMAQUINA_REF_FILE		(HTML_PATH"SupervisorMaquinaRefresh.html")
-#define HTML_FORNELETRIC_REF_FILE		(HTML_PATH"FornoEletricoRefresh.html")
-#define HTML_OPERATMAQUINA_REF_FILE		(HTML_PATH"OperadorMaquinaRefresh.html")
-#define HTML_ALL_FILE						(HTML_PATH"all.html")
-#define HTML_SUPERVMAQUINA_FILE			(HTML_PATH"SupervisorMaquina.html")
-#define HTML_FORNELETRIC_FILE				(HTML_PATH"FornoEletrico.html")
-#define HTML_OPERATMAQUINA_FILE			(HTML_PATH"OperadorMaquina.html")
-*/
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
