@@ -26,4 +26,14 @@ export PAINEL_HOME=`pwd`
 
 export PATH=$PATH:$PAINEL_HOME/scripts
 
+ALERT_ERROR()
+{
+	ret=$?
+
+	if [ $ret -ne 0 ]; then
+		echo "ERROR (returned $ret): $1"
+	fi
+}
+export -f ALERT_ERROR
+
 chmod +x ./scripts/*
