@@ -30,7 +30,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "sc.h"
+#include "util.h"
 #include "client.h"
 
 #include "SG_client.h"
@@ -38,6 +38,7 @@
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define USER_INPUT_LEN		(400)
+#define LOG_CLIENT_FILE    ("client.log")
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -77,7 +78,7 @@ void limparCampoProto(char *campo, int c_from, int c_to)
 
 tipoPreenchimento_t preencherCampo(const char *pergunta, char *campo, size_t szCampo)
 {
-	char usrInput[USER_INPUT_LEN] = {0};
+	char usrInput[USER_INPUT_LEN + 1] = {0};
 	char *c = NULL;
 
 	printf("%s", pergunta);
@@ -111,14 +112,14 @@ int main(int argc, char *argv[])
 {
 	int sockfd = 0;
 	struct sockaddr_in servaddr;
-	char id[DRT_LEN] = {'\0'};
-	char level[VALOR_FUNCAO_LEN] = {'\0'};
-	char passhash[PASS_SHA256_LEN] = {'\0'};
-	FILE *log = NULL;
+	char id[DRT_LEN + 1] = {'\0'};
+	char level[VALOR_FUNCAO_LEN + 1] = {'\0'};
+	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
 	tipoUsuario_t usrType = UNDEFINED_USER;
 
 	if(argc != 3){
-		fprintf(stderr, "%s IP_ADDRESS PORT\n", argv[0]);
+		fprintf(stderr, "%s <IP_ADDRESS> <PORT>\n", argv[0]);
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
@@ -126,15 +127,15 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGTERM, SIG_IGN);
 
-	if(log_open(LOG_CLIENT_FILE, log) == NOK){
-		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_CLIENT_FILE, strerror(errno));
+	if(log_open(LOG_CLIENT_FILE) == NOK){
+		fprintf(stderr, "Unable to open/create [%s]!\n", LOG_CLIENT_FILE);
 		return(1);
 	}
 
-	log_write(LOG_CLIENT_FILE, "StartUp Client [%s]!\n", time_DDMMYYhhmmss());
+	log_write("StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-		log_write(LOG_CLIENT_FILE, "ERRO: socket() [%s]\n", strerror(errno));
+		log_write("ERRO socket(): [%s].\n", strerror(errno));
 		return(-1);
 	}
 
@@ -143,28 +144,28 @@ int main(int argc, char *argv[])
 	servaddr.sin_port   = htons(atoi(argv[2]));
 
 	if(inet_pton(AF_INET, argv[1], &servaddr.sin_addr) < 0){
-		log_write(LOG_CLIENT_FILE, "ERRO: inet_pton() [%s]\n", strerror(errno));
+		log_write("ERRO inet_pton(): [%s].\n", strerror(errno));
 		return(-1);
 	}
 
 	if(connect(sockfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) < 0){
-		log_write(LOG_CLIENT_FILE, "ERRO: connect() [%s]\n", strerror(errno));
+		log_write("ERRO connect(): [%s].\n", strerror(errno));
 		return(-1);
 	}
 
 	for(;;){
 
 		if(SG_fazerLogin(id, passhash, level, &usrType) == NOK){
-			log_write(LOG_CLIENT_FILE, "EXIT!!!!!!!!\n"); /* TODO */
+			log_write("EXIT!!!!!!!!\n"); /* TODO */
 			break;
 		}
 
 		if(usrType == UNDEFINED_USER) continue;
 
-		log_write(LOG_CLIENT_FILE, "[%s] conectado no [%s:%s] at [%s]\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
+		log_write("[%s] conectado no [%s:%s] at [%s].\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
 
 		if(SG_sendLogin(sockfd, id, passhash, level) == NOK){
-			log_write(LOG_CLIENT_FILE, "Invalid user/pass!\n");
+			log_write("Invalid user/pass!\n");
 			return(-1);
 		}
 
