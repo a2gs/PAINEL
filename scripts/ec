@@ -1,1 +1,1 @@
-vim -p $PAINEL_HOME/src/serv.c $PAINEL_HOME/src/client.c $PAINEL_HOME/src/sc.c ./src/SG_serv.c $PAINEL_HOME/src/SG_client.c $PAINEL_HOME/src/servList.c $PAINEL_HOME/src/select_Excel.c $PAINEL_HOME/src/select_html.c $PAINEL_HOME/src/create_db.c $PAINEL_HOME/makefile
+vim -p $PAINEL_HOME/src/serv.c $PAINEL_HOME/src/client.c $PAINEL_HOME/src/util.c ./src/SG_serv.c $PAINEL_HOME/src/SG_client.c $PAINEL_HOME/src/servList.c $PAINEL_HOME/src/select_Excel.c $PAINEL_HOME/src/select_html.c $PAINEL_HOME/src/create_db.c $PAINEL_HOME/makefile
