@@ -49,27 +49,27 @@ cppcheck:
 
 client:
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/sc.c $(SOURCEPATH)/SG_client.c $(SHA256PATH)/sha-256.c $(INCLUDEPATH) -I$(SHA256PATH) $(CFLAGS)
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(SHA256PATH)/sha-256.c $(INCLUDEPATH) -I$(SHA256PATH) $(CFLAGS)
 
 serv:
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/sc.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
 
 select_html:
 	@echo "=== select_html ============="
-	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/sc.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
 
 select_Excel:
 	@echo "=== select_Excel ============"
-	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
 
 servList:
 	@echo "=== servList ================"
-	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/sc.c $(INCLUDEPATH) $(CFLAGS)
+	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) $(CFLAGS)
 
 create_db:
 	@echo "=== create_db ==============="
-	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
+	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -lsqlite3 $(CFLAGS)
 
 clean: clean_html clean_log clean_bin #clean_data
 	@echo "=== clean ==================="
