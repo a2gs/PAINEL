@@ -33,22 +33,27 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "sc.h"
-#include "serv.h"
-
+#include "util.h"
 #include "SG_serv.h"
+/*
+#include "serv.h"
+*/
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define RUNNING_DIR  ("./")
-#define LOCK_FILE    ("./servlock")
+#define LOCK_FILE							("servlock")
+#define MAX_PATH_RUNNING_LOCKFD		(250)
+#define SUBPATH_RUNNING_DATA_SRV		SUBPATH_RUNNING_DATA
+#define LOG_SERV_FILE					("server.log")
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-static int lockFd;
+static int lockFd = 0;
+static char runnigPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
+static char runnigLockFdPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
 
 
 /* ---[DAEMON]--------------------------------------------------------------------------------------------- */
@@ -65,7 +70,7 @@ static int lockFd;
 void signal_handler(int sig)
 {
 	/* Qualquer sinal recebido ira terminar o server */
-	log_write(LOG_SERV_FILE, "Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
+	log_write("Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
 
 	switch(sig){
 		case SIGHUP:
@@ -75,14 +80,16 @@ void signal_handler(int sig)
 	}
 
 	if(lockf(lockFd, F_ULOCK, 0) < 0){
-		log_write(LOG_SERV_FILE, "Cannt unlock 'only one instance' file\n");
+		log_write("Cannt unlock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		exit(-1);
 	}
 
+	/* Removendo lock */
 	shutdown(lockFd, SHUT_RDWR);
 	close(lockFd);
-	if(unlink(LOCK_FILE) != 0){
-		log_write(LOG_SERV_FILE, "Erro deleting lock file [%s].\n", LOCK_FILE);
+	if(unlink(runnigLockFdPath) != 0){
+		log_write("Erro deleting lock file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
+		exit(-1);
 	}
 
 	/* Termina servidor */
@@ -104,7 +111,7 @@ void signal_handler(int sig)
 pid_t daemonize(void)
 {
 	pid_t i = 0, father = 0;
-	char str[10];
+	char str[20] = {0};
 
 	father = getppid();
 	if(father == 1)
@@ -113,34 +120,39 @@ pid_t daemonize(void)
 	i = fork();
 
 	if(i == -1){
-		log_write(LOG_SERV_FILE, "Erro fork chield process! [%s]\n", strerror(errno));
+		log_write("Erro fork chield process! [%s].\n", strerror(errno));
 		return((pid_t)NOK);
 	}
 
 	if(i > 0)
-		exit(1); /* Pai termina */
+		exit(0); /* Pai termina: 0 - Ok */
 
 	/* Continuando filho... */
 	setsid(); /* novo grupo */
 
 	umask(027);
 
-	chdir(RUNNING_DIR);
-
 	/* Criando e travando arquivo de execucao unica */
-	lockFd = open(LOCK_FILE, O_RDWR|O_CREAT|O_EXCL, 0640);
+	snprintf(runnigPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s/", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA);
+	if(chdir(runnigPath) == -1){
+		log_write("Unable changes to running dir [%s]: [%s].\n", runnigPath, strerror(errno));
+		return((pid_t)NOK);
+	}
+
+	snprintf(runnigLockFdPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s", runnigPath, LOCK_FILE);
+	lockFd = open(runnigLockFdPath, O_RDWR|O_CREAT|O_EXCL, 0640);
 	if(lockFd == -1){
-		log_write(LOG_SERV_FILE, "There is another instance already running\n");
-		exit((pid_t)NOK);
+		log_write("There is another instance already running. Check [%s] file: [%s].\n", runnigLockFdPath, strerror(errno));
+		return((pid_t)NOK);
 	}
 
 	if(lockf(lockFd, F_TLOCK, 0) < 0){
-		log_write(LOG_SERV_FILE, "Cannt test 'only one instance' file\n");
+		log_write("Cannt test 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
 	if(lockf(lockFd, F_LOCK, 0) < 0){
-		log_write(LOG_SERV_FILE, "Cannt lock 'only one instance' file\n");
+		log_write("Cannt lock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
@@ -172,9 +184,9 @@ pid_t daemonize(void)
  */
 int checkLogin(char *msg)
 {
-	char user[DRT_LEN] = {'\0'};
-	char func[VALOR_FUNCAO_LEN] = {'\0'};
-	char passhash[PASS_SHA256_LEN] = {'\0'};
+	char user[DRT_LEN + 1] = {'\0'};
+	char func[VALOR_FUNCAO_LEN + 1] = {'\0'};
+	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
 	char *c1 = NULL;
 	char *c2 = NULL;
 
@@ -219,31 +231,31 @@ int main(int argc, char *argv[])
 	socklen_t len;
 	struct sockaddr_in servaddr, cliaddr;
 	char addStr[255 + 1] = {'\0'};
-	char msg[MAXLINE] = {'\0'}, *endLine = NULL;
-	char msgCod[PROT_CODE_LEN+1] = {'\0'};
+	char msg[MAXLINE + 1] = {'\0'}, *endLine = NULL;
+	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
 	int szCod = 0;
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
-	FILE *log = NULL;
 
 	if(argc != 2){
 		fprintf(stderr, "%s PORT\n", argv[0]);
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(1);
 	}
 
-	if(log_open(LOG_SERV_FILE, log) == NOK){
+	if(log_open(LOG_SERV_FILE) == NOK){
 		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_SERV_FILE, strerror(errno));
 		return(1);
 	}
 
 	p = daemonize();
 	if(p == (pid_t)NOK){
-		log_write(LOG_SERV_FILE, "Cannt daemonize server!\n");
+		log_write("Cannt daemonize server!\n");
 		return(1);
 	}
 
-	log_write(LOG_SERV_FILE, "Server Up! Port [%s] PID [%d] [%s]!\n", argv[1], p, time_DDMMYYhhmmss());
+	log_write("Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	/* colocar aqui:
 	 * if(abrir arquivo servlock) == OK
@@ -251,7 +263,7 @@ int main(int argc, char *argv[])
 	 */
 
 	if(SG_db_open_or_create() == NOK){
-		log_write(LOG_SERV_FILE, "Erro em abrir/criar banco de dados!\n");
+		log_write("Erro em abrir/criar banco de dados!\n");
 		return(1);
 	}
 
@@ -263,12 +275,12 @@ int main(int argc, char *argv[])
 	servaddr.sin_port        = htons(atoi(argv[1]));
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
-		log_write(LOG_SERV_FILE, "Erro bind: [%s]\n", strerror(errno));
+		log_write("Erro bind: [%s].\n", strerror(errno));
 		return(1);
 	}
 
 	if(listen(listenfd, 250) != 0){
-		log_write(LOG_SERV_FILE, "Erro listen: [%s]\n", strerror(errno));
+		log_write("Erro listen: [%s].\n", strerror(errno));
 		return(1);
 	}
 
@@ -276,36 +288,36 @@ int main(int argc, char *argv[])
 		len = sizeof(cliaddr);
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
-			log_write(LOG_SERV_FILE, "Erro accept: [%s]\n", strerror(errno));
+			log_write("Erro accept: [%s].\n", strerror(errno));
 			return(1);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
 		portFrom = ntohs(cliaddr.sin_port);
-		log_write(LOG_SERV_FILE, "Connection from [%s], port [%d] at [%s]\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+		log_write("Connection from [%s], port [%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
 		p = fork();
 
 		if(p == 0){ /* child */
 			while(1){
-				memset(msg,    '\0', MAXLINE      );
-				memset(msgCod, '\0', PROT_CODE_LEN);
+				memset(msg,    '\0', sizeof(msg)   );
+				memset(msgCod, '\0', sizeof(msgCod));
 				szCod = 0;
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
-					log_write(LOG_SERV_FILE, "End of data from [%s:%d] at [%s]\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+					log_write("End of data from [%s:%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
 					break;
 				}
 
 				if(readRet < 0){
-					log_write(LOG_SERV_FILE, "Erro recv(): [%s]\n", strerror(errno));
+					log_write("Erro recv(): [%s].\n", strerror(errno));
 					break;
 				}
 
 				endLine = strrchr(msg, '\n');
 				if(endLine != NULL) (*endLine) = '\0';
 
-				log_write(LOG_SERV_FILE, "Msg from [%s:%d]: [%s]\n", clientFrom, portFrom, msg);
+				log_write("Msg from [%s:%d]: [%s].\n", clientFrom, portFrom, msg);
 
 				/* Capturando o CODIGO da mensagem */
 				endLine = strchr(msg, '|');
@@ -316,7 +328,7 @@ int main(int argc, char *argv[])
 					strncpy(msgCod, msg, szCod);
 					msgCod[szCod] = '\0';
 				}else{
-					log_write(LOG_SERV_FILE, "Mensagem de codigo nao reconhecido! [%s]\n", msg);
+					log_write("Mensagem de codigo nao reconhecido! [%s].\n", msg);
 					continue;
 				}
 
@@ -325,8 +337,8 @@ int main(int argc, char *argv[])
 					case PROT_COD_LOGIN:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-						if(checkLogin(&msg[szCod+1]) == NOK){
-							log_write(LOG_SERV_FILE, "USUARIO NAO VALIDADO!\n");
+						if(checkLogin(&msg[szCod + 1]) == NOK){
+							log_write("USUARIO NAO VALIDADO!\n");
 							/* TODO: ENVIAR RESPOSTA DE USER NOT AUTH */
 						}else{
 							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado */
@@ -337,36 +349,36 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 						/* TODO */
 
-						log_write(LOG_SERV_FILE, "Codigo [%s] ainda nao implementado!\n", msgCod);
+						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					case PROT_COD_INSREG:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-						if(SG_parsingDataInsertRegistro(&msg[szCod+1], clientFrom, portFrom, &msgCleaned) == NOK){
+						if(SG_parsingDataInsertRegistro(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
 
-							log_write(LOG_SERV_FILE, "PARSING ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+							log_write("PARSING ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
 							continue;
 
 						}else{
 
 							if(SG_db_inserting(&msgCleaned) == NOK){
-								log_write(LOG_SERV_FILE, "INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+								log_write("INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
 							}
 
 						}
 						break;
 
 					case PROT_COD_SERCMD:
-						log_write(LOG_SERV_FILE, "Codigo [%s] ainda nao implementado!\n", msgCod);
+						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					case PROT_COD_CLICMD:
-						log_write(LOG_SERV_FILE, "Codigo [%s] ainda nao implementado!\n", msgCod);
+						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					default:
-						log_write(LOG_SERV_FILE, "Nao ha implementacao de tratamento para codigo de mensagem: [%s]!\n", msgCod);
+						log_write("Nao ha implementacao de tratamento para codigo de mensagem: [%s]!\n", msgCod);
 						break;
 				}
 			}
@@ -374,7 +386,7 @@ int main(int argc, char *argv[])
 			break; /* for() */
 
 		}else if(p == -1)
-			log_write(LOG_SERV_FILE, "Erro fork: [%s]\n", strerror(errno));
+			log_write("Erro fork: [%s].\n", strerror(errno));
 	}
 
 	SG_db_close();
