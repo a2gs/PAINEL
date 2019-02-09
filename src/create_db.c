@@ -21,8 +21,8 @@
 /* *** INCLUDES ************************************************************************ */
 #include <sqlite3.h>
 
-#include "sc.h"
-#include "serv.h"
+#include "util.h"
+#include "db.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -51,11 +51,15 @@ int main(int argc, char *argv[])
 	char *sql = NULL;
 	char *err_msg = NULL;
 	sqlite3 *SG_db = NULL;
+	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 
-	rc = sqlite3_open_v2(DATABASE_FILE, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
+	fprintf(stderr, "Criando banco: [%s]\n", DBPath);
+
+	rc = sqlite3_open_v2(DBPath, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
 
 	if(rc != SQLITE_OK){
-		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DATABASE_FILE, sqlite3_errmsg(SG_db));
+		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(SG_db));
 		sqlite3_close(SG_db);
 
 		return(NOK);
