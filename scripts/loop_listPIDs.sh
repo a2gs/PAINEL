@@ -19,6 +19,6 @@
 while true
 do
 	echo ---------------
-	$PAINEL_HOME/listPIDs.sh
+	$PAINEL_HOME/scripts/listPIDs.sh
 	sleep 3
 done
