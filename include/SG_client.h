@@ -23,14 +23,14 @@
 
 
 /* *** INCLUDES ****************************************************** */
-#include "sc.h"
+/* #include "sc.h" */
 #include "SG.h"
 
 
 /* *** DEFINES ******************************************************* */
-#define DRT_FILE				("running/DRTs.text")
-
-#define LOG_CLIENT_FILE		(LOG_PATH"client.log")
+/*
+#define DRT_FILE				("DRTs.text")
+*/
 
 #define STR_FORNOELETRICO	("FornoEletrico")
 #define STR_OPERMAQUINA		("OperadorMaquina")
