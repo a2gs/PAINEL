@@ -33,7 +33,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "sc.h"
+#include "util.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -73,7 +73,8 @@ int main(int argc, char **argv)
 	pid_t p = (pid_t)0;
 
 	if(argc != 3){
-		fprintf(stderr, "%s PORT FILE\n", argv[0]);
+		fprintf(stderr, "%s <PORT> <FILE>\n", argv[0]);
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
 		return(-2);
 	}
 
-	fprintf(stderr, "Server Up! Port [%s] PID [%d] [%s]\n", argv[1], p, time_DDMMYYhhmmss());
+	fprintf(stderr, "Server Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
