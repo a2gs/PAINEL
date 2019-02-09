@@ -1,1 +1,1 @@
-vim -p $PAINEL_HOME/include/serv.h $PAINEL_HOME/include/client.h $PAINEL_HOME/include/sc.h $PAINEL_HOME/include/SG_serv.h $PAINEL_HOME/include/SG_client.h $PAINEL_HOME/include/SG.h
+vim -p $PAINEL_HOME/include/serv.h $PAINEL_HOME/include/client.h $PAINEL_HOME/include/util.h $PAINEL_HOME/include/SG_serv.h $PAINEL_HOME/include/SG_client.h $PAINEL_HOME/include/SG.h
