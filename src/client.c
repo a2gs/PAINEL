@@ -131,6 +131,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Unable to open/create [%s]!\n", LOG_CLIENT_FILE);
 		return(1);
 	}
+	
+	/* gethostbyname() */
 
 	log_write("StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 
