@@ -18,7 +18,7 @@
 
 
 #USAR ESTAS FLAGS PARA DEV PERNICIOSA:
-CFLAGS=-Wall -Wextra -g -std=c11 -D_XOPEN_SOURCE=700 -Wno-unused-parameter -Wno-unused-but-set-parameter
+CFLAGS=-Wall -Wextra -g -std=c11 -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -D_POSIX_SOURCE=1 -D_DEFAULT_SOURCE=1 -D_GNU_SOURCE=1 -Wno-unused-parameter -Wno-unused-but-set-parameter
 #USAR ESTAS FLAGS PARA DEV RIGOROSO:
 	#CFLAGS=-Wall -Wextra -g -std=c11 -D_XOPEN_SOURCE=700
 #USAR ESTAS FLAGS PARA DEPLOY:
