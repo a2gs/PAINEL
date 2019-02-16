@@ -32,7 +32,7 @@ LIBS=./libs
 
 SHA256PATH=$(LIBS)/sha-256
 
-RM = rm -f
+RM = rm -rf
 CPPCHECK = cppcheck
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
