@@ -26,9 +26,10 @@
 #include <signal.h>
 #include <errno.h>
 #include <time.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 #include "util.h"
 #include "client.h"
@@ -39,6 +40,7 @@
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define USER_INPUT_LEN		(400)
 #define LOG_CLIENT_FILE    ("client.log")
+#define STRADDR_SZ			(50)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -90,7 +92,7 @@ tipoPreenchimento_t preencherCampo(const char *pergunta, char *campo, size_t szC
 
 	if(strncmp(LOGOUT_CMD,        usrInput, sizeof(LOGOUT_CMD)  -1) == 0) return(EXITPC);
 	else if(strncmp(CORRIGIR_CMD, usrInput, sizeof(CORRIGIR_CMD)-1) == 0) return(CORRIGIRPC);
-	else                                                              strncpy(campo, usrInput, ((szCampo <= USER_INPUT_LEN) ? szCampo : USER_INPUT_LEN));
+	else                                                                  strncpy(campo, usrInput, ((szCampo <= USER_INPUT_LEN) ? szCampo : USER_INPUT_LEN));
 
 	return(OKPC);
 }
@@ -111,7 +113,10 @@ tipoPreenchimento_t preencherCampo(const char *pergunta, char *campo, size_t szC
 int main(int argc, char *argv[])
 {
 	int sockfd = 0;
-	struct sockaddr_in servaddr;
+	struct addrinfo hints, *res = NULL, *rp = NULL;
+	int errGetAddrInfoCode = 0, errConnect = 0;
+	char strAddr[STRADDR_SZ + 1] = {'\0'};
+	void *pAddr = NULL;
 	char id[DRT_LEN + 1] = {'\0'};
 	char level[VALOR_FUNCAO_LEN + 1] = {'\0'};
 	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
@@ -129,31 +134,51 @@ int main(int argc, char *argv[])
 
 	if(log_open(LOG_CLIENT_FILE) == NOK){
 		fprintf(stderr, "Unable to open/create [%s]!\n", LOG_CLIENT_FILE);
-		return(1);
+		return(-1);
 	}
-	
-	/* gethostbyname() */
 
 	log_write("StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 
-	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-		log_write("ERRO socket(): [%s].\n", strerror(errno));
+	memset (&hints, 0, sizeof (hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags |= AI_CANONNAME;
+
+	errGetAddrInfoCode = getaddrinfo(argv[1], argv[2], &hints, &res);
+	if(errGetAddrInfoCode != 0){
+		log_write("ERRO: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
 		return(-1);
 	}
 
-	memset(&servaddr, 0, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_port   = htons(atoi(argv[2]));
+	for(rp = res; rp != NULL; rp = rp->ai_next){
+		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sockfd == -1){
+			log_write("ERRO: socket() [%s].\n", strerror(errno));
+			continue;
+		}
 
-	if(inet_pton(AF_INET, argv[1], &servaddr.sin_addr) < 0){
-		log_write("ERRO inet_pton(): [%s].\n", strerror(errno));
+		if(rp->ai_family == AF_INET)       pAddr = &((struct sockaddr_in *) rp->ai_addr)->sin_addr;
+		else if(rp->ai_family == AF_INET6) pAddr = &((struct sockaddr_in6 *) rp->ai_addr)->sin6_addr;
+		else                               pAddr = NULL;
+
+		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
+		log_write("Trying connect to [%s/%s:%s].\n", rp->ai_canonname, strAddr, argv[2]);
+
+		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
+		if(errConnect == 0)
+			break;
+
+		log_write("ERRO: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, argv[2], strerror(errno));
+
+		close(sockfd);
+	}
+
+	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
+		log_write("ERRO: Unable connect to any address.\n");
 		return(-1);
 	}
 
-	if(connect(sockfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) < 0){
-		log_write("ERRO connect(): [%s].\n", strerror(errno));
-		return(-1);
-	}
+	freeaddrinfo(res);
 
 	for(;;){
 
