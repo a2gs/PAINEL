@@ -33,8 +33,8 @@
 #define DB_USERS_TABLE				"USERS"
 /*
 #define DB_MSGS_TABLE				"MSGS"
-#define DB_REPORTS_TABLE			"RELATS"
 */
+#define DB_REPORTS_TABLE			"RELATS"
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */

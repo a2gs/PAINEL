@@ -42,6 +42,19 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
+{
+	int i = 0;
+
+	for(i = 0; i < argc; i++){
+		if(strcmp(argv[i], "All") == 0) continue;
+
+		printf("%s\n", argv[i]);
+	}
+
+	return(0);
+}
+
 int listUsersFunctions(char *DBPath)
 {
 	sqlite3 *db = NULL;
@@ -49,9 +62,72 @@ int listUsersFunctions(char *DBPath)
 	int rc = 0;
 	char sql[SZ_SQLCMD + 1] = {'\0'};
 
-	printf("Banco de dados: [%s]\n", DBPath);
-	printf("Listagem de funcoes disponiveis:\n");
-	printf("NULL");
+	printf("Banco de dados: [%s]\n\n", DBPath);
+	printf("Listagem de funcoes disponiveis:\n\n");
+
+	rc = sqlite3_enable_shared_cache(1);
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		return(NOK);
+	}
+
+	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+    
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		sqlite3_close(db);
+        
+		return(NOK);
+	}
+
+	memset(sql, '\0', sizeof(sql));
+	snprintf(sql, SZ_SQLCMD, "SELECT FUNCAO FROM %s", DB_REPORTS_TABLE);
+
+	rc = sqlite3_exec(db, sql, listFuncs, NULL, &err_msg);
+
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Failed to select data [%s]: [%s].\n", DB_REPORTS_TABLE, sql);
+		fprintf(stderr, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
+
+		sqlite3_free(err_msg);
+		sqlite3_close(db);
+        
+		return(NOK);
+	}
+
+	printf("\n");
+
+	sqlite3_close(db);
 
 	return(OK);
 }
@@ -62,6 +138,12 @@ int dBAddUser(char *user, char *func, char *pass, char *dbPath)
 	char *err_msg = NULL;
 	int rc = 0;
 	char sql[SZ_SQLCMD + 1] = {'\0'};
+
+
+
+
+
+
 
 
 	return(OK);
@@ -111,143 +193,6 @@ int main(int argc, char *argv[])
 		return(-3);
 	}
 
-#if 0
-
-
-	for(;;){
-		memset(&pageInfo, 0, sizeof(pageInfos_t));
-
-		rc = sqlite3_enable_shared_cache(1);
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			return(1);
-		}
-
-		/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
-		/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX, NULL);*/
-		rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			sqlite3_close(db);
-        
-			return(-2);
-		}
-
-		memset(sql, '\0', sizeof(sql));
-		snprintf(sql, SZ_SQLCMD, "SELECT TITULO, CAMPOS, HEADERS FROM RELATS WHERE FUNCAO = '%s'", funcao);
-
-		rc = sqlite3_exec(db, sql, hmtl_relat_infos, &pageInfo, &err_msg);
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			fprintf(stderr, "Failed to select data RELAT [%s].\n", sql);
-			fprintf(stderr, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-
-			sqlite3_free(err_msg);
-			sqlite3_close(db);
-        
-			return(-3);
-		} 
-
-		memset(&htmls, 0, sizeof(htmlFiles_t));
-		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
-			fprintf(stderr, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-4);
-		}
-
-		if(html_header(&htmls, pageInfo.title, segRefresh) == NOK){
-			fprintf(stderr, "Falha em escrever header para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-5);
-		}
-
-		if(html_startTable(&htmls, pageInfo.columnsHeaders) == NOK){
-			fprintf(stderr, "Falha em escrever tabela para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-6);
-		}
-
-		memset(sql, '\0', sizeof(sql));
-
-		if(strncmp(funcao, "All", 3) == 0) snprintf(sql, SZ_SQLCMD, "SELECT %s FROM MSGS", pageInfo.columnsTable);
-		else                               snprintf(sql, SZ_SQLCMD, "SELECT %s FROM MSGS WHERE FUNCAO = '%s'", pageInfo.columnsTable, funcao);
-
-		rc = sqlite3_exec(db, sql, hmtl_constructTable, &htmls, &err_msg);
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			fprintf(stderr, "Failed to select data FUNCAO [%s]\n", funcao);
-			fprintf(stderr, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-
-			sqlite3_free(err_msg);
-			sqlite3_close(db);
-        
-			return(-7);
-		} 
-    
-		if(html_endTable(&htmls) == NOK){
-			fprintf(stderr, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-9);
-		}
-
-		html_fflush(&htmls);
-		html_fclose(&htmls);
-
-		if(sqlite3_close_v2(db) != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			fprintf(stderr, "SQL close error!\nCMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-			return(-10);
-		}
-
-		sleep(segReaload);
-	}
-#endif
-
+	printf("Usuario inserido com sucesso!\n");
 	return(0);
 }
