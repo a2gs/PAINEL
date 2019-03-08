@@ -27,6 +27,7 @@
 #include <sqlite3.h>
 
 #include "db.h"
+#include "SG.h"
 #include "util.h"
 
 
@@ -41,48 +42,74 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int listUsersFunctions(char *DBPath, char *sql)
+int listUsersFunctions(char *DBPath)
 {
+	sqlite3 *db = NULL;
+	char *err_msg = NULL;
+	int rc = 0;
+	char sql[SZ_SQLCMD + 1] = {'\0'};
 
 	printf("Banco de dados: [%s]\n", DBPath);
 	printf("Listagem de funcoes disponiveis:\n");
 	printf("NULL");
 
-	return(0);
+	return(OK);
+}
+
+int dBAddUser(char *user, char *func, char *pass, char *dbPath)
+{
+	sqlite3 *db = NULL;
+	char *err_msg = NULL;
+	int rc = 0;
+	char sql[SZ_SQLCMD + 1] = {'\0'};
+
+
+	return(OK);
 }
 
 int main(int argc, char *argv[])
 {
-	/*
-	sqlite3 *db = NULL;
-	char *err_msg = NULL;
-	*/
-	char sql[SZ_SQLCMD + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
-	/*int rc = 0;*/
+	char user[DRT_LEN + 1] = {'\0'};
+	char func[VALOR_FUNCAO_LEN + 1] = {'\0'};
+	char pass[PASS_SHA256_LEN + 1] = {'\0'};
 
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
 	if((argc == 2) && (strncmp("-f", argv[1], 2) == 0)){
-		listUsersFunctions(DBPath, sql);
+		listUsersFunctions(DBPath);
 		return(0);
+	}else if(argc == 4){
+		strncpy(user,argv[1], DRT_LEN);
+		strncpy(func,argv[2], VALOR_FUNCAO_LEN);
+		strncpy(pass, argv[3], PASS_SHA256_LEN);
+
+		if(dBAddUser(user, func, pass, DBPath) == NOK){
+			fprintf(stderr, "erro...\n");
+			return(-2);
+		}
+
 	}else if(argc != 1){
-		fprintf(stderr, "Execucao:\n%s [-f]\n", argv[0]);
+		fprintf(stderr, "Execucao:\n%s [-f] [<USER DRT> <FUNC (-f)> <PASSWORD>]\n", argv[0]);
+		fprintf(stderr, "\t<USER DRT> <FUNC (-f)> <PASSWORD>\t\tUsuario (DRT), funcao (conforme listada em -f) e senha\n");
 		fprintf(stderr, "\t-f\t\tListagem de funcoes\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
+	printf("Usuario (DRT): ");
+	fgets(user, DRT_LEN, stdin);
+
+	printf("Funcao ......: ");
+	fgets(func, VALOR_FUNCAO_LEN, stdin);
+
+	printf("Senha .......: ");
+	fgets(pass, PASS_SHA256_LEN, stdin);
 
 
-	/*
-	printf("Usuario (DRT).........................: ");
-	printf("Funcao (para lista-las, execute %s -f): ", argv[0]);
-	printf("Senha ................................: ");
-
-	*/
-	printf("aqui1\n");
-
+	if(dBAddUser(user, func, pass, DBPath) == NOK){
+		return(-3);
+	}
 
 #if 0
 
