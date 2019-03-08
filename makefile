@@ -44,7 +44,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean sha256 client serv select_html select_Excel servList create_db cppcheck
+all: clean sha256 client serv select_html select_Excel servList create_db cppcheck addUser
 	@echo "=== ctags ==================="
 	ctags -R *
 	@echo "=== cscope =================="
@@ -76,6 +76,10 @@ select_html:
 select_Excel:
 	@echo "=== select_Excel ============"
 	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+
+addUser: sha256
+	@echo "=== addUser ================="
+	$(CC) -o $(BINPATH)/addUser $(SOURCEPATH)/addUser.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 servList:
 	@echo "=== servList ================"
