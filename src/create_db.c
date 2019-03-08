@@ -160,23 +160,23 @@ int main(int argc, char *argv[])
 	 * PASSHASH					TEXT
 	 */
 
-	sql = "CREATE TABLE IF NOT EXISTS USERS ("
-	                                        "ID          TEXT NOT NULL, "
-	                                        "FUNCAO      TEXT, "
-	                                        "PASSHASH    TEXT, "
-	                                        "PRIMARY KEY(ID)"
+	sql = "CREATE TABLE IF NOT EXISTS " DB_USERS_TABLE "("                \
+	                                        "ID          TEXT NOT NULL, " \
+	                                        "FUNCAO      TEXT, "          \
+	                                        "PASSHASH    TEXT, "          \
+	                                        "PRIMARY KEY(ID)"             \
 	                                        ")";
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
-		fprintf(stderr, "SQL create USERS error [%s]: [%s].\n", sql, err_msg);
+		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS ID_INDX ON USERS (ID)";
+	sql = "CREATE INDEX IF NOT EXISTS ID_INDX ON " DB_USERS_TABLE " (ID)";
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 

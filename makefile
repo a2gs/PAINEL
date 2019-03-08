@@ -28,10 +28,13 @@ INCLUDEPATH = -I./include
 SOURCEPATH = ./src
 BINPATH = ./bin
 LOCAL_LIBS = ./libs
-LIBS = -lsqlite3 -lsha-256
+# Libs to ALL modules:
+LIBS = -lsqlite3
 LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
 
-SHA256PATH=$(LOCAL_LIBS)/sha-256
+# Specific libraries:
+LIB_SHA256=sha-256
+SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
 
 CC = gcc
 RM = rm -f
@@ -53,7 +56,7 @@ cppcheck:
 
 client: sha256
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 sha256:
 	@echo "=== lib SHA256 =============="
