@@ -44,13 +44,8 @@
 /* *** FUNCTIONS *********************************************************************** */
 int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
 {
-	int i = 0;
-
-	for(i = 0; i < argc; i++){
-		if(strcmp(argv[i], "All") == 0) continue;
-
-		printf("%s\n", argv[i]);
-	}
+	if(strcmp(argv[0], "All") != 0)
+		printf("%-*s%s\n",VALOR_FUNCAO_LEN, argv[0], argv[1]);
 
 	return(0);
 }
@@ -101,7 +96,7 @@ int listUsersFunctions(char *DBPath)
 	}
 
 	memset(sql, '\0', sizeof(sql));
-	snprintf(sql, SZ_SQLCMD, "SELECT FUNCAO FROM %s", DB_REPORTS_TABLE);
+	snprintf(sql, SZ_SQLCMD, "SELECT FUNCAO, TITULO FROM %s", DB_REPORTS_TABLE);
 
 	rc = sqlite3_exec(db, sql, listFuncs, NULL, &err_msg);
 
