@@ -275,17 +275,17 @@ int main(int argc, char *argv[])
 	printf("Usuario (DRT): ");
 	fgets(user, DRT_LEN, stdin);
 	c = strchr(user, '\n');
-	if(*c == '\n') *c = '\0';
+	if(c != NULL) *c = '\0';
 
 	printf("Funcao ......: ");
 	fgets(func, VALOR_FUNCAO_LEN, stdin);
 	c = strchr(func, '\n');
-	if(*c == '\n') *c = '\0';
+	if(c != NULL) *c = '\0';
 
 	printf("Senha .......: ");
 	fgets(pass, PASS_SHA256_LEN, stdin);
 	c = strchr(pass, '\n');
-	if(*c == '\n') *c = '\0';
+	if(c != NULL) *c = '\0';
 
 
 	if(dBAddUser(user, func, pass, DBPath) == NOK){

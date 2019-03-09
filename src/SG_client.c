@@ -458,10 +458,10 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 		if(fgets(line, LINE_DRT_FILE_LEN, fDRT) == NULL) break;
 
 		c = strchr(line, '\n');
-		if(*c == '\n') *c = '\0';
+		if(c != NULL) *c = '\0';
 
 		c = strchr(line, '-');
-		if(*c != '-') continue;
+		if(c == NULL) continue; /* linha mal formatada, sem '-' */
 
 		strncpy(drtReaded, line, c-line);
 
@@ -512,7 +512,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 		fgets(drt, DRT_LEN, stdin);
 
 		c = strchr(drt, '\n');
-		if(*c == '\n') *c = '\0';
+		if(c != NULL) *c = '\0';
 	}while(drt[0] == '\0');
 
 	if(strncmp(drt, LOGOUT_CMD, sizeof(LOGOUT_CMD)-1) == 0){
@@ -527,7 +527,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	fgets(pass, PASS_LEN, stdin);
 
 	c = strchr(pass, '\n');
-	if(*c == '\n') *c = '\0';
+	if(c != NULL) *c = '\0';
 
 	/* HASH PASS */
 	calc_sha_256(hash, pass, strlen(pass));

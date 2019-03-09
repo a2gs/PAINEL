@@ -322,7 +322,7 @@ int main(int argc, char *argv[])
 				/* Capturando o CODIGO da mensagem */
 				endLine = strchr(msg, '|');
 				if(endLine != NULL){
-					if(msg-endLine < PROT_CODE_LEN) szCod = endLine-msg;
+					if(msg-endLine < PROT_CODE_LEN) szCod = endLine-msg; /* TODO: VERIFICAR msg-endLine. Se nao deveria ser endLine-msg */
 					else                            szCod = PROT_CODE_LEN;
 
 					strncpy(msgCod, msg, szCod);
