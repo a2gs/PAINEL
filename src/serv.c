@@ -196,7 +196,7 @@ int checkLogin(char *msg)
 	/* DRT */
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
-	strncpy(user, c1, c2-c1);
+	strncpy(user, c1, ((c2-c1 < DRT_LEN) ? c2-c1 : DRT_LEN));
 	c1 = c2+1;
 
 	/* DATAHORA - unused */
