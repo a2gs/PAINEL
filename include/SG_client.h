@@ -28,9 +28,7 @@
 
 
 /* *** DEFINES ******************************************************* */
-/*
 #define DRT_FILE				("DRTs.text")
-*/
 
 #define STR_FORNOELETRICO	("FornoEletrico")
 #define STR_OPERMAQUINA		("OperadorMaquina")

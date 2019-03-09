@@ -40,7 +40,6 @@
 #define CONFIRMA_ENFIO_LEN				(5)
 #define LINE_DRT_FILE_LEN				(200)
 #define DRT_FULLFILEPATH_SZ			(300)
-#define DRT_FILE							("DRTs.text")
 #define SUBPATH_RUNNING_DATA_CLI 	SUBPATH_RUNNING_DATA
 
 

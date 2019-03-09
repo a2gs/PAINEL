@@ -79,7 +79,7 @@ select_Excel:
 
 addUser: sha256
 	@echo "=== addUser ================="
-	$(CC) -o $(BINPATH)/addUser $(SOURCEPATH)/addUser.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
+	$(CC) -o $(BINPATH)/addUser $(SOURCEPATH)/addUser.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
 
 servList:
 	@echo "=== servList ================"

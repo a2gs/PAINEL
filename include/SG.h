@@ -31,6 +31,7 @@
 */
 
 #define DRT_LEN						(25)
+#define PASS_LEN						(100)
 #define PASS_SHA256_LEN				(64+1)
 
 #define VALOR_PANELA_LEN			(3)
