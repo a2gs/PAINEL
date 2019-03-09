@@ -61,106 +61,127 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 
 	/* DRT */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->drt, c1, c2-c1);
 	c1 = c2+1;
 
 	/* DATAHORA */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->data, c1, c2-c1);
 	c1 = c2+1;
 
 	/* LOGINOUT */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->loginout, c1, c2-c1);
 	c1 = c2+1;
 
 	/* FUNCAO */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->funcao, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PANELA */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->panela, c1, c2-c1);
 	c1 = c2+1;
 
 	/* WS */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->ws, c1, c2-c1);
 	c1 = c2+1;
 
 	/* FORNELETR */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->fornEletr, c1, c2-c1);
 	c1 = c2+1;
 
 	/* NUMMAQUINA */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->numMaquina, c1, c2-c1);
 	c1 = c2+1;
 
 	/* DIAMETRO */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->diamNom, c1, c2-c1);
 	c1 = c2+1;
 
 	/* CLASSE */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->classe, c1, c2-c1);
 	c1 = c2+1;
 
 	/* TEMP */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->temp, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCFESI */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percFeSi, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCMG */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percMg, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCC */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percC, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCS */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percS, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCP */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percP, c1, c2-c1);
 	c1 = c2+1;
 
 	/* PERCINOCLNT */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->percInoculante, c1, c2-c1);
 	c1 = c2+1;
 
 	/* ENELETTON */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->enerEletTon, c1, c2-c1);
 	c1 = c2+1;
 
 	/* CADENCIA */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->cadencia, c1, c2-c1);
 	c1 = c2+1;
 
 	/* OEE */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->oee, c1, c2-c1);
 	c1 = c2+1;
 
 	/* ASPECTUBO */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(data->aspecto, c1, c2-c1);
 	c1 = c2+1;
 

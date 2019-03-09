@@ -195,11 +195,13 @@ int checkLogin(char *msg)
 
 	/* DRT */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	strncpy(user, c1, c2-c1);
 	c1 = c2+1;
 
 	/* DATAHORA - unused */
 	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
 	c1 = c2+1;
 
 	/* FUNCAO */
