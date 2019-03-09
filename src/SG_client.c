@@ -68,13 +68,8 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
 	memset(lineToSend, '\0', MAXLINE);
 
-#if 1
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
 	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
-#else
-	/* COD|DRT|DATAHORA|LOGINOUT|FUNCAO|||||||||||||||||| */
-	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|I|%s||||||||||||||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), funcao);
-#endif
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
 		log_write("ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
@@ -88,13 +83,8 @@ int SG_sendExit(int sockfd, char *drt, char *funcao)
 {
 	memset(lineToSend, '\0', MAXLINE);
 
-#if 1
 	/* COD|DRT|DATAHORA|FUNCAO */
 	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
-#else
-	/* COD|DRT|DATAHORA|LOGINOUT|FUNCAO|||||||||||||||||| */
-	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|O|%s||||||||||||||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), funcao);
-#endif
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
 		log_write("ERRO: send() exit [%s].\n", strerror(errno));
