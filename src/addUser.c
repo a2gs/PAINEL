@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
 	if(c != NULL) *c = '\0';
 
 	printf("Senha .......: ");
-	fgets(pass, PASS_SHA256_LEN, stdin);
+	fgets(pass, PASS_LEN, stdin);
 	c = strchr(pass, '\n');
 	if(c != NULL) *c = '\0';
 
