@@ -44,6 +44,13 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
+/* int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
+ *
+ * SQLite3 callback
+ *
+ * INPUT:
+ * OUTPUT:
+ */
 int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
 {
 	if(strcmp(argv[0], "All") != 0)
@@ -52,6 +59,16 @@ int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
 	return(0);
 }
 
+/* int listUsersFunctions(char *DBPath)
+ *
+ * Print (screen) all levels (or office responsibility)
+ *
+ * INPUT:
+ *  DBPath - Database full path
+ * OUTPUT:
+ *  OK - Printed (stdout)
+ *  NOK - Error (probability db (stderr)) 
+ */
 int listUsersFunctions(char *DBPath)
 {
 	sqlite3 *db = NULL;
@@ -129,6 +146,19 @@ int listUsersFunctions(char *DBPath)
 	return(OK);
 }
 
+/* int dBAddUser(char *user, char *func, char *pass, char *DBPath)
+ *
+ * Insert a user (ID), level (or office responsibility) and password into database.
+ *
+ * INPUT:
+ *  user - User ID (DRT)
+ *  func - level (or office responsibility)
+ *  pass - Textplain password
+ *  DBPath - Database full path
+ * OUTPUT:
+ *  OK - Printed (stdout)
+ *  NOK - Error (probability db (stderr)) 
+ */
 int dBAddUser(char *user, char *func, char *pass, char *DBPath)
 {
 	sqlite3 *db = NULL;
@@ -219,6 +249,8 @@ int main(int argc, char *argv[])
 	if((argc == 2) && (strncmp("-f", argv[1], 2) == 0)){
 		listUsersFunctions(DBPath);
 		return(0);
+	}else if((argc == 3) && (strncmp("-r", argv[1], 2) == 0)){
+		/* to do */
 	}else if(argc == 4){
 		strncpy(user, argv[1], DRT_LEN);
 		strncpy(func, argv[2], VALOR_FUNCAO_LEN);
@@ -232,8 +264,9 @@ int main(int argc, char *argv[])
 		return(0);
 
 	}else if(argc != 1){
-		fprintf(stderr, "Execucao:\n%s [-f] [<USER DRT> <FUNC (-f)> <PASSWORD>]\n", argv[0]);
+		fprintf(stderr, "Execucao:\n%s [-f] [<USER DRT> <FUNC (-f)> <PASSWORD>] [-r <USER DRT>]\n", argv[0]);
 		fprintf(stderr, "\t<USER DRT> <FUNC (-f)> <PASSWORD>\t\tUsuario (DRT), funcao (conforme listada em -f) e senha\n");
+		fprintf(stderr, "\t-r <USER DRT>\t\tUsuario (DRT) a ser excluido\n");
 		fprintf(stderr, "\t-f\t\tListagem de funcoes\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
