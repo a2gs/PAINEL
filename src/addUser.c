@@ -287,7 +287,6 @@ int main(int argc, char *argv[])
 	c = strchr(pass, '\n');
 	if(c != NULL) *c = '\0';
 
-
 	if(dBAddUser(user, func, pass, DBPath) == NOK){
 		return(-3);
 	}
