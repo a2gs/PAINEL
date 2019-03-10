@@ -8,8 +8,8 @@
  */
 
 
-/* addUser.c
- * Add a user to USERS table
+/* userId.c
+ * Add/remove a user to USERS table
  *
  *  Who     | When       | What
  *  --------+------------+----------------------------
@@ -146,7 +146,7 @@ int listUsersFunctions(char *DBPath)
 	return(OK);
 }
 
-/* int dBAddUser(char *user, char *func, char *pass, char *DBPath)
+/* int dbAddUser(char *user, char *func, char *pass, char *DBPath)
  *
  * Insert a user (ID), level (or office responsibility) and password into database.
  *
@@ -159,7 +159,7 @@ int listUsersFunctions(char *DBPath)
  *  OK - Printed (stdout)
  *  NOK - Error (probability db (stderr)) 
  */
-int dBAddUser(char *user, char *func, char *pass, char *DBPath)
+int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 {
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
@@ -236,6 +236,13 @@ int dBAddUser(char *user, char *func, char *pass, char *DBPath)
 	return(OK);
 }
 
+int dbRemoveUser(char *user, char *DBPath)
+{
+
+
+	return(0);
+}
+
 int main(int argc, char *argv[])
 {
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
@@ -246,51 +253,90 @@ int main(int argc, char *argv[])
 
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
-	if((argc == 2) && (strncmp("-f", argv[1], 2) == 0)){
-		listUsersFunctions(DBPath);
+	if(argc == 2){
+
+		if(strncmp(argv[1], "-f", 2) == 0){
+			/* form to list funcoes (user level or office responsibility) */
+
+			listUsersFunctions(DBPath);
+
+		}else if(strncmp(argv[1], "-i", 2) == 0){
+			/* form to include user */
+
+			printf("Usuario (DRT): ");
+			fgets(user, DRT_LEN, stdin);
+			c = strchr(user, '\n');
+			if(c != NULL) *c = '\0';
+
+			printf("Funcao ......: ");
+			fgets(func, VALOR_FUNCAO_LEN, stdin);
+			c = strchr(func, '\n');
+			if(c != NULL) *c = '\0';
+
+			printf("Senha .......: ");
+			fgets(pass, PASS_LEN, stdin);
+			c = strchr(pass, '\n');
+			if(c != NULL) *c = '\0';
+
+			if(dbAddUser(user, func, pass, DBPath) == NOK){
+				fprintf(stderr, "Erro inserindo formulario de usuario!\n");
+				return(-3);
+			}
+
+			printf("Usuario inserido com sucesso!\nNao esquecer de adicionar a linha \"%s-%s\" no(s) arquivo(s) %s, no(s) computador(es) de trabalho deste usuario.\n", user, func, DRT_FILE);
+
+		}else if(strncmp(argv[1], "-r", 2) == 0){
+			/* form to remove user */
+
+			printf("Usuario (DRT): ");
+			fgets(user, DRT_LEN, stdin);
+			c = strchr(user, '\n');
+			if(c != NULL) *c = '\0';
+
+			if(dbRemoveUser(user, DBPath) == NOK){
+				fprintf(stderr, "Erro removendo formulario de usuario!\n");
+				return(-3);
+			}
+
+			printf("Usuario removido com sucesso!\nNao esquecer de remover a linha do usuario \"%s\" no(s) arquivo(s) %s, no(s) computador(es) de trabalho deste usuario.\n", user, DRT_FILE);
+
+		}else if(strncmp(argv[1], "-l", 2) == 0){
+			/* list users */
+
+		}
+
 		return(0);
-	}else if((argc == 3) && (strncmp("-r", argv[1], 2) == 0)){
-		/* to do */
-	}else if(argc == 4){
+	}
+
+	if(argc == 5 && strncmp(argv[1], "-i", 2) == 0){
+		/* include user */
 		strncpy(user, argv[1], DRT_LEN);
 		strncpy(func, argv[2], VALOR_FUNCAO_LEN);
 		strncpy(pass, argv[3], PASS_LEN);
 
-		if(dBAddUser(user, func, pass, DBPath) == NOK){
-			fprintf(stderr, "erro...\n");
+		if(dbAddUser(user, func, pass, DBPath) == NOK){
+			fprintf(stderr, "Erro inserindo usuario!\n");
 			return(-2);
 		}
 
 		return(0);
-
-	}else if(argc != 1){
-		fprintf(stderr, "Execucao:\n%s [-f] [<USER DRT> <FUNC (-f)> <PASSWORD>] [-r <USER DRT>]\n", argv[0]);
-		fprintf(stderr, "\t<USER DRT> <FUNC (-f)> <PASSWORD>\t\tUsuario (DRT), funcao (conforme listada em -f) e senha\n");
-		fprintf(stderr, "\t-r <USER DRT>\t\tUsuario (DRT) a ser excluido\n");
-		fprintf(stderr, "\t-f\t\tListagem de funcoes\n");
-		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
-		return(-1);
 	}
 
-	printf("Usuario (DRT): ");
-	fgets(user, DRT_LEN, stdin);
-	c = strchr(user, '\n');
-	if(c != NULL) *c = '\0';
+	if(argc == 3 && strncmp(argv[1], "-r", 2) == 0){
+		/* remove user */
 
-	printf("Funcao ......: ");
-	fgets(func, VALOR_FUNCAO_LEN, stdin);
-	c = strchr(func, '\n');
-	if(c != NULL) *c = '\0';
-
-	printf("Senha .......: ");
-	fgets(pass, PASS_LEN, stdin);
-	c = strchr(pass, '\n');
-	if(c != NULL) *c = '\0';
-
-	if(dBAddUser(user, func, pass, DBPath) == NOK){
-		return(-3);
+		return(0);
 	}
 
-	printf("Usuario inserido com sucesso!\nNao esquecer de adicionar a linha \"%s-%s\" no(s) arquivo(s) %s, no(s) computador(es) de trabalho deste usuario.\n", user, func, DRT_FILE);
-	return(0);
+	/* argc and argv wrong! */
+	fprintf(stderr, "Execucao:\n%s [-f] [<USER DRT> <FUNC (-f)> <PASSWORD>] [-r <USER DRT>]\n", argv[0]);
+	fprintf(stderr, "\t-i <USER DRT> <FUNC (-f)> <PASSWORD>\t\tUsuario (DRT), funcao (conforme listada em -f) e senha\n");
+	fprintf(stderr, "\t-i\t\tFormulario para inserir usuario (DRT), funcao (conforme listada em -f) e senha\n");
+	fprintf(stderr, "\t-r <USER DRT>\t\tUsuario (DRT) a ser excluido\n");
+	fprintf(stderr, "\t-r\t\tFormulario para excluir usuario (DRT)\n");
+	fprintf(stderr, "\t-f\t\tListagem de funcoes\n");
+	fprintf(stderr, "\t-l\t\tListagem de usuarios e suas funcoes\n");
+	fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+
+	return(-1);
 }
