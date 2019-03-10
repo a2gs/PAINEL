@@ -59,7 +59,7 @@ int listUsersAndYoursFunctions(char *DBPath)
 	char sql[SZ_SQLCMD + 1] = {'\0'};
 
 	printf("Banco de dados: [%s]\n\n", DBPath);
-	printf("Listagem de funcoes disponiveis:\n\n");
+	printf("Listagem de usuarios e suas funcoes:\n\n");
 
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
