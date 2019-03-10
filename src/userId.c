@@ -44,6 +44,90 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int listUsersAndFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
+{
+	printf("%-*s%s\n",DRT_LEN, argv[0], argv[1]);
+
+	return(0);
+}
+
+int listUsersAndYoursFunctions(char *DBPath)
+{
+	sqlite3 *db = NULL;
+	char *err_msg = NULL;
+	int rc = 0;
+	char sql[SZ_SQLCMD + 1] = {'\0'};
+
+	printf("Banco de dados: [%s]\n\n", DBPath);
+	printf("Listagem de funcoes disponiveis:\n\n");
+
+	rc = sqlite3_enable_shared_cache(1);
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		return(NOK);
+	}
+
+	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+    
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		sqlite3_close(db);
+        
+		return(NOK);
+	}
+
+	memset(sql, '\0', sizeof(sql));
+	snprintf(sql, SZ_SQLCMD, "SELECT ID, FUNCAO FROM %s", DB_USERS_TABLE);
+
+	rc = sqlite3_exec(db, sql, listUsersAndFuncs, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			fprintf(stderr, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			fprintf(stderr, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			fprintf(stderr, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			fprintf(stderr, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		fprintf(stderr, "Failed to select data [%s]: [%s].\n", DB_REPORTS_TABLE, sql);
+		fprintf(stderr, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
+
+		sqlite3_free(err_msg);
+		sqlite3_close(db);
+        
+		return(NOK);
+	}
+
+	printf("\n");
+
+	sqlite3_close(db);
+
+	return(OK);
+}
+
 /* int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
  *
  * SQLite3 callback
@@ -303,6 +387,7 @@ int main(int argc, char *argv[])
 		}else if(strncmp(argv[1], "-l", 2) == 0){
 			/* list users */
 
+			listUsersAndYoursFunctions(DBPath);
 		}
 
 		return(0);
