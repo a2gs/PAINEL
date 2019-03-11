@@ -44,6 +44,13 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
+/* int listUsersAndFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
+ *
+ * SQLite3 callback
+ *
+ * INPUT:
+ * OUTPUT:
+ */
 int listUsersAndFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
 {
 	printf("%-*s%s\n",DRT_LEN, argv[0], argv[1]);
@@ -51,6 +58,16 @@ int listUsersAndFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
 	return(0);
 }
 
+/* int listUsersAndYoursFunctions(char *DBPath)
+ *
+ * Print (screen) all users and yours levels (or office responsibility)
+ *
+ * INPUT:
+ *  DBPath - Database full path
+ * OUTPUT:
+ *  OK - Printed (stdout)
+ *  NOK - Error (probability db (stderr)) 
+ */
 int listUsersAndYoursFunctions(char *DBPath)
 {
 	sqlite3 *db = NULL;
@@ -240,7 +257,7 @@ int listUsersFunctions(char *DBPath)
  *  pass - Textplain password
  *  DBPath - Database full path
  * OUTPUT:
- *  OK - Printed (stdout)
+ *  OK - Added
  *  NOK - Error (probability db (stderr)) 
  */
 int dbAddUser(char *user, char *func, char *pass, char *DBPath)
@@ -320,6 +337,17 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 	return(OK);
 }
 
+/* int dbRemoveUser(char *user, char *func, char *pass, char *DBPath)
+ *
+ * Remove a user (ID) from database.
+ *
+ * INPUT:
+ *  user - User ID (DRT)
+ *  DBPath - Database full path
+ * OUTPUT:
+ *  OK - Removed
+ *  NOK - Error (probability db (stderr)) 
+ */
 int dbRemoveUser(char *user, char *DBPath)
 {
 	sqlite3 *db = NULL;
