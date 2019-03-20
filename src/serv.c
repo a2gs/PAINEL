@@ -214,6 +214,26 @@ int checkLogin(char *msg)
 	return(OK);
 }
 
+
+/* int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
+ *
+ * 
+ *
+ * INPUT:
+ *  connfd - 
+ *  ProtCode - 
+ *  data - 
+ *  szData = 
+ * OUTPUT:
+ *  OK - Sent ok
+ *  NOK - Didnt send
+ */
+int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
+{
+
+	return(OK);
+}
+
 /* -------------------------------------------------------------------------------------------------------- */
 
 /* int main(int argc, char *argv[])
@@ -341,7 +361,10 @@ int main(int argc, char *argv[])
 
 						if(checkLogin(&msg[szCod + 1]) == NOK){
 							log_write("USUARIO NAO VALIDADO!\n");
+							char *loginErrorMsgToClient = "User/funcion/password didnt find into database!";
 							/* TODO: ENVIAR RESPOSTA DE USER NOT AUTH */
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+							}
 						}else{
 							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado */
 						}
@@ -371,9 +394,11 @@ int main(int argc, char *argv[])
 						}
 						break;
 
+					/*
 					case PROT_COD_SERCMD:
 						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
+					*/
 
 					case PROT_COD_CLICMD:
 						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
