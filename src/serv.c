@@ -244,6 +244,12 @@ int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 			return(NOK);
 	}
 
+	if(send(connfd, msg, strlen(msg), 0) == -1){
+		log_write("ERRO: send() [%s]: [%s]\n", msg, strerror(errno));
+		printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", msg, strerror(errno));
+		return(NOK);
+	}
+
 	return(OK);
 }
 
