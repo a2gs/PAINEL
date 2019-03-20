@@ -66,6 +66,23 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 
 	rc = sqlite3_exec(SG_db, sql, SG_checkLogin_callback, 0, &err_msg);
 
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else if(rc == SQLITE_LOCKED){
+			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else{
+			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}
+
+		log_write("SQL insert error [%s]: [%s].\n", sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(NOK);
+	}
+
 	if(SG_checkLogin_NOROW == SQL_NO_ROW)
 		return(NOK);
 
