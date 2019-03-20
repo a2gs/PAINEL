@@ -328,7 +328,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 int SG_db_open_or_create(void)
 {
 	int rc = 0;
-	char *sql = NULL;
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char *err_msg = NULL;
 
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
@@ -398,32 +398,32 @@ int SG_db_open_or_create(void)
 	   IPPORT      TEXT
 	 */
 
-	sql = "CREATE TABLE IF NOT EXISTS MSGS ("
-	                                        "DRT         TEXT NOT NULL, "
-	                                        "DATAHORA    TEXT NOT NULL, "
-	                                        "LOGINOUT    TEXT, "
-	                                        "FUNCAO      TEXT, "
-	                                        "PANELA      TEXT, "
-	                                        "WS          TEXT, "
-	                                        "FORNELETR   TEXT, "
-	                                        "NUMMAQUINA  TEXT, "
-	                                        "DIAMETRO    TEXT, "
-	                                        "CLASSE      TEXT, "
-	                                        "TEMP        TEXT, "
-	                                        "PERCFESI    TEXT, "
-	                                        "PERCMG      TEXT, "
-	                                        "PERCC       TEXT, "
-	                                        "PERCS       TEXT, "
-	                                        "PERCP       TEXT, "
-	                                        "PERCINOCLNT TEXT, "
-	                                        "ENELETTON   TEXT, "
-	                                        "CADENCIA    TEXT, "
-	                                        "OEE         TEXT, "
-	                                        "ASPECTUBO   TEXT, "
-	                                        "REFUGO      TEXT, "
-	                                        "IPPORT      TEXT, "
-	                                        "PRIMARY KEY(DATAHORA, DRT)"
-	                                        ")";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "DRT         TEXT NOT NULL, "     \
+	                              "DATAHORA    TEXT NOT NULL, "     \
+	                              "LOGINOUT    TEXT, "              \
+	                              "FUNCAO      TEXT, "              \
+	                              "PANELA      TEXT, "              \
+	                              "WS          TEXT, "              \
+	                              "FORNELETR   TEXT, "              \
+	                              "NUMMAQUINA  TEXT, "              \
+	                              "DIAMETRO    TEXT, "              \
+	                              "CLASSE      TEXT, "              \
+	                              "TEMP        TEXT, "              \
+	                              "PERCFESI    TEXT, "              \
+	                              "PERCMG      TEXT, "              \
+	                              "PERCC       TEXT, "              \
+	                              "PERCS       TEXT, "              \
+	                              "PERCP       TEXT, "              \
+	                              "PERCINOCLNT TEXT, "              \
+	                              "ENELETTON   TEXT, "              \
+	                              "CADENCIA    TEXT, "              \
+	                              "OEE         TEXT, "              \
+	                              "ASPECTUBO   TEXT, "              \
+	                              "REFUGO      TEXT, "              \
+	                              "IPPORT      TEXT, "              \
+	                              "PRIMARY KEY(DATAHORA, DRT))",
+	         DB_MSGS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -444,7 +444,7 @@ int SG_db_open_or_create(void)
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON MSGS (FUNCAO)";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON %s (FUNCAO)", DB_MSGS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -482,9 +482,9 @@ int SG_db_inserting(SG_registroDB_t *data)
 	memset(sqlCmd, '\0', sizeof(SG_registroDB_t) + 300);
 
 	snprintf(sqlCmd,
-	         sizeof(sqlCmd),
-	         "INSERT INTO MSGS(DRT,DATAHORA,LOGINOUT,FUNCAO,PANELA,WS,FORNELETR,NUMMAQUINA,DIAMETRO,CLASSE,TEMP,PERCFESI,PERCMG,PERCC,PERCS,PERCP,PERCINOCLNT,ENELETTON,CADENCIA,OEE,ASPECTUBO,REFUGO,IPPORT) "
-	         "VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+	         SQL_COMMAND_SZ,
+	         "INSERT INTO %s (DRT,DATAHORA,LOGINOUT,FUNCAO,PANELA,WS,FORNELETR,NUMMAQUINA,DIAMETRO,CLASSE,TEMP,PERCFESI,PERCMG,PERCC,PERCS,PERCP,PERCINOCLNT,ENELETTON,CADENCIA,OEE,ASPECTUBO,REFUGO,IPPORT) " \
+	         "VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", DB_MSGS_TABLE,
 	         data->drt, data->data, data->loginout, data->funcao, data->panela, data->ws, data->fornEletr, data->numMaquina, data->diamNom, data->classe, data->temp, data->percFeSi,
 	         data->percMg, data->percC, data->percS, data->percP, data->percInoculante, data->enerEletTon, data->cadencia, data->oee, data->aspecto, data->refugo, data->ipport);
 
