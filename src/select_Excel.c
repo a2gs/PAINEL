@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 {
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
-	char *sql = NULL;
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	int rc = 0;
 	char fExcel[SZ_EXCELFILENAME + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 		return(1);
 	}
     
-	sql = "SELECT * FROM MSGS";
+	snprintf(sql, SQL_COMMAND_SZ, "SELECT * FROM %s", DB_MSGS_TABLE);
 
 	rc = sqlite3_exec(db, sql, excel_constructTable, 0, &err_msg);
     
