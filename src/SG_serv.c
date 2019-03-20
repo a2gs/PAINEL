@@ -47,8 +47,10 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 {
 	char sql[SZ_SQLCMD + 1] = {'\0'};
 
-	if(SG_db == NULL)
+	if(SG_db == NULL){
+		log_write("Database handle didnt define for insert!\n");
 		return(NOK);
+	}
 
 	snprintf(sql, SZ_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'"; DB_USERS_TABLE, user, func, passhash);
 
@@ -262,6 +264,7 @@ int SG_db_open_or_create(void)
 	char *err_msg = NULL;
 
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
+	SG_db = NULL;
 
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
@@ -403,8 +406,10 @@ int SG_db_inserting(SG_registroDB_t *data)
 	char *err_msg = NULL;
 	int rc = 0;
 
-	if(SG_db == NULL)
+	if(SG_db == NULL){
+		log_write("Database handle didnt define for insert!\n");
 		return(NOK);
+	}
 
 	memset(sqlCmd, '\0', sizeof(SG_registroDB_t) + 300);
 
@@ -443,10 +448,10 @@ int SG_db_close(void)
 {
 	int rc = 0;
 
-	if(SG_db == NULL)
+	if(SG_db == NULL){
+		log_write("Database handle didnt define for close!\n");
 		return(NOK);
-
-	memset(DBPath, 0, sizeof(DBPath));
+	}
 
 	rc = sqlite3_close_v2(SG_db);
 	if(rc != SQLITE_OK){
@@ -463,6 +468,8 @@ int SG_db_close(void)
 		log_write("SQL close error!\n");
 		return(NOK);
 	}
+
+	memset(DBPath, 0, sizeof(DBPath));
 
 	return(OK);
 }
