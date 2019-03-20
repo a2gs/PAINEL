@@ -30,10 +30,10 @@
 #define DATABASE_FILE				("database.db")
 #define DB_PATHFILE_SZ				(400)
 
+#define SQL_COMMAND_SZ				(10000)
+
 #define DB_USERS_TABLE				"USERS"
-/*
 #define DB_MSGS_TABLE				"MSGS"
-*/
 #define DB_REPORTS_TABLE			"RELATS"
 
 

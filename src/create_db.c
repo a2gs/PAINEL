@@ -48,7 +48,7 @@
 int main(int argc, char *argv[])
 {
 	int rc = 0;
-	char *sql = NULL;
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char *err_msg = NULL;
 	sqlite3 *SG_db = NULL;
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
@@ -94,32 +94,32 @@ int main(int argc, char *argv[])
 	   IPPORT      TEXT
 	 */
 
-	sql = "CREATE TABLE IF NOT EXISTS MSGS ("
-	                                        "DRT         TEXT NOT NULL, "
-	                                        "DATAHORA    TEXT NOT NULL, "
-	                                        "LOGINOUT    TEXT, "
-	                                        "FUNCAO      TEXT, "
-	                                        "PANELA      TEXT, "
-	                                        "WS          TEXT, "
-	                                        "FORNELETR   TEXT, "
-	                                        "NUMMAQUINA  TEXT, "
-	                                        "DIAMETRO    TEXT, "
-	                                        "CLASSE      TEXT, "
-	                                        "TEMP        TEXT, "
-	                                        "PERCFESI    TEXT, "
-	                                        "PERCMG      TEXT, "
-	                                        "PERCC       TEXT, "
-	                                        "PERCS       TEXT, "
-	                                        "PERCP       TEXT, "
-	                                        "PERCINOCLNT TEXT, "
-	                                        "ENELETTON   TEXT, "
-	                                        "CADENCIA    TEXT, "
-	                                        "OEE         TEXT, "
-	                                        "ASPECTUBO   TEXT, "
-	                                        "REFUGO      TEXT, "
-	                                        "IPPORT      TEXT, "
-	                                        "PRIMARY KEY(DATAHORA, DRT)"
-	                                        ")";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "DRT         TEXT NOT NULL, "     \
+	                              "DATAHORA    TEXT NOT NULL, "     \
+	                              "LOGINOUT    TEXT, "              \
+	                              "FUNCAO      TEXT, "              \
+	                              "PANELA      TEXT, "              \
+	                              "WS          TEXT, "              \
+	                              "FORNELETR   TEXT, "              \
+	                              "NUMMAQUINA  TEXT, "              \
+	                              "DIAMETRO    TEXT, "              \
+	                              "CLASSE      TEXT, "              \
+	                              "TEMP        TEXT, "              \
+	                              "PERCFESI    TEXT, "              \
+	                              "PERCMG      TEXT, "              \
+	                              "PERCC       TEXT, "              \
+	                              "PERCS       TEXT, "              \
+	                              "PERCP       TEXT, "              \
+	                              "PERCINOCLNT TEXT, "              \
+	                              "ENELETTON   TEXT, "              \
+	                              "CADENCIA    TEXT, "              \
+	                              "OEE         TEXT, "              \
+	                              "ASPECTUBO   TEXT, "              \
+	                              "REFUGO      TEXT, "              \
+	                              "IPPORT      TEXT, "              \
+	                              "PRIMARY KEY(DATAHORA, DRT))",
+	         DB_MSGS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON MSGS (FUNCAO)";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON %s (FUNCAO)", DB_MSGS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS DATAHORA_INDX ON MSGS (DATAHORA)";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS DATAHORA_INDX ON %s (DATAHORA)", DB_MSGS_TABLE);
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
@@ -160,12 +160,12 @@ int main(int argc, char *argv[])
 	 * PASSHASH					TEXT
 	 */
 
-	sql = "CREATE TABLE IF NOT EXISTS " DB_USERS_TABLE "("                \
-	                                        "ID          TEXT NOT NULL, " \
-	                                        "FUNCAO      TEXT, "          \
-	                                        "PASSHASH    TEXT, "          \
-	                                        "PRIMARY KEY(ID)"             \
-	                                        ")";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "ID TEXT NOT NULL, "              \
+	                              "FUNCAO TEXT, "                   \
+	                              "PASSHASH TEXT, "                 \
+	                              "PRIMARY KEY(ID))",
+	         DB_USERS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS ID_INDX ON " DB_USERS_TABLE " (ID)";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS ID_INDX ON %s (ID)", DB_USERS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -197,13 +197,13 @@ int main(int argc, char *argv[])
 	 * HEADER (DESCRICOES DOS CAMPOS)           TEXT
 	 */
 
-	sql = "CREATE TABLE IF NOT EXISTS RELATS ("
-	                                         "FUNCAO   TEXT, "
-	                                         "TITULO   TEXT, "
-	                                         "CAMPOS   TEXT, "
-	                                         "HEADERS  TEXT, "
-	                                         "PRIMARY KEY(FUNCAO)"
-	                                         ")";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "FUNCAO   TEXT, "                 \
+	                              "TITULO   TEXT, "                 \
+	                              "CAMPOS   TEXT, "                 \
+	                              "HEADERS  TEXT, "                 \
+	                              "PRIMARY KEY(FUNCAO))",
+	         DB_REPORTS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 		return(NOK);
 	}
 
-	sql = "CREATE INDEX IF NOT EXISTS FUNC_INDX ON RELATS (FUNCAO)";
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNC_INDX ON %s (FUNCAO)", DB_REPORTS_TABLE);
 
 	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
 
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "SQL close error!\n");
 		return(NOK);
 	}
-	fprintf(stderr, "Banco SQL criado!\n");
+	fprintf(stderr, "Bancos SQL criados!\n");
 
 	return(OK);
 }
