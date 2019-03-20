@@ -33,7 +33,6 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define SZ_SQLCMD					(5000)
 #define SZ_HTMLFILENAME			(200)
 #define SZ_COLUMNSHEADER_DB	(10000)
 #define SZ_COLUMNSTABLE_DB		(1000)
@@ -262,7 +261,7 @@ int main(int argc, char *argv[])
 	sqlite3 *db = NULL;
 	char *funcao = NULL;
 	char *err_msg = NULL;
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char fHtmlStatic[SZ_HTMLFILENAME + 1] = {'\0'};
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
@@ -336,7 +335,7 @@ int main(int argc, char *argv[])
 		}
 
 		memset(sql, '\0', sizeof(sql));
-		snprintf(sql, SZ_SQLCMD, "SELECT TITULO, CAMPOS, HEADERS FROM RELATS WHERE FUNCAO = '%s'", funcao);
+		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM RELATS WHERE FUNCAO = '%s'", funcao);
 
 		rc = sqlite3_exec(db, sql, hmtl_relat_infos, &pageInfo, &err_msg);
     
@@ -378,8 +377,8 @@ int main(int argc, char *argv[])
 
 		memset(sql, '\0', sizeof(sql));
 
-		if(strncmp(funcao, "All", 3) == 0) snprintf(sql, SZ_SQLCMD, "SELECT %s FROM MSGS", pageInfo.columnsTable);
-		else                               snprintf(sql, SZ_SQLCMD, "SELECT %s FROM MSGS WHERE FUNCAO = '%s'", pageInfo.columnsTable, funcao);
+		if(strncmp(funcao, "All", 3) == 0) snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s", pageInfo.columnsTable, DB_MSGS_TABLE);
+		else                               snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s WHERE FUNCAO = '%s'", pageInfo.columnsTable, DB_MSGS_TABLE, funcao);
 
 		rc = sqlite3_exec(db, sql, hmtl_constructTable, &htmls, &err_msg);
     
