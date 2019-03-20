@@ -230,6 +230,19 @@ int checkLogin(char *msg)
  */
 int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 {
+	char msg[MAXLINE + 1] = {'\0'};
+
+	switch(ProtCode){
+		case PROT_COD_LOGIN:
+			snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
+			break;
+
+		case PROT_COD_LOGOUT:
+			break;
+
+		default:
+			return(NOK);
+	}
 
 	return(OK);
 }
@@ -357,16 +370,23 @@ int main(int argc, char *argv[])
 				switch(atoi(msgCod)){
 
 					case PROT_COD_LOGIN:
-						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(checkLogin(&msg[szCod + 1]) == NOK){
-							log_write("USUARIO NAO VALIDADO!\n");
-							char *loginErrorMsgToClient = "User/funcion/password didnt find into database!";
-							/* TODO: ENVIAR RESPOSTA DE USER NOT AUTH */
+							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
+							log_write("USUARIO NAO VALIDADO!\n"); /* TODO: melhorar */
+
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 							}
+
 						}else{
-							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado */
+							char *loginErrorMsgToClient = "OK|Userregistred into database!";
+							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar */
+
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+							}
+
+							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado com dados do momento do login */
 						}
 						break;
 
