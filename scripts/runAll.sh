@@ -66,13 +66,8 @@ ALERT_ERROR 'servList 9990 SupervisorMaquina.log'
 
 
 # ------------------------------------------------
-ps -ef | grep select_html
+echo '--- PROCESSOS NO AR -----------------------------------'
+ps -C serv,servList,select_html -o pid,cmd | sed 's/^ *//' | column  -t
+
+echo '--- PORTAS EM LISTNING --------------------------------'
 netstat -nap --tcp --listening 2>/dev/null | grep 999
-echo '--------------------------------------'
-echo 'PIDs:'
-echo 'servList:'
-ps -o pid -C servList | grep -v PID
-echo 'select:'
-ps aux | grep select| grep -v vim | grep -v grep | awk '{print $2}'
-echo 'serv:'
-ps -o pid -C serv | grep -v PID
