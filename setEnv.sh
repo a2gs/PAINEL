@@ -32,6 +32,8 @@ ALERT_ERROR()
 
 	if [ $ret -ne 0 ]; then
 		echo "ERROR (returned $ret): $1"
+	else
+		echo 'Ok!'
 	fi
 }
 export -f ALERT_ERROR

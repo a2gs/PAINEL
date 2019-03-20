@@ -17,26 +17,29 @@
 
 
 # ------------------------------------------------
+echo '--- Stating serv ---'
 $PAINEL_HOME/bin/serv 9998
 ALERT_ERROR 'serv 9998'
 
 
 # ------------------------------------------------
+echo '--- Stating select_htmls ---'
 #Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML>
-$PAINEL_HOME/bin/select_html OperadorMaquina        1            5 2> $PAINEL_HOME/log/select_html_OperadorMaquina.log &
+$PAINEL_HOME/bin/select_html OperadorMaquina 1 5   2> $PAINEL_HOME/log/select_html_OperadorMaquina.log &
 ALERT_ERROR 'select_html OperadorMaquina select_html_OperadorMaquina.log'
 
-$PAINEL_HOME/bin/select_html SupervisorMaquina      1            5 2> $PAINEL_HOME/log/select_html_SupervisorMaquina.log &
+$PAINEL_HOME/bin/select_html SupervisorMaquina 1 5 2> $PAINEL_HOME/log/select_html_SupervisorMaquina.log &
 ALERT_ERROR 'select_html SupervisorMaquina select_html_SupervisorMaquina.log'
 
-$PAINEL_HOME/bin/select_html FornoEletrico          1            5 2> $PAINEL_HOME/log/select_html_FornoEletrico.log &
+$PAINEL_HOME/bin/select_html FornoEletrico 1 5     2> $PAINEL_HOME/log/select_html_FornoEletrico.log &
 ALERT_ERROR 'select_html FornoEletrico select_html_FornoEletrico.log'
 
-$PAINEL_HOME/bin/select_html All                    1            5 2> $PAINEL_HOME/log/select_html_All.log &
+$PAINEL_HOME/bin/select_html All 1 5               2> $PAINEL_HOME/log/select_html_All.log &
 ALERT_ERROR 'select_html All select_html_All.log'
 
 
 # ------------------------------------------------
+echo '--- Stating servLists ---'
 $PAINEL_HOME/bin/servList 9997 $PAINEL_HOME/html/All_Refresh.html               2> $PAINEL_HOME/log/allRefresh.log
 ALERT_ERROR 'servList 9997 allRefresh.log'
 
