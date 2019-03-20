@@ -118,7 +118,10 @@ int SG_parsingDataInsertLogin(char *msg, char *ip, int port, SG_registroDB_t *da
 	strncpy(data->funcao, c1, c2-c1);
 	c1 = c2+1;
 
-	/* PASSHASH */
+	/* PASSHASH is ignored. Had used to valited the user */
+
+	/* LOGINOUT */
+	strncpy(data->loginout, "I", 1);
 
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);

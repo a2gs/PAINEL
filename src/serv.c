@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
 							}
 
 						}else{
-							char *loginErrorMsgToClient = "OK|Userregistred into database!";
+							char *loginErrorMsgToClient = "OK|User registred into database!";
 							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
@@ -388,18 +388,15 @@ int main(int argc, char *argv[])
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
-							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado com dados do momento do login */
+
 							if(SG_parsingDataInsertLogin(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
 								log_write("PARSING LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 								continue;
 							}else{
 								if(SG_db_inserting(&msgCleaned) == NOK){
-									log_write("INSERT LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+									log_write("INSERT LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 								}
 							}
-
-
-
 						}
 						break;
 
@@ -414,11 +411,11 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(SG_parsingDataInsertRegistro(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
-							log_write("PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+							log_write("PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 							continue;
 						}else{
 							if(SG_db_inserting(&msgCleaned) == NOK){
-								log_write("INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+								log_write("INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 							}
 						}
 						break;
