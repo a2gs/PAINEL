@@ -47,6 +47,9 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 {
 	char sql[SZ_SQLCMD + 1] = {'\0'};
 
+	if(SG_db == NULL)
+		return(NOK);
+
 	snprintf(sql, SZ_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'"; DB_USERS_TABLE, user, func, passhash);
 
 
@@ -400,6 +403,9 @@ int SG_db_inserting(SG_registroDB_t *data)
 	char *err_msg = NULL;
 	int rc = 0;
 
+	if(SG_db == NULL)
+		return(NOK);
+
 	memset(sqlCmd, '\0', sizeof(SG_registroDB_t) + 300);
 
 	snprintf(sqlCmd,
@@ -436,6 +442,9 @@ int SG_db_inserting(SG_registroDB_t *data)
 int SG_db_close(void)
 {
 	int rc = 0;
+
+	if(SG_db == NULL)
+		return(NOK);
 
 	memset(DBPath, 0, sizeof(DBPath));
 
