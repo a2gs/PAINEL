@@ -34,7 +34,6 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define SZ_SQLCMD					(5000)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -73,7 +72,7 @@ int listUsersAndYoursFunctions(char *DBPath)
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
 	int rc = 0;
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 
 	printf("Banco de dados: [%s]\n\n", DBPath);
 	printf("Listagem de usuarios e suas funcoes:\n\n");
@@ -114,7 +113,7 @@ int listUsersAndYoursFunctions(char *DBPath)
 	}
 
 	memset(sql, '\0', sizeof(sql));
-	snprintf(sql, SZ_SQLCMD, "SELECT ID, FUNCAO FROM %s", DB_USERS_TABLE);
+	snprintf(sql, SQL_COMMAND_SZ, "SELECT ID, FUNCAO FROM %s", DB_USERS_TABLE);
 
 	rc = sqlite3_exec(db, sql, listUsersAndFuncs, 0, &err_msg);
 
@@ -175,7 +174,7 @@ int listUsersFunctions(char *DBPath)
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
 	int rc = 0;
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 
 	printf("Banco de dados: [%s]\n\n", DBPath);
 	printf("Listagem de funcoes disponiveis:\n\n");
@@ -216,7 +215,7 @@ int listUsersFunctions(char *DBPath)
 	}
 
 	memset(sql, '\0', sizeof(sql));
-	snprintf(sql, SZ_SQLCMD, "SELECT FUNCAO, TITULO FROM %s", DB_REPORTS_TABLE);
+	snprintf(sql, SQL_COMMAND_SZ, "SELECT FUNCAO, TITULO FROM %s", DB_REPORTS_TABLE);
 
 	rc = sqlite3_exec(db, sql, listFuncs, 0, &err_msg);
 
@@ -265,7 +264,7 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
 	int rc = 0;
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	uint8_t hash[32] = {0};
 	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
 
@@ -308,7 +307,7 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 	hash_to_string(passhash, hash);
 
 	memset(sql, '\0', sizeof(sql));
-	snprintf(sql, SZ_SQLCMD, "INSERT INTO %s(ID, FUNCAO, PASSHASH) VALUES('%s', '%s', '%s')", DB_USERS_TABLE, user, func, passhash);
+	snprintf(sql, SQL_COMMAND_SZ, "INSERT INTO %s(ID, FUNCAO, PASSHASH) VALUES('%s', '%s', '%s')", DB_USERS_TABLE, user, func, passhash);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -353,7 +352,7 @@ int dbRemoveUser(char *user, char *DBPath)
 	sqlite3 *db = NULL;
 	char *err_msg = NULL;
 	int rc = 0;
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
@@ -391,7 +390,7 @@ int dbRemoveUser(char *user, char *DBPath)
 	}
 
 	memset(sql, '\0', sizeof(sql));
-	snprintf(sql, SZ_SQLCMD, "DELETE FROM %s WHERE ID = '%s'", DB_USERS_TABLE, user);
+	snprintf(sql, SQL_COMMAND_SZ, "DELETE FROM %s WHERE ID = '%s'", DB_USERS_TABLE, user);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
