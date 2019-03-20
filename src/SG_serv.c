@@ -89,12 +89,47 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	return(OK);
 }
 
-int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
+int SG_parsingDataInsertLogin(char *msg, char *ip, int port, SG_registroDB_t *data)
 {
 	char *c1 = NULL;
 	char *c2 = NULL;
 
-	memset(data, 0, sizeof(SG_registroDB_t));
+	c1 = c2 = msg;
+
+	/* PROTOCOLO DE PROT_COD_LOGIN
+	   <COD|> DRT|DATAHORA|FUNCAO|PASSHASH
+	 */
+
+	/* DRT */
+	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
+	strncpy(data->drt, c1, c2-c1);
+	c1 = c2+1;
+
+	/* DATAHORA */
+	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
+	strncpy(data->data, c1, c2-c1);
+	c1 = c2+1;
+
+	/* FUNCAO */
+	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
+	strncpy(data->funcao, c1, c2-c1);
+	c1 = c2+1;
+
+	/* PASSHASH */
+
+	/* CLIENT IP/PORT */
+	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
+
+	return(OK);
+}
+
+int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
+{
+	char *c1 = NULL;
+	char *c2 = NULL;
 
 	c1 = c2 = msg;
 
@@ -231,6 +266,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 	/* REFUGO (ultimo) */
 	strcpy(data->refugo, c1);
 
+	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
 
 	log_write("Inserindo registro:\n"

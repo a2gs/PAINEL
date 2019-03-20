@@ -373,20 +373,33 @@ int main(int argc, char *argv[])
 
 						if(checkLogin(&msg[szCod + 1]) == NOK){
 							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
-							log_write("USUARIO NAO VALIDADO!\n"); /* TODO: melhorar */
+							log_write("USUARIO NAO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+								/* TODO */
 							}
 
 						}else{
 							char *loginErrorMsgToClient = "OK|Userregistred into database!";
-							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar */
+							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+								/* TODO */
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 							/* TODO: chamar SG_db_inserting() com msgCleaned devidamente populado com dados do momento do login */
+							if(SG_parsingDataInsertLogin(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
+								log_write("PARSING LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
+								continue;
+							}else{
+								if(SG_db_inserting(&msgCleaned) == NOK){
+									log_write("INSERT LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+								}
+							}
+
+
+
 						}
 						break;
 
@@ -401,16 +414,12 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(SG_parsingDataInsertRegistro(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
-
-							log_write("PARSING ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
+							log_write("PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
 							continue;
-
 						}else{
-
 							if(SG_db_inserting(&msgCleaned) == NOK){
 								log_write("INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO */
 							}
-
 						}
 						break;
 
