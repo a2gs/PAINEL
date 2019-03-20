@@ -43,6 +43,12 @@ static char SG_checkLogin_NOROW = SQL_NO_ROW;
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColName)
+{
+	SG_checkLogin_NOROW = SQL_HAS_ROW;
+	return(0);
+}
+
 int SG_checkLogin(char *user, char *passhash, char *func)
 {
 	char sql[SZ_SQLCMD + 1] = {'\0'};
@@ -53,9 +59,12 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	}
 
 	snprintf(sql, SZ_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'"; DB_USERS_TABLE, user, func, passhash);
+	SG_checkLogin_NOROW = SQL_NO_ROW;
 
+	rc = sqlite3_exec(db, sql, SG_checkLogin_callback, 0, &err_msg);
 
-
+	if(SG_checkLogin_NOROW == SQL_NO_ROW)
+		return(NOK);
 
 	return(OK);
 }
