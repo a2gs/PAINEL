@@ -182,7 +182,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
 			memset(lineToSend, '\0', MAXLINE);
 			/* COD|DRT|DATAHORA||FUNCAO|PANELA||FORNELETR||||TEMP|PERCFESI|PERCMG||PERCS||||||| */
-			snprintf(lineToSend, MAXLINE, "%03d|%s|%s||%s|%s||%s||||%s|%s|%s||%s|||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_FORNOELETRICO, fornElet.panela, fornElet.fornEletr, fornElet.temp, fornElet.percFeSi, fornElet.percMg, fornElet.percS);
+			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s||%s||||%s|%s|%s||%s|||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_FORNOELETRICO, fornElet.panela, fornElet.fornEletr, fornElet.temp, fornElet.percFeSi, fornElet.percMg, fornElet.percS);
 
 			log_write("Mensagem [%s] enviada.\n", lineToSend);
 							 
@@ -318,7 +318,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
 			memset(lineToSend, '\0', MAXLINE);
 			/* COD|DRT|DATAHORA||FUNCAO|PANELA|WS||NUMMAQUINA|||TEMP|PERCFESI|||||INOCULANTE||||ASPECTUBO| */
-			snprintf(lineToSend, MAXLINE, "%03d|%s|%s||%s|%s|%s||%s|||%s|%s|||||%s||||%s|", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_OPERMAQUINA, operMaquina.panela, operMaquina.ws, operMaquina.numMaquina, operMaquina.temp, operMaquina.percFeSi, operMaquina.percInoculante, operMaquina.aspecto);
+			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s|%s||%s|||%s|%s|||||%s||||%s|", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_OPERMAQUINA, operMaquina.panela, operMaquina.ws, operMaquina.numMaquina, operMaquina.temp, operMaquina.percFeSi, operMaquina.percInoculante, operMaquina.aspecto);
 
 			log_write("Mensagem [%s] enviada.\n", lineToSend);
 
@@ -387,7 +387,7 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
 			memset(lineToSend, '\0', MAXLINE);
 			/* COD|DRT|DATAHORA||FUNCAO|||||||||||||||CADENCIA|OEE|ASPECTUBO|REFUGO */
-			snprintf(lineToSend, MAXLINE, "%03d|%s|%s||%s|||||||||||||||%s|%s|%s|%s", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_SUPMAQUINA, supMaquina.cadencia, supMaquina.oee, supMaquina.aspecto, supMaquina.refugo);
+			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|||||||||||||||%s|%s|%s|%s", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_SUPMAQUINA, supMaquina.cadencia, supMaquina.oee, supMaquina.aspecto, supMaquina.refugo);
 
 			log_write("Mensagem [%s] enviada.\n", lineToSend);
 
