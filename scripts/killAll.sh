@@ -15,12 +15,12 @@
 #          |            |
 #
 
-#kill `cat servlock`
-kill `ps -o pid -C servList | grep -v PID`
-ALERT_ERROR 'Kill servList'
+PROCS_PID_LIST=$(ps -C serv,servList,select_html --no-headers -o pid,cmd | sed 's/^ *//' | cut -f1 -d ' ')
 
-kill `ps aux | grep select| grep -v vim | grep -v grep | awk '{print $2}'`
-ALERT_ERROR 'Kill select'
+if [ -z "$PROCS_PID_LIST" ]; then
+	echo "There are no processes running."
+	exit 1
+fi
 
-kill `ps -o pid -C serv | grep -v PID`
-ALERT_ERROR 'Kill serv'
+kill $PROCS_PID_LIST
+ALERT_ERROR "Kill $PROCS_PID_LIST"
