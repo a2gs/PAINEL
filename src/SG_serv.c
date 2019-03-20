@@ -31,6 +31,7 @@
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define SQL_NO_ROW			(0)
 #define SQL_HAS_ROW			(!SQL_NO_ROW)
+#define SZ_SG_SQLCMD			(2000)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -51,17 +52,19 @@ int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColNam
 
 int SG_checkLogin(char *user, char *passhash, char *func)
 {
-	char sql[SZ_SQLCMD + 1] = {'\0'};
+	int rc = 0;
+	char *err_msg = NULL;
+	char sql[SZ_SG_SQLCMD + 1] = {'\0'};
 
 	if(SG_db == NULL){
 		log_write("Database handle didnt define for insert!\n");
 		return(NOK);
 	}
 
-	snprintf(sql, SZ_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'"; DB_USERS_TABLE, user, func, passhash);
+	snprintf(sql, SZ_SG_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'", DB_USERS_TABLE, user, func, passhash);
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
-	rc = sqlite3_exec(db, sql, SG_checkLogin_callback, 0, &err_msg);
+	rc = sqlite3_exec(SG_db, sql, SG_checkLogin_callback, 0, &err_msg);
 
 	if(SG_checkLogin_NOROW == SQL_NO_ROW)
 		return(NOK);
