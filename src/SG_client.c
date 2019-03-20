@@ -69,7 +69,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
-	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
+	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
 		log_write("ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
@@ -84,7 +84,7 @@ int SG_sendExit(int sockfd, char *drt, char *funcao)
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* COD|DRT|DATAHORA|FUNCAO */
-	snprintf(lineToSend, MAXLINE, "%03d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
+	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
 		log_write("ERRO: send() exit [%s].\n", strerror(errno));
