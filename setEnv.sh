@@ -30,7 +30,7 @@ ALERT_ERROR()
 {
 	ret=$?
 
-	echo "Running: $1"
+	echo "Running: $1 - $ret - $?"
 
 	if [ $ret -ne 0 ]; then
 		echo "ERROR! Returned: $ret"
