@@ -29,6 +29,8 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
+#define SQL_NO_ROW			(0)
+#define SQL_HAS_ROW			(!SQL_NO_ROW)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -37,13 +39,20 @@
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 static sqlite3 *SG_db = NULL;
 static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
+static char SG_checkLogin_NOROW = SQL_NO_ROW;
 
 
 /* *** FUNCTIONS *********************************************************************** */
 int SG_checkLogin(char *user, char *passhash, char *func)
 {
-	/* TODO */
-	return(NOK);
+	char sql[SZ_SQLCMD + 1] = {'\0'};
+
+	snprintf(sql, SZ_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'"; DB_USERS_TABLE, user, func, passhash);
+
+
+
+
+	return(OK);
 }
 
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
