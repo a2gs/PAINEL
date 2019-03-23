@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 	for(;;){
 
 		if(SG_fazerLogin(id, passhash, level, &usrType) == NOK){
-			log_write("EXIT!!!!!!!!\n"); /* TODO */
+			log_write("EXIT!!!!!!!!\n"); /* TODO: melhorar mensagem */
 			break;
 		}
 

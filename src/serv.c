@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 							log_write("USUARIO NAO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								/* TODO */
+								/* TODO: retorno de erro */
 							}
 
 						}else{
@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
 							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								/* TODO */
+								/* TODO: retorno de erro */
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_LOGOUT:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
-						/* TODO */
+						/* TODO: IMPLEMENTAR ESTE COMANDO */
 
 						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
