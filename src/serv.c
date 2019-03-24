@@ -192,11 +192,6 @@ pid_t daemonize(void)
  */
 int checkLogin(char *msg)
 {
-	/*
-	char user[DRT_LEN + 1] = {'\0'};
-	char func[VALOR_FUNCAO_LEN + 1] = {'\0'};
-	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
-	*/
 	char *c1 = NULL;
 	char *c2 = NULL;
 	size_t fieldSz = 0;
@@ -230,9 +225,8 @@ int checkLogin(char *msg)
 	/* PASSHASH */
 	strncpy(userSession.passhash, c1, sizeof(userSession.passhash)-1);
 
-	if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
+	if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK)
 		return(NOK);
-	}
 
 	return(OK);
 }
