@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 		return(-2);
 	}
 
-	fprintf(stderr, "Server Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	fprintf(stderr, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 
