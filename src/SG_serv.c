@@ -89,36 +89,16 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	return(OK);
 }
 
-int SG_parsingDataInsertLogin(char *msg, char *ip, int port, SG_registroDB_t *data)
+int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
 {
-	char *c1 = NULL;
-	char *c2 = NULL;
-
-	c1 = c2 = msg;
-
-	/* PROTOCOLO DE PROT_COD_LOGIN
-	   <COD|> DRT|DATAHORA|FUNCAO|PASSHASH
-	 */
-
 	/* DRT */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	strncpy(data->drt, c1, c2-c1);
-	c1 = c2+1;
+	strcpy(data->drt, user);
 
 	/* DATAHORA */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	strncpy(data->data, c1, c2-c1);
-	c1 = c2+1;
+	strcpy(data->data, dateTime);
 
 	/* FUNCAO */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	strncpy(data->funcao, c1, c2-c1);
-	c1 = c2+1;
-
-	/* PASSHASH is ignored. Had used to valited the user */
+	strcpy(data->funcao, func);
 
 	/* LOGINOUT */
 	strncpy(data->loginout, "I", 1);

@@ -46,6 +46,13 @@
 #define SUBPATH_RUNNING_DATA_SRV		SUBPATH_RUNNING_DATA
 #define LOG_SERV_FILE					("server.log")
 
+typedef struct _userIdent_t{
+	char username[DRT_LEN + 1];
+	char level[VALOR_FUNCAO_LEN + 1];
+	char dateTime[DATA_LEN + 1];
+	char passhash[PASS_SHA256_LEN + 1];
+}userIdent_t;
+
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 
@@ -54,6 +61,7 @@
 static int lockFd = 0;
 static char runnigPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
 static char runnigLockFdPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
+static userIdent_t userSession;
 
 
 /* ---[DAEMON]--------------------------------------------------------------------------------------------- */
@@ -184,30 +192,45 @@ pid_t daemonize(void)
  */
 int checkLogin(char *msg)
 {
+	/*
 	char user[DRT_LEN + 1] = {'\0'};
 	char func[VALOR_FUNCAO_LEN + 1] = {'\0'};
 	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
+	*/
 	char *c1 = NULL;
 	char *c2 = NULL;
+	size_t fieldSz = 0;
 
-	/* <COD|> DRT|DATAHORA|FUNCAO */
+	memset(&userSession, 0, sizeof(userIdent_t));
+
+	/* <COD|> DRT|DATAHORA|FUNCAO|PASSHASH */
 	c1 = c2 = msg;
 
 	/* DRT */
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
-	strncpy(user, c1, ((c2-c1 < DRT_LEN) ? c2-c1 : DRT_LEN));
+	fieldSz = (size_t) (c2-c1);
+	strncpy(userSession.username, c1, ((fieldSz < sizeof(userSession.username)) ? fieldSz : sizeof(userSession.username)-1));
 	c1 = c2+1;
 
-	/* DATAHORA - unused */
+	/* DATAHORA */
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
+	fieldSz = (size_t) (c2-c1);
+	strncpy(userSession.dateTime, c1, ((fieldSz < sizeof(userSession.dateTime)) ? fieldSz : sizeof(userSession.dateTime)-1));
 	c1 = c2+1;
 
 	/* FUNCAO */
-	strcpy(func, c1);
+	c2 = strchr(c1, '|');
+	if(c2 == NULL) return(NOK);
+	fieldSz = (size_t) (c2-c1);
+	strncpy(userSession.level, c1, ((fieldSz < sizeof(userSession.level)) ? fieldSz : sizeof(userSession.level)-1));
+	c1 = c2+1;
 
-	if(SG_checkLogin(user, passhash, func) == NOK){
+	/* PASSHASH */
+	strncpy(userSession.passhash, c1, sizeof(userSession.passhash)-1);
+
+	if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
 		return(NOK);
 	}
 
@@ -379,7 +402,7 @@ int main(int argc, char *argv[])
 
 						if(checkLogin(&msg[szCod + 1]) == NOK){
 							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
-							log_write("USUARIO NAO VALIDADO!\n"); /* TODO: melhorar mensagem */
+							log_write("User [%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 								/* TODO: retorno de erro */
@@ -395,7 +418,7 @@ int main(int argc, char *argv[])
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-							if(SG_parsingDataInsertLogin(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
+							if(SG_parsingDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned) == NOK){
 								log_write("PARSING LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 								continue;
 							}else{

@@ -78,12 +78,14 @@ typedef struct _SG_registroDB_t{
  */
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data);
 
-/* int SG_parsingDataInsertLogin(char *msg, char *ip, int port, SG_registroDB_t *data)
+/* int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
  *
  * Parses the login's message data.
  *
  * INPUT:
- *  msg - Message (protocol) from client
+ *  user - UserId (DRT)
+ *  func - User Level (office responsibility)
+ *  dateTime - Login date and time
  *  ip - Client IP
  *  port - Client PORT
  * OUTPUT:
@@ -91,9 +93,9 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
  *  OK - Ok
  *  NOK - Parsing error
  */
-int SG_parsingDataInsertLogin(char *msg, char *ip, int port, SG_registroDB_t *data);
+int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
 
-/* int SG_checkLogin(char *user, char *passhash, char *func) TODO
+/* int SG_checkLogin(char *user, char *passhash, char *func)
  *
  * Check a User ID, User Level and password (hashed).
  *
