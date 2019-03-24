@@ -183,8 +183,8 @@ int main(int argc, char *argv[])
 	for(;;){
 
 		if(SG_fazerLogin(id, passhash, level, &usrType) == NOK){
-			log_write("EXIT!!!!!!!!\n"); /* TODO: melhorar mensagem */
-			break;
+			log_write("Exit client interface.\n");
+			break; /* exit */
 		}
 
 		if(usrType == UNDEFINED_USER) continue;
@@ -192,7 +192,8 @@ int main(int argc, char *argv[])
 		log_write("[%s] conectado no [%s:%s] at [%s].\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
 
 		if(SG_sendLogin(sockfd, id, passhash, level) == NOK){
-			log_write("Invalid user/pass!\n");
+			log_write("The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
+			printf("Usuario, funcao ou senha invalidos!\n");
 			return(-1);
 		}
 
