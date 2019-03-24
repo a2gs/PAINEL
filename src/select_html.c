@@ -266,6 +266,7 @@ int main(int argc, char *argv[])
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 	int rc = 0;
+	pid_t p = (pid_t)0;
 	htmlFiles_t htmls = {
 		.htmlStatic = NULL,
 		.htmlRefresh = NULL,
@@ -284,6 +285,12 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML>\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
+	}
+
+	p = daemonizeWithoutLock();
+	if(p == (pid_t)NOK){
+		fprintf(stderr, "Cannt daemonize select html [%s]!\n", argv[1]);
+		return(-2);
 	}
 
 	funcao = argv[1];
