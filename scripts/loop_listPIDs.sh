@@ -18,7 +18,7 @@
 #!/bin/sh
 while true
 do
-	echo ---------------
+	echo '===[' `date +"%d/%m/%Y %H:%M:%S"` ']========================================================'
 	$PAINEL_HOME/scripts/listPIDs.sh
 	sleep 3
 done

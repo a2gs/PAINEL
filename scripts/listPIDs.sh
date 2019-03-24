@@ -15,7 +15,14 @@
 #          |            |
 #
 
-echo "1) servList: " `ps -o pid -C servList | grep -v PID`
-netstat -nap --tcp --listening 2>/dev/null | grep 999
-echo "2) select: " `ps aux | grep select| grep -v vim | grep -v grep | awk '{print $2}'`
-echo "3) serv: " `ps -o pid -C serv | grep -v PID`
+echo '--- PROCESSOS NO AR -----------------------------------'
+ps -C serv,servList,select_html -o pid,cmd | sed 's/^ *//' | column -t
+
+echo '--- PORTAS EM LISTNING --------------------------------'
+PROCS_PID_LIST=$(ps -C serv,servList,select_html --no-headers -o pid,cmd | sed 's/^ *//' | cut -f1 -d ' ')
+
+if [ -z "$PROCS_PID_LIST" ]; then
+	echo "There are no listening processes running."
+else
+	netstat -nap --tcp --listening 2>/dev/null | grep "$PROCS_PID_LIST"
+fi
