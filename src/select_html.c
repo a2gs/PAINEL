@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 		}
 
 		memset(sql, '\0', sizeof(sql));
-		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM RELATS WHERE FUNCAO = '%s'", funcao);
+		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
 
 		rc = sqlite3_exec(db, sql, hmtl_relat_infos, &pageInfo, &err_msg);
     
