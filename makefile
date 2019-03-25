@@ -34,7 +34,9 @@ LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
 
 # Specific libraries:
 LIB_SHA256=sha-256
+LIB_LOG=log
 SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
+LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
 
 CC = gcc
 RM = rm -f
@@ -44,7 +46,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean sha256 client serv select_html select_Excel servList create_db userId cppcheck
+all: clean logtag sha256 client serv select_html select_Excel servList create_db userId cppcheck
 	@echo "=== ctags ==================="
 	ctags -R *
 	@echo "=== cscope =================="
@@ -52,11 +54,18 @@ all: clean sha256 client serv select_html select_Excel servList create_db userId
 
 cppcheck:
 	@echo "=== cppcheck ================"
-	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ -i ./ncurses/ --suppress=missingIncludeSystem  ./src/
+	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -I./libs/log/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ -i ./ncurses/ --suppress=missingIncludeSystem ./src/
 
 client: sha256
 	@echo "=== client =================="
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+
+logtag:
+	@echo "=== lib LOG ================="
+	$(CC) -c -o$(LIBS_BIN_PATH)/log.o $(LOGPATH)/log.c -I$(LOGPATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/liblog.a $(LIBS_BIN_PATH)/log.o
+	$(RANLIB) $(LIBS_BIN_PATH)/liblog.a
+	-$(RM) $(LIBS_BIN_PATH)/log.o
 
 sha256:
 	@echo "=== lib SHA256 =============="
