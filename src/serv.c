@@ -61,7 +61,6 @@ typedef struct _userIdent_t{
 static int lockFd = 0;
 static char runnigPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
 static char runnigLockFdPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
-static userIdent_t userSession;
 
 
 /* ---[DAEMON]--------------------------------------------------------------------------------------------- */
@@ -180,23 +179,22 @@ pid_t daemonize(void)
 	return(getpid());
 }
 
-/* int checkLogin(char *msg)
+/* int parsingLogin(char *msg, userIdent_t *userSession)
  *
  * Parser the login message.
  *
  * INPUT:
- *  msg - Message
  * OUTPUT:
  *  OK - Valid login
  *  NOK - Not valid login
  */
-int checkLogin(char *msg)
+int parsingLogin(char *msg, userIdent_t *userSession)
 {
 	char *c1 = NULL;
 	char *c2 = NULL;
 	size_t fieldSz = 0;
 
-	memset(&userSession, 0, sizeof(userIdent_t));
+	memset(userSession, 0, sizeof(userIdent_t));
 
 	/* <COD|> DRT|DATAHORA|FUNCAO|PASSHASH */
 	c1 = c2 = msg;
@@ -205,28 +203,25 @@ int checkLogin(char *msg)
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
 	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession.username, c1, ((fieldSz < sizeof(userSession.username)) ? fieldSz : sizeof(userSession.username)-1));
+	strncpy(userSession->username, c1, ((fieldSz < sizeof(userSession->username)) ? fieldSz : sizeof(userSession->username)-1));
 	c1 = c2+1;
 
 	/* DATAHORA */
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
 	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession.dateTime, c1, ((fieldSz < sizeof(userSession.dateTime)) ? fieldSz : sizeof(userSession.dateTime)-1));
+	strncpy(userSession->dateTime, c1, ((fieldSz < sizeof(userSession->dateTime)) ? fieldSz : sizeof(userSession->dateTime)-1));
 	c1 = c2+1;
 
 	/* FUNCAO */
 	c2 = strchr(c1, '|');
 	if(c2 == NULL) return(NOK);
 	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession.level, c1, ((fieldSz < sizeof(userSession.level)) ? fieldSz : sizeof(userSession.level)-1));
+	strncpy(userSession->level, c1, ((fieldSz < sizeof(userSession->level)) ? fieldSz : sizeof(userSession->level)-1));
 	c1 = c2+1;
 
 	/* PASSHASH */
-	strncpy(userSession.passhash, c1, sizeof(userSession.passhash)-1);
-
-	if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK)
-		return(NOK);
+	strncpy(userSession->passhash, c1, sizeof(userSession->passhash)-1);
 
 	return(OK);
 }
@@ -262,8 +257,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 	}
 
 	if(send(connfd, msg, strlen(msg), 0) == -1){
-		log_write("ERRO: send() [%s]: [%s]\n", msg, strerror(errno));
-		printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", msg, strerror(errno));
+		log_write("ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
 		return(NOK);
 	}
 
@@ -295,6 +289,7 @@ int main(int argc, char *argv[])
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
+	userIdent_t userSession = {0};
 
 	if(argc != 2){
 		fprintf(stderr, "%s PORT\n", argv[0]);
@@ -394,8 +389,20 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_LOGIN:
 
-						if(checkLogin(&msg[szCod + 1]) == NOK){
+						if(parsingLogin(&msg[szCod + 1], &userSession) == NOK){
+							/* Bad formmated protocol */
+							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
+
+							log_write("Login protocol bad formatted [%s]!\n", msg);
+
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+								/* TODO: retorno de erro */
+							}
+						}
+
+						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
 							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
+
 							log_write("User [%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
@@ -404,6 +411,7 @@ int main(int argc, char *argv[])
 
 						}else{
 							char *loginErrorMsgToClient = "OK|User registred into database!";
+
 							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar mensagem */
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
