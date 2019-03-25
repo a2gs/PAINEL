@@ -407,7 +407,7 @@ int main(int argc, char *argv[])
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
 							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
 
-							log_write("User [%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash);
+							log_write("User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 								log_write("Problem sent login error message! Disconnecting.\n");
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 						}else{
 							char *loginErrorMsgToClient = "OK|User registred into database!";
 
-							log_write("Login ok: [%s][%s]\n", userSession.username, userSession.level);
+							log_write("Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 								log_write("Problem sent login success message! Disconnecting.\n");
@@ -436,13 +436,10 @@ int main(int argc, char *argv[])
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-							if(SG_parsingDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned) == NOK){
-								log_write("PARSING LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
-								continue;
-							}else{
-								if(SG_db_inserting(&msgCleaned) == NOK){
-									log_write("INSERT LOGIN ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
-								}
+							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+
+							if(SG_db_inserting(&msgCleaned) == NOK){
+								log_write("Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 							}
 						}
 						break;

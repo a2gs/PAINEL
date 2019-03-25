@@ -78,7 +78,7 @@ typedef struct _SG_registroDB_t{
  */
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data);
 
-/* int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+/* int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
  *
  * Parses the login's message data.
  *
@@ -93,7 +93,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
  *  OK - Ok
  *  NOK - Parsing error
  */
-int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
+int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
 
 /* int SG_checkLogin(char *user, char *passhash, char *func)
  *

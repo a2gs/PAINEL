@@ -89,7 +89,7 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	return(OK);
 }
 
-int SG_parsingDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
 {
 	/* DRT */
 	strcpy(data->drt, user);
