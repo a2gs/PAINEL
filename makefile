@@ -24,22 +24,23 @@ CFLAGS_WARNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-unused-but-set-parame
 CFLAGS_DEFINES = -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -D_POSIX_SOURCE=1 -D_DEFAULT_SOURCE=1 -D_GNU_SOURCE=1
 CFLAGS = $(CFLAGS_OPTIMIZATION) $(CFLAGS_VERSION) $(CFLAGS_WARNINGS) $(CFLAGS_DEFINES)
 
-INCLUDEPATH = -I./include
-SOURCEPATH = ./src
-BINPATH = ./bin
-LOCAL_LIBS = ./libs
-# Libs to ALL modules:
-LIBS = -lsqlite3
-LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
-
 # Specific libraries:
 LIB_SHA256=sha-256
 LIB_LOG=log
 SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
+# Libs to ALL modules:
+LIBS = -lsqlite3
+LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
+
+INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
+SOURCEPATH = ./src
+BINPATH = ./bin
+LOCAL_LIBS = ./libs
 
 CC = gcc
 RM = rm -f
+CP = cp
 AR = ar
 RANLIB = ranlib
 CPPCHECK = cppcheck
@@ -58,13 +59,14 @@ cppcheck:
 
 client: sha256
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 logtag:
 	@echo "=== lib LOG ================="
 	$(CC) -c -o$(LIBS_BIN_PATH)/log.o $(LOGPATH)/log.c -I$(LOGPATH) $(CFLAGS)
 	$(AR) rc $(LIBS_BIN_PATH)/liblog.a $(LIBS_BIN_PATH)/log.o
 	$(RANLIB) $(LIBS_BIN_PATH)/liblog.a
+	$(CP) $(LOGPATH)/log.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/log.o
 
 sha256:
@@ -72,6 +74,7 @@ sha256:
 	$(CC) -c -o$(LIBS_BIN_PATH)/sha-256.o $(SHA256PATH)/sha-256.c -I$(SHA256PATH) $(CFLAGS)
 	$(AR) rc $(LIBS_BIN_PATH)/libsha-256.a $(LIBS_BIN_PATH)/sha-256.o
 	$(RANLIB) $(LIBS_BIN_PATH)/libsha-256.a
+	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
 
 serv:
@@ -88,7 +91,7 @@ select_Excel:
 
 userId: sha256
 	@echo "=== userId ================="
-	$(CC) -o $(BINPATH)/userId $(SOURCEPATH)/userId.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -I$(SHA256PATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
+	$(CC) -o $(BINPATH)/userId $(SOURCEPATH)/userId.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
 
 servList:
 	@echo "=== servList ================"
