@@ -393,11 +393,15 @@ int main(int argc, char *argv[])
 							/* Bad formmated protocol */
 							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
 
-							log_write("Login protocol bad formatted [%s]!\n", msg);
+							log_write("Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								/* TODO: retorno de erro */
-							}
+							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient));
+
+							SG_db_close();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-1);
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
@@ -406,16 +410,28 @@ int main(int argc, char *argv[])
 							log_write("User [%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								/* TODO: retorno de erro */
+								log_write("Problem sent login error message! Disconnecting.\n");
+
+								SG_db_close();
+								shutdown(connfd, SHUT_RDWR);
+								close(connfd);
+
+								return(-1);
 							}
 
 						}else{
 							char *loginErrorMsgToClient = "OK|User registred into database!";
 
-							log_write("USUARIO VALIDADO!\n"); /* TODO: melhorar mensagem */
+							log_write("Login ok: [%s][%s]\n", userSession.username, userSession.level);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								/* TODO: retorno de erro */
+								log_write("Problem sent login success message! Disconnecting.\n");
+
+								SG_db_close();
+								shutdown(connfd, SHUT_RDWR);
+								close(connfd);
+
+								return(-1);
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
