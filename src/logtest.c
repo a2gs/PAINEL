@@ -17,13 +17,13 @@ typedef struct _logLevel_t{
 }logLevel_t;
 
 logLevel_t levels[] = {
-	{.value = LOG_RED_ALERT,        .name = "REDALERT"},
-	{.value = LOG_DATABASE_ALERT,   .name = "DBALERT"},
-	{.value = LOG_DATABASE_MESSAGE, .name = "DBMSG"},
-	{.value = LOG_OPERATOR_ALERT,   .name = "OPALERT"},
-	{.value = LOG_OPERATOR_MESSAGE, .name = "OPMSG"},
-	{.value = LOG_MESSAGE,          .name = "MSG"},
-	{.value = LOG_DEVELOP,          .name = "DEV"}
+	{.value = LOG_RED_ALERT,        .name = "|REDALERT|"},
+	{.value = LOG_DATABASE_ALERT,   .name = "|DBALERT|" },
+	{.value = LOG_DATABASE_MESSAGE, .name = "|DBMSG|"   },
+	{.value = LOG_OPERATOR_ALERT,   .name = "|OPALERT|" },
+	{.value = LOG_OPERATOR_MESSAGE, .name = "|OPMSG|"   },
+	{.value = LOG_MESSAGE,          .name = "|MSG|"     },
+	{.value = LOG_DEVELOP,          .name = "|DEV|"     }
 };
 
 #define LOG_TOTAL_LEVELS_DEFINED		(sizeof(levels)/sizeof(logLevel_t))
@@ -32,10 +32,14 @@ logLevel_t levels[] = {
 
 int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 {
+#define LOG_CMDMASK_SZ		(sizeof("|REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV|"))
 	unsigned int i = 0;
+	char mask[LOG_CMDMASK_SZ + 1] = {'\0'};
+
+	snprintf(mask, LOG_CMDMASK_SZ, "|%s|", cmdLog);
 
 	for(*level = LOG_MUST_LOG_IT, i = 0; i < LOG_TOTAL_LEVELS_DEFINED; i++){
-		if(strstr((const char *)cmdLog, levels[i].name) != NULL)
+		if(strstr(mask, levels[i].name) != NULL)
 			*level |= levels[i].value;
 	}
 
