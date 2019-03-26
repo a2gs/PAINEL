@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <fcntl.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 
 #include "log.h"
 
@@ -54,12 +57,39 @@ int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 	return(OK);
 }
 
-int logWrite(log_t *log, unsigned int msgLevel, char *msg)
+int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 {
-	if(log->level & msgLevel)
-		printf("DEBUG: [%02x]: %s", msgLevel, msg);
+#define LOG_FMTMSG_SZ       (5000)
+	int totFmt = sizeof("YYYYMMDD HHMMSS");
+	va_list args;
+	struct tm logTimeTm;
+	time_t logTimeTimet;
+	struct timeval tv;
+	char fmtMsg[LOG_FMTMSG_SZ + 1] =  {'\0'};
 
+	errno = 0;
 
+	time(&logTimeTimet);
+	memcpy(&logTimeTm, localtime(&logTimeTimet), sizeof(struct tm));
+	strftime(fmtMsg, LOG_FMTMSG_SZ, "%Y%m%d %H%M%S", &logTimeTm);
+
+	if(gettimeofday(&tv, NULL) == -1)
+		return(NOK);
+
+	va_start(args, msg);
+
+	totFmt += snprintf(&(fmtMsg[totFmt - 1]), LOG_FMTMSG_SZ - totFmt, " %06ld|%06d|", tv.tv_usec, getpid());
+
+	totFmt += vsnprintf(&(fmtMsg[totFmt - 1]), LOG_FMTMSG_SZ - totFmt, msg, args);
+
+	if(log->level & msgLevel){
+		if(write(log->fd, fmtMsg, totFmt) == -1){
+			va_end(args);
+			return(NOK);
+		}
+	}
+
+	va_end(args);
 	return(OK);
 }
 
@@ -106,7 +136,6 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOG_DATABASE_ALERT|LOG_DATABASE_MESSAGE|LOG_OPERATOR_ALERT|LOG_OPERATOR_MESSAGE, "ola mundo\n");
 	logWrite(&log, LOG_MUST_LOG_IT, "ola mundo OBRIGATIORIO\n");
-
 
 	logClose(&log);
 
