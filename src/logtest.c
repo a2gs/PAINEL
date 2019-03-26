@@ -11,6 +11,11 @@
 exec REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV
 */
 
+typedef struct _log_t{
+	unsigned int level;
+	int fd;
+}log_t;
+
 typedef struct _logLevel_t{
 	int value;
 	char *name;
@@ -26,13 +31,10 @@ logLevel_t levels[] = {
 	{.value = LOG_DEVELOP,          .name = "|DEV|"     }
 };
 
-#define LOG_TOTAL_LEVELS_DEFINED		(sizeof(levels)/sizeof(logLevel_t))
-
-/* --- HEADER END --------------------------------------------------------------- */
-
 int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 {
 #define LOG_CMDMASK_SZ		(sizeof("|REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV|"))
+#define LOG_TOTAL_LEVELS_DEFINED		(sizeof(levels)/sizeof(logLevel_t))
 	unsigned int i = 0;
 	char mask[LOG_CMDMASK_SZ + 1] = {'\0'};
 
@@ -46,11 +48,45 @@ int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 	return(OK);
 }
 
-/* --- */
+int logWrite(log_t *log, unsigned int msgLevel, char *msg)
+{
+	if(log->level & msgLevel)
+		printf("DEBUG: [%02x]: %s", msgLevel, msg);
+
+	return(OK);
+}
+
+int logCreate(log_t *log, char *fullPath, char *cmdLog)
+{
+	log->level = 0;
+	log->fd = 0;
+
+	if(parsingLogCmdLine(cmdLog, &(log->level)) == NOK){
+		printf("Erro parsingLogCmdLine()\n");
+		return(1);
+	}
+
+	printf("DEBUG: level defined: [%02X]\n", log->level);
+
+
+
+
+
+	return(OK);
+}
+
+int logClose(log_t *log)
+{
+
+	return(OK);
+}
+
+
+/* --- HEADER END --------------------------------------------------------------- */
 
 int main(int argc, char *argv[])
 {
-	unsigned int logLevel = 0;
+	log_t log;
 
 	printf("REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n\n");
 
@@ -59,16 +95,16 @@ int main(int argc, char *argv[])
 		return(1);
 	}
 
-	if(parsingLogCmdLine(argv[1], &logLevel) == NOK){
-		printf("Erro parsingLogCmdLine()\n");
+	if(logCreate(&log, "./log.text", argv[1]) == NOK){
+		printf("Erro criando log!\n");
 		return(1);
 	}
 
-	printf("level: [%02x]\n", logLevel);
+	logWrite(&log, LOG_DATABASE_ALERT|LOG_DATABASE_MESSAGE|LOG_OPERATOR_ALERT|LOG_OPERATOR_MESSAGE, "ola mundo\n");
+	logWrite(&log, LOG_MUST_LOG_IT, "ola mundo OBRIGATIORIO\n");
 
 
-
-
+	logClose(&log);
 
 	return(0);
 }
