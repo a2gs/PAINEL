@@ -62,12 +62,12 @@ c1 = c2+1;
 strcpy(data->refugo, c1);
 */
 
-int parsingLogCmdLine(char *cmdLog, int *level)
+int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 {
 	unsigned int i = 0;
 
 	for(*level = LEVEL_MUST_LOG_IT, i = 0; i < LOG_TOTAL_LEVELS_DEFINED; i++){
-		if(strstr(levels[i].name, (const char *)cmdLog) != NULL)
+		if(strstr((const char *)cmdLog, levels[i].name) != NULL)
 			*level |= levels[i].value;
 	}
 
@@ -76,7 +76,7 @@ int parsingLogCmdLine(char *cmdLog, int *level)
 
 int main(int argc, char *argv[])
 {
-	int logLevel = 0;
+	unsigned int logLevel = 0;
 
 	printf("REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n\n");
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 		return(1);
 	}
 
-	printf("[%d]\n", logLevel);
+	printf("[%02x]\n", logLevel);
 
 
 	return(0);
