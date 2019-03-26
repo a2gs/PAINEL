@@ -102,8 +102,6 @@ int logCreate(log_t *log, char *fullPath, char *cmdLog)
 	if(parsingLogCmdLine(cmdLog, &(log->level)) == NOK)
 		return(NOK);
 
-	printf("DEBUG: level defined: [%02X]\n", log->level);
-
 	if((log->fd = open(fullPath, O_WRONLY|O_CREAT|O_APPEND|O_NONBLOCK, S_IRUSR|S_IWUSR|S_IRGRP)) == -1)
 		return(NOK);
 
@@ -122,10 +120,8 @@ int main(int argc, char *argv[])
 {
 	log_t log;
 
-	printf("REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n\n");
-
 	if(argc != 2){
-		printf("Erro de argumento\n");
+		printf("Syntax error! Usage:\n%s 'XXX|YYY|ZZZ|WWW'\n\nWhere XXX, YYY, ZZZ and WWW are: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n", argv[0]);
 		return(1);
 	}
 
