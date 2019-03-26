@@ -120,18 +120,25 @@ int main(int argc, char *argv[])
 {
 	log_t log;
 
-	if(argc != 2){
-		printf("Syntax error! Usage:\n%s 'XXX|YYY|ZZZ|WWW'\n\nWhere XXX, YYY, ZZZ and WWW are: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n", argv[0]);
+	if(argc != 3){
+		printf("Syntax error! Usage:\n\t%s <LOG_FILE> 'WWW|XXX|YYY|ZZZ'\n\nWhere WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n\n", argv[0]);
+		printf("\tREDALERT = Red alert\n");
+		printf("\tDBALERT = Database alert\n");
+		printf("\tDBMSG = Database message\n");
+		printf("\tOPALERT = Operation alert\n");
+		printf("\tOPMSG = Operation message\n");
+		printf("\tMSG = Just a message\n");
+		printf("\tDEV = Developer (DEBUG) message\n");
 		return(1);
 	}
 
-	if(logCreate(&log, "./log.text", argv[1]) == NOK){
+	if(logCreate(&log, argv[1], argv[2]) == NOK){
 		printf("Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(1);
 	}
 
-	logWrite(&log, LOG_DATABASE_ALERT|LOG_DATABASE_MESSAGE|LOG_OPERATOR_ALERT|LOG_OPERATOR_MESSAGE, "ola mundo\n");
-	logWrite(&log, LOG_MUST_LOG_IT, "ola mundo OBRIGATIORIO\n");
+	logWrite(&log, LOG_DATABASE_ALERT|LOG_DATABASE_MESSAGE|LOG_OPERATOR_ALERT|LOG_OPERATOR_MESSAGE, "Hello World!\n");
+	logWrite(&log, LOG_MUST_LOG_IT, "Hello World! MUST LOG IT!\n");
 
 	logClose(&log);
 
