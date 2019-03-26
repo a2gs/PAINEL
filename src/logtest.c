@@ -5,16 +5,6 @@
 #define OK 0
 #define NOK 1
 
-/*
-MUST_LOG_IT     
-RED_ALERT       
-DATABASE_ALERT  
-DATABASE_MESSAGE
-OPERATOR_ALERT  
-OPERATOR_MESSAGE
-MESSAGE         
-DEVELOP         
-*/
 #define LEVEL_MUST_LOG_IT        (unsigned int)0x1
 #define LEVEL_RED_ALERT          (unsigned int)0x2
 #define LEVEL_DATABASE_ALERT     (unsigned int)0x4
@@ -45,23 +35,6 @@ logLevel_t levels[] = {
 
 #define LOG_TOTAL_LEVELS_DEFINED		(sizeof(levels)/sizeof(logLevel_t))
 
-/*
-/- DRT -/
-c2 = strchr(c1, '|');
-if(c2 == NULL) return(NOK);
-strncpy(data->drt, c1, c2-c1);
-c1 = c2+1;
-
-/- DATAHORA -/
-c2 = strchr(c1, '|');
-if(c2 == NULL) return(NOK);
-strncpy(data->data, c1, c2-c1);
-c1 = c2+1;
-
-/- REFUGO (ultimo) -/
-strcpy(data->refugo, c1);
-*/
-
 int parsingLogCmdLine(char *cmdLog, unsigned int *level)
 {
 	unsigned int i = 0;
@@ -90,7 +63,10 @@ int main(int argc, char *argv[])
 		return(1);
 	}
 
-	printf("[%02x]\n", logLevel);
+	printf("level: [%02x]\n", logLevel);
+
+
+
 
 
 	return(0);
