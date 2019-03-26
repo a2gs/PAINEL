@@ -57,10 +57,6 @@ cppcheck:
 	@echo "=== cppcheck ================"
 	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -I./libs/log/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ -i ./ncurses/ --suppress=missingIncludeSystem ./src/
 
-client: sha256
-	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
-
 logtag:
 	@echo "=== lib LOG ================="
 	$(CC) -c -o$(LIBS_BIN_PATH)/log.o $(LOGPATH)/log.c -I$(LOGPATH) $(CFLAGS)
@@ -76,6 +72,14 @@ sha256:
 	$(RANLIB) $(LIBS_BIN_PATH)/libsha-256.a
 	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
+
+client: sha256
+	@echo "=== client =================="
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+
+logtest: logtag
+	@echo "=== LOG TEST ================"
+	$(CC) -o $(BINPATH)/logtest $(SOURCEPATH)/logtest.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
 
 serv:
 	@echo "=== serv ===================="
