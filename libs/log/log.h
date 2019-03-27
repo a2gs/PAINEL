@@ -26,24 +26,33 @@
 
 
 /* *** DEFINES ******************************************************* */
-#define LOG_MUST_LOG_IT        (unsigned int)0x1
-#define LOG_RED_ALERT          (unsigned int)0x2
-#define LOG_DATABASE_ALERT     (unsigned int)0x4
-#define LOG_DATABASE_MESSAGE   (unsigned int)0x8
-#define LOG_OPERATOR_ALERT     (unsigned int)0x10
-#define LOG_OPERATOR_MESSAGE   (unsigned int)0x20
-#define LOG_MESSAGE            (unsigned int)0x40
-#define LOG_DEVELOP            (unsigned int)0x80
+#define LOG_OK  (0)
+#define LOG_NOK (1)
+
+#define LOGMUSTLOGIT (unsigned int)0x1
+#define LOGREDALERT  (unsigned int)0x2
+#define LOGDBALERT   (unsigned int)0x4
+#define LOGDBMSG     (unsigned int)0x8
+#define LOGOPALERT   (unsigned int)0x10
+#define LOGOPMSG     (unsigned int)0x20
+#define LOGMSG       (unsigned int)0x40
+#define LOGDEV       (unsigned int)0x80
+
+#define LOG_CMDMASK_SZ           (sizeof("|REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV|"))
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
 
 
 /* *** DATA TYPES **************************************************** */
+typedef struct _log_t{
+	unsigned int level;
+	int fd;
+}log_t;
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
-/* <header function description included by another sources> void function(void)
+/* int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
  *
  * <Description>
  *
@@ -52,6 +61,28 @@
  * OUTPUT:
  *  <None>
  */
-void logPrint(void);
+int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...);
+
+/* int logCreate(log_t *log, char *fullPath, char *cmdLog)
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
+int logCreate(log_t *log, char *fullPath, char *cmdLog);
+
+/* int logClose(log_t *log)
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
+int logClose(log_t *log);
 
 #endif
