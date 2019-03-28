@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
 		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-1);
+		return(-3);
 	}
 
 	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	if(listenfd == -1){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
 		logClose(&log);
-		return(-3);
+		return(-4);
 	}
 
 	memset(&servaddr, 0, sizeof(servaddr));
@@ -111,13 +111,13 @@ int main(int argc, char **argv)
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
 		logClose(&log);
-		return(-3);
+		return(-5);
 	}
 
 	if(listen(listenfd, 250) != 0){
 		logWrite(&log, LOGOPALERT, "Erro listen: [%s]\n", strerror(errno));
 		logClose(&log);
-		return(-4);
+		return(-6);
 	}
 
 	for(;;){
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 		if(connfd == -1){
 			logWrite(&log, LOGOPALERT, "Erro accept: [%s]\n", strerror(errno));
 			logClose(&log);
-			return(-5);
+			return(-7);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -137,14 +137,14 @@ int main(int argc, char **argv)
 		if(f == NULL){
 			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss());
 			logClose(&log);
-			return(-6);
+			return(-8);
 		}
 
 		for(i = 0; i <= 10; i++){
 			if(i == 10){
 				logWrite(&log, LOGOPALERT, "Nao foi liberado o LOCK para o arquivo [%s] em 10 tentativas!\n", fileName);
 				logClose(&log);
-				return(-7);
+				return(-9);
 			}
 
 			retLock = html_testHtmlLock(f);
@@ -155,9 +155,9 @@ int main(int argc, char **argv)
 			}else if(retLock == HTML_FILE_UNLOCKED){
 				break;
 			}else{
-				fprintf(stderr, "Erro em testar LOCK no aquivo html [%s]!\n", fileName);
+				logWrite(&log, LOGOPALERT, "Erro em testar LOCK no aquivo html [%s]!\n", fileName);
 				logClose(&log);
-				return(-8);
+				return(-10);
 			}
 		}
 
