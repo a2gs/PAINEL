@@ -31,12 +31,12 @@ SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
 # Libs to ALL modules:
 LIBS = -lsqlite3
-LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
 
 INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 SOURCEPATH = ./src
 BINPATH = ./bin
 LOCAL_LIBS = ./libs
+LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
 
 CC = gcc
 RM = rm -f
@@ -81,9 +81,9 @@ serv:
 	@echo "=== serv ===================="
 	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
-select_html:
+select_html: logtag
 	@echo "=== select_html ============="
-	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
 
 select_Excel:
 	@echo "=== select_Excel ============"

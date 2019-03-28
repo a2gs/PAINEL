@@ -24,17 +24,17 @@ ALERT_ERROR 'serv 9998'
 
 # ------------------------------------------------
 echo '--- Stating select_htmls ------------------------------'
-#Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML>
-$PAINEL_HOME/bin/select_html OperadorMaquina 1 5   2> $PAINEL_HOME/log/select_html_OperadorMaquina.log
+#Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <FULL_LOG_PATH> <LOG_LEVEL>
+$PAINEL_HOME/bin/select_html OperadorMaquina 1 5 $PAINEL_HOME/log/select_html_OperadorMaquina.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV'
 ALERT_ERROR 'select_html OperadorMaquina select_html_OperadorMaquina.log'
 
-$PAINEL_HOME/bin/select_html SupervisorMaquina 1 5 2> $PAINEL_HOME/log/select_html_SupervisorMaquina.log
+$PAINEL_HOME/bin/select_html SupervisorMaquina 1 5 $PAINEL_HOME/log/select_html_SupervisorMaquina.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV'
 ALERT_ERROR 'select_html SupervisorMaquina select_html_SupervisorMaquina.log'
 
-$PAINEL_HOME/bin/select_html FornoEletrico 1 5     2> $PAINEL_HOME/log/select_html_FornoEletrico.log
+$PAINEL_HOME/bin/select_html FornoEletrico 1 5 $PAINEL_HOME/log/select_html_FornoEletrico.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV'
 ALERT_ERROR 'select_html FornoEletrico select_html_FornoEletrico.log'
 
-$PAINEL_HOME/bin/select_html All 1 5               2> $PAINEL_HOME/log/select_html_All.log
+$PAINEL_HOME/bin/select_html All 1 5 $PAINEL_HOME/log/select_html_All.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV'
 ALERT_ERROR 'select_html All select_html_All.log'
 
 

@@ -57,7 +57,10 @@ typedef struct _log_t{
  * <Description>
  *
  * INPUT:
- *  <None>
+ *  log - log context
+ *  msgLevel - Bit OR between: LOGMUSTLOGIT|LOGREDALERT|LOGDBALERT|LOGDBMSG|LOGOPALERT|LOGOPMSG|LOGMSG|LOGDEV
+ *  msg - printf() like format string
+ *  ... - parameters
  * OUTPUT:
  *  <None>
  */
