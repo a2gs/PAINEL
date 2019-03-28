@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenfd == -1){
-		fprintf(stderr, "Erro bind: [%s]\n", strerror(errno));
+		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
 		return(-3);
 	}
 
@@ -108,12 +108,12 @@ int main(int argc, char **argv)
 	servaddr.sin_port        = htons(atoi(argv[1]));
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
-		fprintf(stderr, "Erro bind: [%s]\n", strerror(errno));
+		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
 		return(-3);
 	}
 
 	if(listen(listenfd, 250) != 0){
-		fprintf(stderr, "Erro listen: [%s]\n", strerror(errno));
+		logWrite(&log, LOGOPALERT, "Erro listen: [%s]\n", strerror(errno));
 		return(-4);
 	}
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 		len = sizeof(cliaddr);
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
-			fprintf(stderr, "Erro accept: [%s]\n", strerror(errno));
+			logWrite(&log, LOGOPALERT, "Erro accept: [%s]\n", strerror(errno));
 			return(-5);
 		}
 
@@ -131,13 +131,13 @@ int main(int argc, char **argv)
 
 		f = fopen(fileName, "r");
 		if(f == NULL){
-			fprintf(stderr, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss());
+			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss());
 			return(-6);
 		}
 
 		for(i = 0; i <= 10; i++){
 			if(i == 10){
-				fprintf(stderr, "Nao foi liberado o LOCK para o arquivo [%s] em 10 tentativas!\n", fileName);
+				logWrite(&log, LOGOPALERT, "Nao foi liberado o LOCK para o arquivo [%s] em 10 tentativas!\n", fileName);
 				return(-7);
 			}
 
