@@ -81,8 +81,6 @@ int main(int argc, char **argv)
 		return(-1);
 	}
 
-	fileName = argv[2];
-
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)NOK){
 		fprintf(stderr, "Cannt daemonize server list!\n");
@@ -93,6 +91,8 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-3);
 	}
+
+	fileName = argv[2];
 
 	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
