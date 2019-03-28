@@ -109,7 +109,7 @@ int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 	totFmt += vsnprintf(&(fmtMsg[totFmt - 1]), LOG_FMTMSG_SZ - totFmt, msg, args);
 
 	if(log->level & msgLevel){
-		if(write(log->fd, fmtMsg, totFmt) == -1){
+		if(write(log->fd, fmtMsg, totFmt - 1) == -1){
 			va_end(args);
 			return(LOG_NOK);
 		}
