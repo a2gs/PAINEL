@@ -386,16 +386,19 @@ int main(int argc, char *argv[])
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
+			logClose(&log);
 			return(-7);
 		}
 
 		if(html_header(&htmls, pageInfo.title, segRefresh) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever header para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
+			logClose(&log);
 			return(-8);
 		}
 
 		if(html_startTable(&htmls, pageInfo.columnsHeaders) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever tabela para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
+			logClose(&log);
 			return(-9);
 		}
 
@@ -431,6 +434,7 @@ int main(int argc, char *argv[])
     
 		if(html_endTable(&htmls) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
+			logClose(&log);
 			return(-11);
 		}
 
