@@ -32,6 +32,8 @@
 
 #include "util.h"
 
+#include "log.h"
+
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define LOGPATH_SZ		(350)
@@ -190,7 +192,7 @@ void signal_handlerWithoutLock(int sig)
 	return;
 }
 
-pid_t daemonizeWithoutLock(void)
+pid_t daemonizeWithoutLock(log_t *log)
 {
 	pid_t i = 0, father = 0;
 

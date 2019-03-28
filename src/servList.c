@@ -83,14 +83,15 @@ int main(int argc, char **argv)
 
 	fileName = argv[2];
 
-	p = daemonizeWithoutLock();
-	if(p == (pid_t)NOK){
-		fprintf(stderr, "Cannt daemonize server!\n");
+	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
+		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-2);
 	}
 
-	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
-		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+	p = daemonizeWithoutLock(&log);
+	if(p == (pid_t)NOK){
+		logWrite(&log, LOGOPALERT, "Cannt daemonize server list!\n");
+		logClose(&log);
 		return(-3);
 	}
 

@@ -25,6 +25,8 @@
 /* *** INCLUDES ****************************************************** */
 #include <stdio.h>
 
+#include "log.h"
+
 
 /* *** DEFINES ******************************************************* */
 /* PROTOCOLO (maximo MAXLINE bytes):
@@ -125,11 +127,11 @@ int log_write(char *msg, ...);
  * Daemonizes the process without create a 'process lock file' (guaranteeing only one instance).
  *
  * INPUT:
- *  none
+ *  log - Pointer to log system
  * OUTPUT:
  *  pid_t - Daemon PID number, 1 to father or NOK if fork() error.
  */
-int daemonizeWithoutLock(void);
+int daemonizeWithoutLock(log_t *log);
 
 /* char * time_DDMMYYhhmmss(void)
  *
