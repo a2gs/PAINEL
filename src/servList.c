@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
 		portFrom = ntohs(cliaddr.sin_port);
-		fprintf(stderr, "Connection from [%s], port [%d] at [%s]\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+		logWrite(&log, LOGOPMSG, "Connection from [%s], port [%d] at [%s]\n", clientFrom, portFrom, time_DDMMYYhhmmss());
 
 		f = fopen(fileName, "r");
 		if(f == NULL){
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 			retLock = html_testHtmlLock(f);
 
 			if(retLock == HTML_FILE_LOCKED){
-				fprintf(stderr, "Arquivo [%s] locked! Aguardando 3 segundos de 10 tentativas: %d/10\n", fileName, i+1);
+				logWrite(&log, LOGOPMSG, "Arquivo [%s] locked! Aguardando 3 segundos de 10 tentativas: %d/10\n", fileName, i+1);
 				sleep(3);
 			}else if(retLock == HTML_FILE_UNLOCKED){
 				break;
