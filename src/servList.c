@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	log_t log;
 	pid_t p = (pid_t)0;
 
-	if(argc != 3){
+	if(argc != 5){
 		fprintf(stderr, "%s <PORT> <FILE> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
