@@ -290,15 +290,14 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
-		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+	p = daemonizeWithoutLock(&log);
+	if(p == (pid_t)NOK){
+		fprintf(stderr, "Cannt daemonize select html [%s]!\n", argv[1]);
 		return(-2);
 	}
 
-	p = daemonizeWithoutLock(&log);
-	if(p == (pid_t)NOK){
-		logWrite(&log, LOGOPALERT, "Cannt daemonize select html [%s]!\n", argv[1]);
-		logClose(&log);
+	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
+		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-3);
 	}
 
