@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
 
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
-		logWrite(&log, LOGDEV, sql);
+		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
 		rc = sqlite3_exec(db, sql, hmtl_relat_infos, &pageInfo, &err_msg);
     
@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 		if(strncmp(funcao, "All", 3) == 0) snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s", pageInfo.columnsTable, DB_MSGS_TABLE);
 		else                               snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s WHERE FUNCAO = '%s'", pageInfo.columnsTable, DB_MSGS_TABLE, funcao);
 
-		logWrite(&log, LOGDEV, sql);
+		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
 		rc = sqlite3_exec(db, sql, hmtl_constructTable, &htmls, &err_msg);
     
