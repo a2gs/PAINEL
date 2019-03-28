@@ -177,9 +177,11 @@ int html_testHtmlLock(FILE *file)
  * OUTPUT:
  *  none
  */
+static log_t *logUtil = NULL;
+
 void signal_handlerWithoutLock(int sig)
 {
-	fprintf(stderr, "Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
+	logWrite(logUtil, LOGMUSTLOGIT, "Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
 
 	switch(sig){
 		case SIGHUP:
@@ -187,6 +189,8 @@ void signal_handlerWithoutLock(int sig)
 		case SIGTERM:
 			break;
 	}
+
+	logClose(logUtil);
 
 	exit(0);
 	return;
@@ -218,6 +222,8 @@ pid_t daemonizeWithoutLock(log_t *log)
 	umask(027);
 
 	chdir("./");
+
+	logUtil = log;
 
 	/* Configurando sinais */
 	signal(SIGCHLD, SIG_IGN);

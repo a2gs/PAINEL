@@ -30,7 +30,7 @@ LIB_LOG=log
 SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
 # Libs to ALL modules:
-LIBS = -lsqlite3 # Common libs, libs to all modules or system libs
+LIBS = -lsqlite3 -llog # Common libs, libs to all modules or system libs
 
 INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 SOURCEPATH = ./src
