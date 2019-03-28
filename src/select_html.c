@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 
 	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
 		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-1);
+		return(-3);
 	}
 
 	funcao = argv[1];
@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
 
 			logClose(&log);
 
-			return(1);
+			return(-4);
 		}
 
 		/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
@@ -353,7 +353,7 @@ int main(int argc, char *argv[])
 			sqlite3_close(db);
 			logClose(&log);
 
-			return(-2);
+			return(-5);
 		}
 
 		memset(sql, '\0', sizeof(sql));
@@ -380,23 +380,23 @@ int main(int argc, char *argv[])
 			sqlite3_close(db);
 			logClose(&log);
         
-			return(-3);
+			return(-6);
 		} 
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-4);
+			return(-7);
 		}
 
 		if(html_header(&htmls, pageInfo.title, segRefresh) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever header para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-5);
+			return(-8);
 		}
 
 		if(html_startTable(&htmls, pageInfo.columnsHeaders) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever tabela para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-6);
+			return(-9);
 		}
 
 		memset(sql, '\0', sizeof(sql));
@@ -426,12 +426,12 @@ int main(int argc, char *argv[])
 			sqlite3_close(db);
 			logClose(&log);
         
-			return(-7);
+			return(-10);
 		} 
     
 		if(html_endTable(&htmls) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			return(-9);
+			return(-11);
 		}
 
 		html_fflush(&htmls);
@@ -451,7 +451,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGDBALERT, "SQL close error!\nCMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
 			logClose(&log);
 
-			return(-10);
+			return(-12);
 		}
 
 		sleep(segReaload);
