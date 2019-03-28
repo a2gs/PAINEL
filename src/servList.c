@@ -35,6 +35,8 @@
 
 #include "util.h"
 
+#include "log.h"
+
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define HTML_START_PROT1		("HTTP/1.1 200 OK\r\n")
@@ -70,10 +72,11 @@ int main(int argc, char **argv)
 	uint16_t portFrom = 0;
 	FILE *f = NULL;
 	char *fileName = NULL;
+	log_t log;
 	pid_t p = (pid_t)0;
 
 	if(argc != 3){
-		fprintf(stderr, "%s <PORT> <FILE>\n", argv[0]);
+		fprintf(stderr, "%s <PORT> <FILE> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
@@ -86,9 +89,18 @@ int main(int argc, char **argv)
 		return(-2);
 	}
 
-	fprintf(stderr, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
+		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+		return(-1);
+	}
+
+	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(listenfd == -1){
+		fprintf(stderr, "Erro bind: [%s]\n", strerror(errno));
+		return(-3);
+	}
 
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family      = AF_INET;

@@ -30,7 +30,7 @@ LIB_LOG=log
 SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
 # Libs to ALL modules:
-LIBS = -lsqlite3
+LIBS = -lsqlite3 # Common libs, libs to all modules or system libs
 
 INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 SOURCEPATH = ./src
@@ -95,7 +95,7 @@ userId: sha256
 
 servList:
 	@echo "=== servList ================"
-	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) $(CFLAGS)
+	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(CFLAGS)
 
 create_db:
 	@echo "=== create_db ==============="
