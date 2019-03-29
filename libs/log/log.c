@@ -95,8 +95,8 @@ int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 
 	errno = 0;
 
-	if(log == NULL)                   return(LOG_NOK);
-	if(log->fd == -1 || log->fd == 0) return(LOG_NOK);
+	if(log == NULL)   return(LOG_NOK);
+	if(log->fd == -1) return(LOG_NOK);
 
 	time(&logTimeTimet);
 	memcpy(&logTimeTm, localtime(&logTimeTimet), sizeof(struct tm));
@@ -139,6 +139,9 @@ int logCreate(log_t *log, char *fullPath, char *cmdLog)
 
 int logClose(log_t *log)
 {
+	if(log == NULL)   return(LOG_NOK);
+	if(log->fd == -1) return(LOG_NOK);
+
 	close(log->fd);
 	return(LOG_OK);
 }
