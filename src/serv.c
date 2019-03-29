@@ -291,13 +291,13 @@ int main(int argc, char *argv[])
 	userIdent_t userSession = {0};
 
 	if(argc != 2){
-		fprintf(stderr, "%s <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
+		fprintf(stderr, "[%s] Usage:\n%s <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
 	if(logCreate(&log, argv[2], argv[3]) == LOG_NOK){                                                         
-		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", argv[2], strerror(errno));
+		fprintf(stderr, "[%s] Unable to open/create [%s]! [%s]\n", time_DDMMYYhhmmss(), argv[2], strerror(errno));
 		return(-2);
 	}
 
