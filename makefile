@@ -36,11 +36,11 @@ LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
 LIBS = -lsqlite3 -llog # Common libs, libs to all modules or system libs
 
 # Paths normalizes
-INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 SOURCEPATH = ./src
 BINPATH = ./bin
 LOCAL_LIBS = ./libs
 LIBS_BIN_PATH = $(LOCAL_LIBS)/bin
+INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 
 # System shell utilities
 CC = gcc
