@@ -145,5 +145,8 @@ int logClose(log_t *log)
 	if(log->fd == -1) return(LOG_NOK);
 
 	close(log->fd);
+
+	log->fd = -1;
+
 	return(LOG_OK);
 }

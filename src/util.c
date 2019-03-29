@@ -192,7 +192,11 @@ void signal_handlerWithoutLock(int sig)
 			break;
 	}
 
-	logClose(logUtil);
+	if(logUtil != NULL)
+		logClose(logUtil);
+
+	if(logUtil->fd != -1)
+		logClose(logUtil);
 
 	exit(0);
 	return;

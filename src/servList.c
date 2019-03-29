@@ -76,19 +76,20 @@ int main(int argc, char **argv)
 	pid_t p = (pid_t)0;
 
 	if(argc != 5){
-		fprintf(stderr, "%s <PORT> <FILE> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
+		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <FILE> <FULL_LOG_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
-	p = daemonizeWithoutLock(&log);
-	if(p == (pid_t)NOK){
-		fprintf(stderr, "Cannt daemonize server list!\n");
+	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
+		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n",time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-2);
 	}
 
-	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
-		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+	p = daemonizeWithoutLock(&log);
+	if(p == (pid_t)NOK){
+		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server list!\n");
+		logClose(&log);
 		return(-3);
 	}
 
