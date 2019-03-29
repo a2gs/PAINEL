@@ -48,11 +48,10 @@
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 static char lineToSend[MAXLINE] = {0};
+static log_t *log = NULL;
 
 
 /* *** FUNCTIONS *********************************************************************** */
-static log_t *log;
-
 void getLogSystem(log_t *logClient)
 {
 	log = logClient;

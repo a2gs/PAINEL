@@ -41,9 +41,16 @@
 static sqlite3 *SG_db = NULL;
 static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 static char SG_checkLogin_NOROW = SQL_NO_ROW;
+static log_t *log = NULL;
 
 
 /* *** FUNCTIONS *********************************************************************** */
+void getLogSystem(log_t *logClient)
+{
+	log = logClient;
+	return;
+}
+
 int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	SG_checkLogin_NOROW = SQL_HAS_ROW;
