@@ -43,7 +43,9 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+/*
 static char logPath[LOGPATH_SZ + 1] = {0};
+*/
 
 
 /* *** FUNCTIONS *********************************************************************** */
@@ -200,6 +202,8 @@ pid_t daemonizeWithoutLock(log_t *log)
 {
 	pid_t i = 0, father = 0;
 
+	logUtil = NULL;
+
 	father = getppid();
 	if(father == 1)
 		return(NOK);
@@ -238,6 +242,7 @@ pid_t daemonizeWithoutLock(log_t *log)
 }
 
 /* ---[LOG SYSTEM]----------------------------------------------------------------------------------------- */
+#if 0
 int log_open(char *logFile)
 {
 	if(logPath[0] != '\0'){
@@ -282,3 +287,4 @@ int log_write(char *msg, ...)
 
 	return(OK);
 }
+#endif

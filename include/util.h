@@ -94,8 +94,8 @@ char * getPAINELEnvHomeVar(void);
  * OUTPUT:
  *  OK - Ok
  *  NOK - Error (unable to create file)
- */
 int log_open(char *logFile);
+ */
 
 /* int log_close(void)
  *
@@ -106,8 +106,8 @@ int log_open(char *logFile);
  * OUTPUT:
  *  OK - Ok
  *  NOK - Error (unable to close file)
- */
 int log_close(void);
+ */
 
 /* int log_write(char *msg, ...)
  *
@@ -119,8 +119,8 @@ int log_close(void);
  * OUTPUT:
  *  OK - Ok
  *  NOK - Unable to open or write to log
- */
 int log_write(char *msg, ...);
+ */
 
 /* int daemonizeWithoutLock(void)
  *
