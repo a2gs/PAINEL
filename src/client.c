@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 	tipoUsuario_t usrType = UNDEFINED_USER;
 
 	if(argc != 3){
-		fprintf(stderr, "%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
+		fprintf(stderr, "[%s] Usage:\n%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, SIG_IGN);
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
-		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+		fprintf(stderr, "[%s] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-2);
 	}
 
