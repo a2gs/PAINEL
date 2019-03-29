@@ -26,6 +26,8 @@
 #include "util.h"
 #include "SG.h"
 
+#include "log.h"
+
 
 /* *** DEFINES ******************************************************* */
 

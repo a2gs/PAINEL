@@ -73,13 +73,13 @@ sha256:
 	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
 
-client: sha256
+client: sha256 logtag
 	@echo "=== client =================="
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
-serv:
+serv: logtag
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(LIBS) $(CFLAGS)
 
 select_html: logtag
 	@echo "=== select_html ============="
@@ -93,7 +93,7 @@ userId: sha256
 	@echo "=== userId ================="
 	$(CC) -o $(BINPATH)/userId $(SOURCEPATH)/userId.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
 
-servList:
+servList: logtag
 	@echo "=== servList ================"
 	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(CFLAGS)
 

@@ -35,6 +35,9 @@
 
 #include "util.h"
 #include "SG_serv.h"
+
+#include "log.h"
+
 /*
 #include "serv.h"
 */
@@ -286,6 +289,7 @@ int main(int argc, char *argv[])
 	char msg[MAXLINE + 1] = {'\0'}, *endLine = NULL;
 	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
 	int szCod = 0;
+	log_t log;
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
@@ -301,6 +305,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_SERV_FILE, strerror(errno));
 		return(-2);
 	}
+
+	getLogSystem(&log); /* Loading log to business rules */
 
 	p = daemonize();
 	if(p == (pid_t)NOK){
