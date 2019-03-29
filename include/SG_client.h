@@ -84,7 +84,7 @@ typedef struct _supMaquina_t{
  * Save the instance to log system for user interface;
  *
  * INPUT:
- *  log - Log opened by client engine.
+ *  logClient - Log opened by client engine.
  * OUTPUT:
  *  none
  */
