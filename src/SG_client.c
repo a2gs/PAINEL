@@ -30,9 +30,10 @@
 
 #include "util.h"
 #include "client.h"
-#include "sha-256.h"
-
 #include "SG_client.h"
+
+#include "sha-256.h"
+#include "log.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -79,7 +80,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
-		log_write("ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
+		logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
 		return(NOK);
 	}
 
@@ -94,7 +95,7 @@ int SG_sendExit(int sockfd, char *drt, char *funcao)
 	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
-		log_write("ERRO: send() exit [%s].\n", strerror(errno));
+		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
 		printf("ERRO no envio de exit motivo [%s]!\n", strerror(errno));
 		return(NOK);
 	}
@@ -191,10 +192,10 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 			/* COD|DRT|DATAHORA||FUNCAO|PANELA||FORNELETR||||TEMP|PERCFESI|PERCMG||PERCS||||||| */
 			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s||%s||||%s|%s|%s||%s|||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_FORNOELETRICO, fornElet.panela, fornElet.fornEletr, fornElet.temp, fornElet.percFeSi, fornElet.percMg, fornElet.percS);
 
-			log_write("Mensagem [%s] enviada.\n", lineToSend);
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
 							 
 			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
-				log_write("ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 				break;
 			}
@@ -327,10 +328,10 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 			/* COD|DRT|DATAHORA||FUNCAO|PANELA|WS||NUMMAQUINA|||TEMP|PERCFESI|||||INOCULANTE||||ASPECTUBO| */
 			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s|%s||%s|||%s|%s|||||%s||||%s|", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_OPERMAQUINA, operMaquina.panela, operMaquina.ws, operMaquina.numMaquina, operMaquina.temp, operMaquina.percFeSi, operMaquina.percInoculante, operMaquina.aspecto);
 
-			log_write("Mensagem [%s] enviada.\n", lineToSend);
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
 
 			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
-				log_write("ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 				break;
 			}  
@@ -396,10 +397,10 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 			/* COD|DRT|DATAHORA||FUNCAO|||||||||||||||CADENCIA|OEE|ASPECTUBO|REFUGO */
 			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|||||||||||||||%s|%s|%s|%s", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_SUPMAQUINA, supMaquina.cadencia, supMaquina.oee, supMaquina.aspecto, supMaquina.refugo);
 
-			log_write("Mensagem [%s] enviada.\n", lineToSend);
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
 
 			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
-				log_write("ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 				break;
 			}  
@@ -453,7 +454,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_CLI, DRT_FILE);
 
 	if((fDRT = fopen(drtFullFilePath, "r")) == NULL){
-		log_write("Unable to open/read [%s]! [%s].\n", drtFullFilePath, strerror(errno));
+		logWrite(log, LOGOPALERT, "Unable to open/read [%s]! [%s].\n", drtFullFilePath, strerror(errno));
 		return(NOK);
 	}
 
@@ -486,7 +487,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 				break;
 			}else{
 				*usrType = UNDEFINED_USER;
-				log_write("DRT [%s] cadastrada mas funcao nao definida!\n", drt);
+				logWrite(log, LOGOPALERT, "DRT [%s] cadastrada mas funcao nao definida!\n", drt);
 				fclose(fDRT);
 				return(NOK);
 			}
@@ -494,7 +495,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 	}
 
 	if(feof(fDRT)){
-		log_write("DRT [%s] nao cadastrada neste sistema!\n", drt);
+		logWrite(log, LOGOPALERT, "DRT [%s] nao cadastrada neste sistema!\n", drt);
 		fclose(fDRT);
 		return(NOK);
 	}
@@ -527,7 +528,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	}
 
 	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == NOK)
-		log_write("Tentativa de acesso com DRT [%s] nao reconhecida ou com funcao cadastrada invalida as [%s].\n", drt, time_DDMMYYhhmmss());
+		logWrite(log, LOGOPALERT, "Tentativa de acesso com DRT [%s] nao reconhecida ou com funcao cadastrada invalida as [%s].\n", drt, time_DDMMYYhhmmss());
 
 	/* PASS */
 	printf("Digite sua senha: ");
