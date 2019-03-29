@@ -38,16 +38,11 @@
 
 #include "log.h"
 
-/*
-#include "serv.h"
-*/
-
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define LOCK_FILE							("servlock")
 #define MAX_PATH_RUNNING_LOCKFD		(250)
 #define SUBPATH_RUNNING_DATA_SRV		SUBPATH_RUNNING_DATA
-#define LOG_SERV_FILE					("server.log")
 
 typedef struct _userIdent_t{
 	char username[DRT_LEN + 1];
@@ -64,6 +59,7 @@ typedef struct _userIdent_t{
 static int lockFd = 0;
 static char runnigPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
 static char runnigLockFdPath[MAX_PATH_RUNNING_LOCKFD + 1] = {'\0'};
+static log_t log;
 
 
 /* ---[DAEMON]--------------------------------------------------------------------------------------------- */
@@ -289,20 +285,25 @@ int main(int argc, char *argv[])
 	char msg[MAXLINE + 1] = {'\0'}, *endLine = NULL;
 	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
 	int szCod = 0;
-	log_t log;
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
 	userIdent_t userSession = {0};
 
 	if(argc != 2){
-		fprintf(stderr, "%s PORT\n", argv[0]);
+		fprintf(stderr, "%s <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
+	/*
 	if(log_open(LOG_SERV_FILE) == NOK){
 		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_SERV_FILE, strerror(errno));
+		return(-2);
+	}
+	*/
+	if(logCreate(&log, argv[2], argv[3]) == LOG_NOK){                                                         
+		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", argv[2], strerror(errno));
 		return(-2);
 	}
 
