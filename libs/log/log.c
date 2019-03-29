@@ -128,6 +128,8 @@ int logCreate(log_t *log, char *fullPath, char *cmdLog)
 	log->fd = -1;
 	errno = 0;
 
+	if(log == NULL) return(LOG_NOK);
+
 	if(parsingLogCmdLine(cmdLog, &(log->level)) == LOG_NOK)
 		return(LOG_NOK);
 
