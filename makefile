@@ -17,6 +17,7 @@
 # */
 
 
+# C flags:
 CFLAGS_OPTIMIZATION = -g
 #CFLAGS_OPTIMIZATION = -O3
 CFLAGS_VERSION = -std=c11
@@ -24,20 +25,24 @@ CFLAGS_WARNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-unused-but-set-parame
 CFLAGS_DEFINES = -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -D_POSIX_SOURCE=1 -D_DEFAULT_SOURCE=1 -D_GNU_SOURCE=1
 CFLAGS = $(CFLAGS_OPTIMIZATION) $(CFLAGS_VERSION) $(CFLAGS_WARNINGS) $(CFLAGS_DEFINES)
 
-# Specific libraries:
-LIB_SHA256=sha-256
-LIB_LOG=log
-SHA256PATH=$(LOCAL_LIBS)/$(LIB_SHA256)
-LOGPATH=$(LOCAL_LIBS)/$(LIB_LOG)
+# Specific libraries (project libraries ./libs/):
+LIB_SHA256 = sha-256
+LIB_LOG = log
+
+SHA256PATH = $(LOCAL_LIBS)/$(LIB_SHA256)
+LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
+
 # Libs to ALL modules:
 LIBS = -lsqlite3 -llog # Common libs, libs to all modules or system libs
 
+# Paths normalizes
 INCLUDEPATH = -I./include -I$(LIBS_BIN_PATH)
 SOURCEPATH = ./src
 BINPATH = ./bin
 LOCAL_LIBS = ./libs
-LIBS_BIN_PATH=$(LOCAL_LIBS)/bin
+LIBS_BIN_PATH = $(LOCAL_LIBS)/bin
 
+# System shell utilities
 CC = gcc
 RM = rm -f
 CP = cp
