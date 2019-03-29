@@ -27,6 +27,8 @@
 #include "util.h"
 #include "db.h"
 
+#include "log.h"
+
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define SQL_NO_ROW			(0)
@@ -64,7 +66,7 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	char sql[SZ_SG_SQLCMD + 1] = {'\0'};
 
 	if(SG_db == NULL){
-		log_write("Database handle didnt define for insert!\n");
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
 		return(NOK);
 	}
 
@@ -75,16 +77,16 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("SQL insert error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -259,53 +261,53 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
 
-	log_write("Inserindo registro:\n"
-	          "\tdrt[%s]\n"
-	          "\tdata[%s]\n"
-	          "\tloginout[%s]\n"
-	          "\tfuncao[%s]\n"
-	          "\tpanela[%s]\n"
-	          "\tws[%s]\n"
-	          "\tfornEletr[%s]\n"
-	          "\tnumMaquina[%s]\n"
-	          "\tdiamNom[%s]\n"
-	          "\tclasse[%s]\n"
-	          "\ttemp[%s]\n"
-	          "\tpercFeSi[%s]\n"
-	          "\tpercMg[%s]\n"
-	          "\tpercC[%s]\n"
-	          "\tpercS[%s]\n"
-	          "\tpercP[%s]\n"
-	          "\tpercInoculante[%s]\n"
-	          "\tenerEletTon[%s]\n"
-	          "\tcadencia[%s]\n"
-	          "\toee[%s]\n"
-	          "\taspecto[%s]\n"
-	          "\trefugo[%s]\n"
-	          "\tipport[%s]\n",
-	          data->drt,
-	          data->data,
-	          data->loginout,
-	          data->funcao,
-	          data->panela,
-	          data->ws,
-	          data->fornEletr,
-	          data->numMaquina,
-	          data->diamNom,
-	          data->classe,
-	          data->temp,
-	          data->percFeSi,
-	          data->percMg,
-	          data->percC,
-	          data->percS,
-	          data->percP,
-	          data->percInoculante,
-	          data->enerEletTon,
-	          data->cadencia,
-	          data->oee,
-	          data->aspecto,
-	          data->refugo,
-	          data->ipport);
+	logWrite(log, LOGDEV, "Inserindo registro:\n"
+	         "\tdrt[%s]\n"
+	         "\tdata[%s]\n"
+	         "\tloginout[%s]\n"
+	         "\tfuncao[%s]\n"
+	         "\tpanela[%s]\n"
+	         "\tws[%s]\n"
+	         "\tfornEletr[%s]\n"
+	         "\tnumMaquina[%s]\n"
+	         "\tdiamNom[%s]\n"
+	         "\tclasse[%s]\n"
+	         "\ttemp[%s]\n"
+	         "\tpercFeSi[%s]\n"
+	         "\tpercMg[%s]\n"
+	         "\tpercC[%s]\n"
+	         "\tpercS[%s]\n"
+	         "\tpercP[%s]\n"
+	         "\tpercInoculante[%s]\n"
+	         "\tenerEletTon[%s]\n"
+	         "\tcadencia[%s]\n"
+	         "\toee[%s]\n"
+	         "\taspecto[%s]\n"
+	         "\trefugo[%s]\n"
+	         "\tipport[%s]\n",
+	         data->drt,
+	         data->data,
+	         data->loginout,
+	         data->funcao,
+	         data->panela,
+	         data->ws,
+	         data->fornEletr,
+	         data->numMaquina,
+	         data->diamNom,
+	         data->classe,
+	         data->temp,
+	         data->percFeSi,
+	         data->percMg,
+	         data->percC,
+	         data->percS,
+	         data->percP,
+	         data->percInoculante,
+	         data->enerEletTon,
+	         data->cadencia,
+	         data->oee,
+	         data->aspecto,
+	         data->refugo,
+	         data->ipport);
 
 	return(OK);
 }
@@ -324,16 +326,16 @@ int SG_db_open_or_create(void)
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(SG_db));
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(SG_db));
 		return(NOK);
 	}
 
@@ -342,16 +344,16 @@ int SG_db_open_or_create(void)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("Cannot open database [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot open database [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		sqlite3_close(SG_db);
 
 		return(NOK);
@@ -416,16 +418,16 @@ int SG_db_open_or_create(void)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("SQL create error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -437,16 +439,16 @@ int SG_db_open_or_create(void)
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("SQL create index error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -462,7 +464,7 @@ int SG_db_inserting(SG_registroDB_t *data)
 	int rc = 0;
 
 	if(SG_db == NULL){
-		log_write("Database handle didnt define for insert!\n");
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
 		return(NOK);
 	}
 
@@ -475,22 +477,22 @@ int SG_db_inserting(SG_registroDB_t *data)
 	         data->drt, data->data, data->loginout, data->funcao, data->panela, data->ws, data->fornEletr, data->numMaquina, data->diamNom, data->classe, data->temp, data->percFeSi,
 	         data->percMg, data->percC, data->percS, data->percP, data->percInoculante, data->enerEletTon, data->cadencia, data->oee, data->aspecto, data->refugo, data->ipport);
 
-	/* log_write("Tentando INSERT: [%s]\n", sqlCmd); */
+	logWrite(log, LOGDEV, "Tentando INSERT: [%s]\n", sqlCmd);
 
 	rc = sqlite3_exec(SG_db, sqlCmd, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
@@ -504,23 +506,23 @@ int SG_db_close(void)
 	int rc = 0;
 
 	if(SG_db == NULL){
-		log_write("Database handle didnt define for close!\n");
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for close!\n");
 		return(NOK);
 	}
 
 	rc = sqlite3_close_v2(SG_db);
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
-			log_write("SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED){
-			log_write("SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			log_write("SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}else{
-			log_write("Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
 		}
 
-		log_write("SQL close error!\n");
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL close error!\n");
 		return(NOK);
 	}
 
