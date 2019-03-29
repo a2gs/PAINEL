@@ -51,6 +51,14 @@ char lineToSend[MAXLINE] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
+static log_t *log;
+
+void getLogSystem(log_t *logClient)
+{
+	log = logClient;
+	return;
+}
+
 /* int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
  *
  * Formats the outgoing login message.
