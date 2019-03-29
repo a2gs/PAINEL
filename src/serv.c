@@ -76,7 +76,7 @@ static log_t log;
 void signal_handler(int sig)
 {
 	/* Qualquer sinal recebido ira terminar o server */
-	log_write("Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
+	logWrite(&log, LOGMUSTLOGIT, "Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
 
 	switch(sig){
 		case SIGHUP:
@@ -126,7 +126,7 @@ pid_t daemonize(void)
 	i = fork();
 
 	if(i == -1){
-		log_write("Erro fork chield process! [%s].\n", strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Erro fork chield process! [%s].\n", strerror(errno));
 		return((pid_t)NOK);
 	}
 
@@ -141,24 +141,24 @@ pid_t daemonize(void)
 	/* Criando e travando arquivo de execucao unica */
 	snprintf(runnigPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s/", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA);
 	if(chdir(runnigPath) == -1){
-		log_write("Unable changes to running dir [%s]: [%s].\n", runnigPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Unable changes to running dir [%s]: [%s].\n", runnigPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
 	snprintf(runnigLockFdPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s", runnigPath, LOCK_FILE);
 	lockFd = open(runnigLockFdPath, O_RDWR|O_CREAT|O_EXCL, 0640);
 	if(lockFd == -1){
-		log_write("There is another instance already running. Check [%s] file: [%s].\n", runnigLockFdPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "There is another instance already running. Check [%s] file: [%s].\n", runnigLockFdPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
 	if(lockf(lockFd, F_TLOCK, 0) < 0){
-		log_write("Cannt test 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Cannt test 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
 	if(lockf(lockFd, F_LOCK, 0) < 0){
-		log_write("Cannt lock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Cannt lock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		return((pid_t)NOK);
 	}
 
@@ -256,7 +256,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 	}
 
 	if(send(connfd, msg, strlen(msg), 0) == -1){
-		log_write("ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
+		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
 		return(NOK);
 	}
 
@@ -296,12 +296,6 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	/*
-	if(log_open(LOG_SERV_FILE) == NOK){
-		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_SERV_FILE, strerror(errno));
-		return(-2);
-	}
-	*/
 	if(logCreate(&log, argv[2], argv[3]) == LOG_NOK){                                                         
 		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", argv[2], strerror(errno));
 		return(-2);
@@ -311,11 +305,12 @@ int main(int argc, char *argv[])
 
 	p = daemonize();
 	if(p == (pid_t)NOK){
-		log_write("Cannt daemonize server!\n");
+		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server!\n");
+		logClose(&log);
 		return(-3);
 	}
 
-	log_write("Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	/* colocar aqui:
 	 * if(abrir arquivo servlock) == OK

@@ -15,6 +15,10 @@
 #          |            |
 #
 
+######
+###### MESMO TENDO LOG, REDIRECIONAR SAIDA PARA UM LOG DE STDOUT E STDERR:
+######          exec 1>>out.log 2>&1
+######
 
 # ------------------------------------------------
 echo '--- Stating serv --------------------------------------'
