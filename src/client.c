@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
 		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-3);
+		return(-2);
 	}
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 	if(errGetAddrInfoCode != 0){
 		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
 		logClose(&log);
-		return(-1);
+		return(-3);
 	}
 
 	for(rp = res; rp != NULL; rp = rp->ai_next){
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
 		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address.\n");
 		logClose(&log);
-		return(-1);
+		return(-4);
 	}
 
 	freeaddrinfo(res);
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGOPALERT, "The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
 			printf("Usuario, funcao ou senha invalidos!\n");
 			logClose(&log);
-			return(-1);
+			return(-5);
 		}
 
 		SG_clientScreen(sockfd, id, level, usrType);
