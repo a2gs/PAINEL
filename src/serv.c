@@ -294,18 +294,18 @@ int main(int argc, char *argv[])
 	if(argc != 2){
 		fprintf(stderr, "%s PORT\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
-		return(1);
+		return(-1);
 	}
 
 	if(log_open(LOG_SERV_FILE) == NOK){
 		fprintf(stderr, "Unable to open/create [%s]! [%s]\n", LOG_SERV_FILE, strerror(errno));
-		return(1);
+		return(-2);
 	}
 
 	p = daemonize();
 	if(p == (pid_t)NOK){
 		log_write("Cannt daemonize server!\n");
-		return(1);
+		return(-3);
 	}
 
 	log_write("Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 
 	if(SG_db_open_or_create() == NOK){
 		log_write("Erro em abrir/criar banco de dados!\n");
-		return(1);
+		return(-4);
 	}
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -329,12 +329,12 @@ int main(int argc, char *argv[])
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		log_write("Erro bind: [%s].\n", strerror(errno));
-		return(1);
+		return(-5);
 	}
 
 	if(listen(listenfd, 250) != 0){
 		log_write("Erro listen: [%s].\n", strerror(errno));
-		return(1);
+		return(-6);
 	}
 
 	for(;;){
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
 			log_write("Erro accept: [%s].\n", strerror(errno));
-			return(1);
+			return(-7);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -401,7 +401,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-1);
+							return(-8);
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
@@ -416,7 +416,7 @@ int main(int argc, char *argv[])
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
 
-								return(-1);
+								return(-9);
 							}
 
 						}else{
@@ -431,7 +431,7 @@ int main(int argc, char *argv[])
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
 
-								return(-1);
+								return(-10);
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
