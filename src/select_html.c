@@ -285,19 +285,20 @@ int main(int argc, char *argv[])
 	};
 
 	if(argc != 6){
-		fprintf(stderr, "Execucao:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
+		fprintf(stderr, "[%s %d] Usage:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <FULL_LOG_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
-	p = daemonizeWithoutLock(&log);
-	if(p == (pid_t)NOK){
-		fprintf(stderr, "Cannt daemonize select html [%s]!\n", argv[1]);
+	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
+		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-2);
 	}
 
-	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
-		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+	p = daemonizeWithoutLock(&log);
+	if(p == (pid_t)NOK){
+		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize select html!\n");
+		logClose(&log);
 		return(-3);
 	}
 
