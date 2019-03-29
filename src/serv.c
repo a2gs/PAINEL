@@ -319,6 +319,7 @@ int main(int argc, char *argv[])
 
 	if(SG_db_open_or_create() == NOK){
 		log_write("Erro em abrir/criar banco de dados!\n");
+		logClose(&log);
 		return(-4);
 	}
 
@@ -331,11 +332,13 @@ int main(int argc, char *argv[])
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		log_write("Erro bind: [%s].\n", strerror(errno));
+		logClose(&log);
 		return(-5);
 	}
 
 	if(listen(listenfd, 250) != 0){
 		log_write("Erro listen: [%s].\n", strerror(errno));
+		logClose(&log);
 		return(-6);
 	}
 
@@ -344,6 +347,7 @@ int main(int argc, char *argv[])
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
 			log_write("Erro accept: [%s].\n", strerror(errno));
+			logClose(&log);
 			return(-7);
 		}
 
@@ -402,6 +406,7 @@ int main(int argc, char *argv[])
 							SG_db_close();
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
+							logClose(&log);
 
 							return(-8);
 						}
@@ -417,6 +422,7 @@ int main(int argc, char *argv[])
 								SG_db_close();
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
+								logClose(&log);
 
 								return(-9);
 							}
@@ -432,6 +438,7 @@ int main(int argc, char *argv[])
 								SG_db_close();
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
+								logClose(&log);
 
 								return(-10);
 							}
@@ -491,6 +498,7 @@ int main(int argc, char *argv[])
 	SG_db_close();
 	shutdown(connfd, SHUT_RDWR);
 	close(connfd);
+	logClose(&log);
 
 	return(0);
 }
