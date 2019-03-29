@@ -86,7 +86,7 @@ void signal_handler(int sig)
 	}
 
 	if(lockf(lockFd, F_ULOCK, 0) < 0){
-		log_write("Cannt unlock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Cannt unlock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		exit(-1);
 	}
 
@@ -94,7 +94,7 @@ void signal_handler(int sig)
 	shutdown(lockFd, SHUT_RDWR);
 	close(lockFd);
 	if(unlink(runnigLockFdPath) != 0){
-		log_write("Erro deleting lock file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
+		logWrite(&log, LOGMUSTLOGIT, "Erro deleting lock file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
 		exit(-1);
 	}
 
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 	 */
 
 	if(SG_db_open_or_create() == NOK){
-		log_write("Erro em abrir/criar banco de dados!\n");
+		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
 		logClose(&log);
 		return(-4);
 	}
@@ -331,13 +331,13 @@ int main(int argc, char *argv[])
 	servaddr.sin_port        = htons(atoi(argv[1]));
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
-		log_write("Erro bind: [%s].\n", strerror(errno));
+		logWrite(&log, LOGOPALERT, "Erro bind: [%s].\n", strerror(errno));
 		logClose(&log);
 		return(-5);
 	}
 
 	if(listen(listenfd, 250) != 0){
-		log_write("Erro listen: [%s].\n", strerror(errno));
+		logWrite(&log, LOGOPALERT, "Erro listen: [%s].\n", strerror(errno));
 		logClose(&log);
 		return(-6);
 	}
@@ -346,14 +346,14 @@ int main(int argc, char *argv[])
 		len = sizeof(cliaddr);
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
-			log_write("Erro accept: [%s].\n", strerror(errno));
+			logWrite(&log, LOGOPALERT, "Erro accept: [%s].\n", strerror(errno));
 			logClose(&log);
 			return(-7);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
 		portFrom = ntohs(cliaddr.sin_port);
-		log_write("Connection from [%s], port [%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+		logWrite(&log, LOGOPMSG, "Connection from [%s], port [%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
 		p = fork();
 
 		if(p == 0){ /* child */
@@ -364,19 +364,19 @@ int main(int argc, char *argv[])
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
-					log_write("End of data from [%s:%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+					logWrite(&log, LOGOPMSG, "End of data from [%s:%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
 					break;
 				}
 
 				if(readRet < 0){
-					log_write("Erro recv(): [%s].\n", strerror(errno));
+					logWrite(&log, LOGOPALERT, "Erro recv(): [%s].\n", strerror(errno));
 					break;
 				}
 
 				endLine = strrchr(msg, '\n');
 				if(endLine != NULL) (*endLine) = '\0';
 
-				log_write("Msg from [%s:%d]: [%s].\n", clientFrom, portFrom, msg);
+				logWrite(&log, LOGDEV, "Msg from [%s:%d]: [%s].\n", clientFrom, portFrom, msg);
 
 				/* Capturando o CODIGO da mensagem */
 				endLine = strchr(msg, '|');
@@ -387,7 +387,7 @@ int main(int argc, char *argv[])
 					strncpy(msgCod, msg, szCod);
 					msgCod[szCod] = '\0';
 				}else{
-					log_write("Mensagem de codigo nao reconhecido! [%s].\n", msg);
+					logWrite(&log, LOGOPALERT, "Mensagem de codigo nao reconhecido! [%s].\n", msg);
 					continue;
 				}
 
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
 							/* Bad formmated protocol */
 							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
 
-							log_write("Login protocol bad formatted [%s]! Disconnecting.\n", msg);
+							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 
 							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient));
 
@@ -414,10 +414,10 @@ int main(int argc, char *argv[])
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
 							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
 
-							log_write("User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
+							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								log_write("Problem sent login error message! Disconnecting.\n");
+								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 
 								SG_db_close();
 								shutdown(connfd, SHUT_RDWR);
@@ -430,10 +430,10 @@ int main(int argc, char *argv[])
 						}else{
 							char *loginErrorMsgToClient = "OK|User registred into database!";
 
-							log_write("Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
+							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
-								log_write("Problem sent login success message! Disconnecting.\n");
+								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 
 								SG_db_close();
 								shutdown(connfd, SHUT_RDWR);
@@ -448,7 +448,7 @@ int main(int argc, char *argv[])
 							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
 							if(SG_db_inserting(&msgCleaned) == NOK){
-								log_write("Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
+								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 							}
 						}
 						break;
@@ -457,18 +457,18 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 						/* TODO: IMPLEMENTAR ESTE COMANDO */
 
-						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
+						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					case PROT_COD_INSREG:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(SG_parsingDataInsertRegistro(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
-							log_write("PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
+							logWrite(&log, LOGOPALERT, "PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 							continue;
 						}else{
 							if(SG_db_inserting(&msgCleaned) == NOK){
-								log_write("INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
+								logWrite(&log, LOGDBALERT, "INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 							}
 						}
 						break;
@@ -480,11 +480,11 @@ int main(int argc, char *argv[])
 					*/
 
 					case PROT_COD_CLICMD:
-						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
+						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					default:
-						log_write("Nao ha implementacao de tratamento para codigo de mensagem: [%s]!\n", msgCod);
+						logWrite(&log, LOGOPALERT, "Nao ha implementacao de tratamento para codigo de mensagem: [%s]!\n", msgCod);
 						break;
 				}
 			}
@@ -492,7 +492,7 @@ int main(int argc, char *argv[])
 			break; /* for() */
 
 		}else if(p == -1)
-			log_write("Erro fork: [%s].\n", strerror(errno));
+			logWrite(&log, LOGOPALERT, "Erro fork: [%s].\n", strerror(errno));
 	}
 
 	SG_db_close();
