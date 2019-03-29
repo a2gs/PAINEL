@@ -120,10 +120,11 @@ int main(int argc, char *argv[])
 	char id[DRT_LEN + 1] = {'\0'};
 	char level[VALOR_FUNCAO_LEN + 1] = {'\0'};
 	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
+	log_t log;
 	tipoUsuario_t usrType = UNDEFINED_USER;
 
 	if(argc != 3){
-		fprintf(stderr, "%s <IP_ADDRESS> <PORT>\n", argv[0]);
+		fprintf(stderr, "%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
@@ -132,12 +133,12 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGTERM, SIG_IGN);
 
-	if(log_open(LOG_CLIENT_FILE) == NOK){
-		fprintf(stderr, "Unable to open/create [%s]!\n", LOG_CLIENT_FILE);
-		return(-1);
+	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
+		fprintf(stderr, "Erro criando log! [%s]\n", (errno == 0 ? "Level parameters error" : strerror(errno)));
+		return(-3);
 	}
 
-	log_write("StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 
 	memset (&hints, 0, sizeof (hints));
 	hints.ai_family = AF_UNSPEC;
@@ -146,14 +147,15 @@ int main(int argc, char *argv[])
 
 	errGetAddrInfoCode = getaddrinfo(argv[1], argv[2], &hints, &res);
 	if(errGetAddrInfoCode != 0){
-		log_write("ERRO: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
+		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
+		logClose(&log);
 		return(-1);
 	}
 
 	for(rp = res; rp != NULL; rp = rp->ai_next){
 		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sockfd == -1){
-			log_write("ERRO: socket() [%s].\n", strerror(errno));
+			logWrite(&log, LOGOPALERT, "ERRO: socket() [%s].\n", strerror(errno));
 			continue;
 		}
 
@@ -162,19 +164,20 @@ int main(int argc, char *argv[])
 		else                               pAddr = NULL;
 
 		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
-		log_write("Trying connect to [%s/%s:%s].\n", rp->ai_canonname, strAddr, argv[2]);
+		logWrite(&log, LOGOPMSG, "Trying connect to [%s/%s:%s].\n", rp->ai_canonname, strAddr, argv[2]);
 
 		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
 		if(errConnect == 0)
 			break;
 
-		log_write("ERRO: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, argv[2], strerror(errno));
+		logWrite(&log, LOGOPALERT, "ERRO: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, argv[2], strerror(errno));
 
 		close(sockfd);
 	}
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		log_write("ERRO: Unable connect to any address.\n");
+		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address.\n");
+		logClose(&log);
 		return(-1);
 	}
 
@@ -183,17 +186,18 @@ int main(int argc, char *argv[])
 	for(;;){
 
 		if(SG_fazerLogin(id, passhash, level, &usrType) == NOK){
-			log_write("Exit client interface.\n");
+			logWrite(&log, LOGOPMSG, "Exit client interface.\n");
 			break; /* exit */
 		}
 
 		if(usrType == UNDEFINED_USER) continue;
 
-		log_write("[%s] conectado no [%s:%s] at [%s].\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
+		logWrite(&log, LOGOPMSG, "[%s] conectado no [%s:%s] at [%s].\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
 
 		if(SG_sendLogin(sockfd, id, passhash, level) == NOK){
-			log_write("The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
+			logWrite(&log, LOGOPALERT, "The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
 			printf("Usuario, funcao ou senha invalidos!\n");
+			logClose(&log);
 			return(-1);
 		}
 
@@ -204,6 +208,7 @@ int main(int argc, char *argv[])
 
 	shutdown(sockfd, SHUT_RDWR);
 	close(sockfd);
+	logClose(&log);
 
 	return(0);
 }
