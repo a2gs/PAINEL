@@ -95,6 +95,9 @@ int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 
 	errno = 0;
 
+	if(log == NULL)                   return(LOG_NOK);
+	if(log->fd == -1 || log->fd == 0) return(LOG_NOK);
+
 	time(&logTimeTimet);
 	memcpy(&logTimeTm, localtime(&logTimeTimet), sizeof(struct tm));
 	strftime(fmtMsg, LOG_FMTMSG_SZ, "%Y%m%d %H%M%S", &logTimeTm);
@@ -122,7 +125,7 @@ int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 int logCreate(log_t *log, char *fullPath, char *cmdLog)
 {
 	log->level = 0;
-	log->fd = 0;
+	log->fd = -1;
 	errno = 0;
 
 	if(parsingLogCmdLine(cmdLog, &(log->level)) == LOG_NOK)
