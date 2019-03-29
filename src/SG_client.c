@@ -47,7 +47,7 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-char lineToSend[MAXLINE] = {0};
+static char lineToSend[MAXLINE] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
