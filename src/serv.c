@@ -290,8 +290,16 @@ int main(int argc, char *argv[])
 	SG_registroDB_t msgCleaned = {0};
 	userIdent_t userSession = {0};
 
-	if(argc != 2){
-		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <FULL_LOG_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+	if(argc != 4){
+		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
+		fprintf(stderr, "\tREDALERT = Red alert\n");
+		fprintf(stderr, "\tDBALERT = Database alert\n");
+		fprintf(stderr, "\tDBMSG = Database message\n");
+		fprintf(stderr, "\tOPALERT = Operation alert\n");
+		fprintf(stderr, "\tOPMSG = Operation message\n");
+		fprintf(stderr, "\tMSG = Just a message\n");
+		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
