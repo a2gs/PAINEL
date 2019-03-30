@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 	};
 
 	if(argc != 6){
-		fprintf(stderr, "[%s %d] Usage:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <LOG_FULL_PATH> <LOG_LEVEL>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "[%s %d] Usage:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
 		fprintf(stderr, "\tREDALERT = Red alert\n");
 		fprintf(stderr, "\tDBALERT = Database alert\n");
