@@ -139,7 +139,7 @@ pid_t daemonize(void)
 	umask(027);
 
 	/* Criando e travando arquivo de execucao unica */
-	snprintf(runnigPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s/", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA);
+	snprintf(runnigPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s/", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_SRV);
 	if(chdir(runnigPath) == -1){
 		logWrite(&log, LOGMUSTLOGIT, "Unable changes to running dir [%s]: [%s].\n", runnigPath, strerror(errno));
 		return((pid_t)NOK);
