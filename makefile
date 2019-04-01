@@ -84,7 +84,7 @@ client: sha256 logtag
 
 serv: logtag
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(LIBS) $(CFLAGS)
 
 select_html: logtag
 	@echo "=== select_html ============="
@@ -104,7 +104,7 @@ servList: logtag
 
 create_db:
 	@echo "=== create_db ==============="
-	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 clean: clean_html clean_log clean_bin #clean_data
 	@echo "=== clean ==================="
