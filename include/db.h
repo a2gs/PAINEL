@@ -53,5 +53,6 @@
  * OUTPUT:
  *  <None>
  */
+int createAllTables(char *DBPath);
 
 #endif

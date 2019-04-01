@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
 			}
 
-			logWrite(&log, LOGDBALERT, "Failed to select data RELAT [%s].\n", sql);
+			logWrite(&log, LOGDBALERT, "Failed to select data %s [%s].\n", DB_REPORTS_TABLE, sql);
 			logWrite(&log, LOGDBALERT, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
 
 			sqlite3_free(err_msg);

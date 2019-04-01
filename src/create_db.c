@@ -35,26 +35,12 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
-/* int main(int argc, char *argv[])
- *
- * creadte_db starts.
- *
- * INPUT:
- *  <None>
- * OUTPUT:
- *  OK - Ok
- *  NOK - Error
- */
-int main(int argc, char *argv[])
+int createAllTables(char *DBPath)
 {
 	int rc = 0;
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char *err_msg = NULL;
 	sqlite3 *SG_db = NULL;
-	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
-
-	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
-	fprintf(stderr, "Criando banco: [%s]\n", DBPath);
 
 	rc = sqlite3_open_v2(DBPath, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
 
@@ -231,7 +217,34 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "SQL close error!\n");
 		return(NOK);
 	}
-	fprintf(stderr, "Bancos SQL criados!\n");
 
 	return(OK);
+}
+
+/* int main(int argc, char *argv[])
+ *
+ * creadte_db starts.
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  OK - Ok
+ *  NOK - Error
+ */
+int main(int argc, char *argv[])
+{
+	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
+
+	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
+	fprintf(stderr, "Criando banco: [%s]\n", DBPath);
+
+
+	if(createAllTables(DBPath) == NOK){
+		fprintf(stderr, "ERRO criando banco de dados (tabelas) SQLite!\n");
+		return(-1);
+	}
+
+	fprintf(stderr, "Banco de dados (tabelas) SQLite criado!\n");
+
+	return(0);
 }
