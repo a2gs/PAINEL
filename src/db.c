@@ -65,11 +65,13 @@ int dbInsert(char *sqlCmd)
 	return(OK);
 }
 
-int dbOpen(char *userDBPath, int flags)
+int dbOpen(char *userDBPath, int flags, log_t *userLog)
 {
 	int rc = 0;
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char *err_msg = NULL;
+
+	log = userLog;
 
 	if(userDBPath == NULL)
 		snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);

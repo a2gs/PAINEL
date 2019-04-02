@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		return(-4);
 	}
 
-	fprintf(stderr, "Banco de dados (tabelas) SQLite criado!\n");
+	logWrite(&log, LOGREDALERT, "Banco de dados (tabelas) SQLite criado!\n");
 
 	logClose(&log);
 	dbClose();
