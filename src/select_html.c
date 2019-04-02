@@ -351,7 +351,9 @@ int main(int argc, char *argv[])
 		}
 
 		if(select_NOROW == SQL_NO_ROW){
-			/* TODO */
+			logWrite(&log, LOGDEV, "SQL executed [%s].\n", sql);
+			logWrite(&log, LOGOPALERT, "There is no register to level [%s] waiting [%d] seconds.\n", funcao, segReaload * 3);
+			sleep(segReaload * 3);
 		}
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
