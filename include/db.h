@@ -27,15 +27,18 @@
 
 
 /* *** DEFINES ******************************************************* */
-#define DATABASE_PATH				("database")
-#define DATABASE_FILE				("database.db")
-#define DB_PATHFILE_SZ				(400)
+#define DATABASE_PATH      ("database")
+#define DATABASE_FILE      ("database.db")
+#define DB_PATHFILE_SZ     (400)
 
-#define SQL_COMMAND_SZ				(10000)
+#define SQL_COMMAND_SZ     (10000)
 
-#define DB_USERS_TABLE				"USERS"
-#define DB_MSGS_TABLE				"MSGS"
-#define DB_REPORTS_TABLE			"RELATS"
+#define DB_USERS_TABLE     "USERS"
+#define DB_MSGS_TABLE      "MSGS"
+#define DB_REPORTS_TABLE   "RELATS"
+
+#define SQL_NO_ROW         (0)
+#define SQL_HAS_ROW        (!SQL_NO_ROW)
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
