@@ -153,9 +153,6 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 		return(NOK);
 	}
 
-
-
-
 	return(OK);
 }
 

@@ -62,7 +62,7 @@ int dbCreateAllTables(void);
  * Open database.
  *
  * INPUT:
- *  userDBPath - 
+ *  userDBPath - NULL = default system DB ($PAINEL_HOME/database/database.db)
  *  flags - 
  *  log - 
  * OUTPUT:

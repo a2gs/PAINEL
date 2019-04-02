@@ -88,7 +88,7 @@ serv: logtag
 
 select_html: logtag
 	@echo "=== select_html ============="
-	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
 
 select_Excel:
 	@echo "=== select_Excel ============"

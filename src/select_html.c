@@ -320,51 +320,18 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOGMUSTLOGIT, "Select HTML Up! Level: [%s] Generation seconds: [%d] HTML refresh seconds: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s] Files: [%s | %s].\n", funcao, segReaload, segRefresh, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar(), fHtmlStatic, fHtmlRefresh);
 
+	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
+		logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
+
+		sqlite3_close(db);
+		logClose(&log);
+
+		return(-5);
+	}
+
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
 
-		rc = sqlite3_enable_shared_cache(1);
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				logWrite(&log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			logWrite(&log, LOGDBALERT, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-
-			logClose(&log);
-
-			return(-4);
-		}
-
-		/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
-		/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX, NULL);*/
-		rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
-		/* rc = db_open(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == NOK){ */
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				logWrite(&log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			logWrite(&log, LOGDBALERT, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-
-			sqlite3_close(db);
-			logClose(&log);
-
-			return(-5);
-		}
 
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
