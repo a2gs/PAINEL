@@ -165,7 +165,7 @@ pid_t daemonize(void)
 	}
 
 	/* Primeira instancia */
-	sprintf(str, "%d\n", getpid());
+	snprintf(str, sizeof(str), "%d\n", getpid());
 	write(lockFd, str, strlen(str));
 
 	/* Configurando sinais */

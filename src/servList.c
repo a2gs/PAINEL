@@ -86,17 +86,20 @@ int main(int argc, char **argv)
 		fprintf(stderr, "\tMSG = Just a message\n");
 		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+
 		return(-1);
 	}
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n",time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
+
 		return(-2);
 	}
 
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)NOK){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server list!\n");
+
 		logClose(&log);
 		return(-3);
 	}
@@ -108,6 +111,8 @@ int main(int argc, char **argv)
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenfd == -1){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
+		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 		logClose(&log);
 		return(-4);
 	}
@@ -119,12 +124,16 @@ int main(int argc, char **argv)
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
+		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 		logClose(&log);
 		return(-5);
 	}
 
 	if(listen(listenfd, 250) != 0){
 		logWrite(&log, LOGOPALERT, "Erro listen: [%s]\n", strerror(errno));
+		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 		logClose(&log);
 		return(-6);
 	}
@@ -134,6 +143,8 @@ int main(int argc, char **argv)
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
 			logWrite(&log, LOGOPALERT, "Erro accept: [%s]\n", strerror(errno));
+			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 			logClose(&log);
 			return(-7);
 		}
@@ -144,7 +155,9 @@ int main(int argc, char **argv)
 
 		f = fopen(fileName, "r");
 		if(f == NULL){
-			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss());
+			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]: [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss(), strerror(errno));
+			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 			logClose(&log);
 			return(-8);
 		}
@@ -152,6 +165,8 @@ int main(int argc, char **argv)
 		for(i = 0; i <= 10; i++){
 			if(i == 10){
 				logWrite(&log, LOGOPALERT, "Nao foi liberado o LOCK para o arquivo [%s] em 10 tentativas!\n", fileName);
+				logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 				logClose(&log);
 				return(-9);
 			}
@@ -165,6 +180,8 @@ int main(int argc, char **argv)
 				break;
 			}else{
 				logWrite(&log, LOGOPALERT, "Erro em testar LOCK no aquivo html [%s]!\n", fileName);
+				logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
 				logClose(&log);
 				return(-10);
 			}
@@ -186,6 +203,8 @@ int main(int argc, char **argv)
 		shutdown(connfd, SHUT_RDWR);
 		close(connfd);
 	}
+
+	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n");
 
 	logClose(&log);
 	return(0);
