@@ -122,7 +122,7 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 	return(OK);
 }
 
-int createAllPAINELTables(void)
+int dbCreateAllTables(void)
 {
 	/* ------------------------------------------------------------------------------------- */
 
@@ -289,7 +289,7 @@ int createAllPAINELTables(void)
 	return(OK);
 }
 
-int db_close(void)
+int dbClose(void)
 {
 	int rc = 0;
 
@@ -315,34 +315,6 @@ int db_close(void)
 	}
 
 	memset(DBPath, 0, sizeof(DBPath));
-
-	return(OK);
-}
-
-int createAllTables(char *DBPath)
-{
-	int rc = 0;
-	char *err_msg = NULL;
-	sqlite3 *db = NULL;
-	/*
-	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
-
-	if(rc != SQLITE_OK){
-		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		sqlite3_close(db);
-
-		return(NOK);
-	}
-	*/
-	if(db_open(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == NOK){
-		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
-		logClose(&log);
-		return(-4);
-	}
-
-	if(createAllPAINELTables() == NOK){
-		return(NOK);
-	}
 
 	return(OK);
 }

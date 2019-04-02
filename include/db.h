@@ -23,6 +23,7 @@
 
 
 /* *** INCLUDES ****************************************************** */
+#include "log.h"
 
 
 /* *** DEFINES ******************************************************* */
@@ -53,8 +54,8 @@
  * OUTPUT:
  *  <None>
  */
-int createAllTables(char *DBPath);
-int dbOpen(char *userDBPath, int flags);
+int dbCreateAllTables(void);
+int dbOpen(char *userDBPath, int flags, log_t *log);
 int dbClose(void);
 
 #endif

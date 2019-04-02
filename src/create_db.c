@@ -21,6 +21,8 @@
 /* *** INCLUDES ************************************************************************ */
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
 #include <sqlite3.h>
 #include <sys/types.h>
 
@@ -78,7 +80,7 @@ int main(int argc, char *argv[])
 		return(-3);
 	}
 
-	if(createAllTables(DBPath) == NOK){
+	if(dbCreateAllTables() == NOK){
 		logWrite(&log, LOGREDALERT, "ERRO criando banco de dados (tabelas) SQLite!\n");
 		logClose(&log);
 		return(-4);
