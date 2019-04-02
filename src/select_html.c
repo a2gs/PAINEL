@@ -335,6 +335,8 @@ int main(int argc, char *argv[])
 			return(-5);
 		}
 
+		/* Defining report layout by user level (fucao) */
+
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
 		logWrite(&log, LOGDEV, "Command: %s\n", sql);
@@ -361,6 +363,8 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+		/* Creating HTML files */
+
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
@@ -379,6 +383,8 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			return(-9);
 		}
+
+		/* Selecting data by user level (funcao). ALL = all database */
 
 		memset(sql, '\0', sizeof(sql));
 
@@ -399,7 +405,8 @@ int main(int argc, char *argv[])
 		}
 
 		if(select_NOROW == SQL_NO_ROW){
-			/* TODO */
+			logWrite(&log, LOGDEV, "NO ROW for select: [%s].\n", sql);
+			logWrite(&log, LOGOPMSG, "Zero register for [%s]! Empty report.\n", funcao);
 		}
     
 		if(html_endTable(&htmls) == NOK){
