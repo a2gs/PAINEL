@@ -260,14 +260,14 @@ int hmtl_constructTable(void *htmlsVoid, int argc, char **argv, char **azColName
  */
 int main(int argc, char *argv[])
 {
-	sqlite3 *db = NULL;
+	/* sqlite3 *db = NULL; */
 	char *funcao = NULL;
-	char *err_msg = NULL;
+	/* char *err_msg = NULL; */
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char fHtmlStatic[SZ_HTMLFILENAME + 1] = {'\0'};
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
-	int rc = 0;
+	/* int rc = 0; */
 	pid_t p = (pid_t)0;
 	log_t log;
 	htmlFiles_t htmls = {
@@ -332,44 +332,27 @@ int main(int argc, char *argv[])
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
 
+		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
+			logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
+
+			dbClose();
+			logClose(&log);
+
+			return(-5);
+		}
+
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
 		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
-		rc = sqlite3_exec(db, sql, hmtl_relat_infos, &pageInfo, &err_msg);
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				logWrite(&log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			logWrite(&log, LOGDBALERT, "Failed to select data %s [%s].\n", DB_REPORTS_TABLE, sql);
-			logWrite(&log, LOGDBALERT, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-
-			sqlite3_free(err_msg);
-			sqlite3_close(db);
-			logClose(&log);
-        
-			return(-6);
-		} 
-
 		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == NOK){
-
-
+			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
 
 			logClose(&log);
+			dbClose();
         
 			return(-6);
 		}
-
-
-
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
@@ -397,58 +380,33 @@ int main(int argc, char *argv[])
 
 		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
-		rc = sqlite3_exec(db, sql, hmtl_constructTable, &htmls, &err_msg);
-    
-		if(rc != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				logWrite(&log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
+		if(dbSelect(sql, hmtl_constructTable, &htmls) == NOK){
+			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
 
-			logWrite(&log, LOGDBALERT, "Failed to select data FUNCAO [%s]\n", funcao);
-			logWrite(&log, LOGDBALERT, "CMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-
-			sqlite3_free(err_msg);
-			sqlite3_close(db);
 			logClose(&log);
+			dbClose();
         
 			return(-10);
-		} 
+		}
     
 		if(html_endTable(&htmls) == NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
+
 			logClose(&log);
+			dbClose();
+
 			return(-11);
 		}
 
 		html_fflush(&htmls);
 		html_fclose(&htmls);
 
-		if(sqlite3_close_v2(db) != SQLITE_OK){
-			if(rc == SQLITE_BUSY){
-				logWrite(&log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-				logWrite(&log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}else{
-				logWrite(&log, LOGDBALERT, "Another error [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-			}
-
-			logWrite(&log, LOGDBALERT, "SQL close error!\nCMD: [%s]\nSQL error: [%s]\n", sql, err_msg);
-			logClose(&log);
-
-			return(-12);
-		}
+		dbClose();
 
 		sleep(segReaload);
 	}
     
+	dbClose();
 	logClose(&log);
 	return(0);
 }

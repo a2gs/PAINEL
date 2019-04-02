@@ -355,6 +355,8 @@ int dbClose(void)
 		return(NOK);
 	}
 
+	/* sqlite3_close(db); */
+
 	memset(DBPath, 0, sizeof(DBPath));
 
 	return(OK);
