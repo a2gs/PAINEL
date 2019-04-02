@@ -327,11 +327,16 @@ int main(int argc, char *argv[])
 	 * 	avisa que o servers ja esta no ar (ler do arquivo o PID e mostrar) e parar o programa
 	 */
 
-	/*if(SG_db_open_or_create() == NOK){*/
 	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
-		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
+		logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
 		logClose(&log);
 		return(-4);
+	}
+
+	if(dbCreateAllTables() == NOK){
+		logWrite(&log, LOGREDALERT, "Erro em criar tabelas/indices em banco de dados!\n");
+		logClose(&log);
+		return(-5);
 	}
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -344,13 +349,13 @@ int main(int argc, char *argv[])
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s].\n", strerror(errno));
 		logClose(&log);
-		return(-5);
+		return(-6);
 	}
 
 	if(listen(listenfd, 250) != 0){
 		logWrite(&log, LOGOPALERT, "Erro listen: [%s].\n", strerror(errno));
 		logClose(&log);
-		return(-6);
+		return(-7);
 	}
 
 	for(;;){
@@ -359,7 +364,7 @@ int main(int argc, char *argv[])
 		if(connfd == -1){
 			logWrite(&log, LOGOPALERT, "Erro accept: [%s].\n", strerror(errno));
 			logClose(&log);
-			return(-7);
+			return(-8);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -419,7 +424,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-8);
+							return(-9);
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
@@ -435,7 +440,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-9);
+								return(-10);
 							}
 
 						}else{
@@ -451,7 +456,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-10);
+								return(-11);
 							}
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
