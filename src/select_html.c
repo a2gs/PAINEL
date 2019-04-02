@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
 	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
 		logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
 
-		sqlite3_close(db);
+		dbClose();
 		logClose(&log);
 
 		return(-5);
@@ -331,7 +331,6 @@ int main(int argc, char *argv[])
 
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
-
 
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
@@ -359,6 +358,18 @@ int main(int argc, char *argv[])
         
 			return(-6);
 		} 
+
+		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == NOK){
+
+
+
+			logClose(&log);
+        
+			return(-6);
+		}
+
+
+
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){

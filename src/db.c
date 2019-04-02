@@ -41,7 +41,7 @@ static log_t *log = NULL;
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**))
+int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**), void *argCallback)
 {
 	int rc = 0;
 	char *err_msg = NULL;
@@ -51,7 +51,7 @@ int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**))
 		return(NOK);
 	}
 
-	rc = sqlite3_exec(db, sql, callback, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, callback, argCallback, &err_msg);
 
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
