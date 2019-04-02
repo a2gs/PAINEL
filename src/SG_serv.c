@@ -69,7 +69,7 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
 	if(dbSelect(sql, SG_checkLogin_callback) == NOK){
-		logWrite(log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sqlCmd); /* TODO: melhorar mesagem */
+		logWrite(log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
 		return(NOK);
 	}
 
@@ -442,13 +442,17 @@ int SG_db_open_or_create(void)
 int SG_db_inserting(SG_registroDB_t *data)
 {
 	char sqlCmd[sizeof(SG_registroDB_t) + 300] = {'\0'};
+	/*
 	char *err_msg = NULL;
 	int rc = 0;
+	*/
 
+	/*
 	if(SG_db == NULL){
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
 		return(NOK);
 	}
+	*/
 
 	memset(sqlCmd, '\0', sizeof(SG_registroDB_t) + 300);
 
@@ -469,6 +473,7 @@ int SG_db_inserting(SG_registroDB_t *data)
 	return(OK);
 }
 
+/*
 int SG_db_close(void)
 {
 	int rc = 0;
@@ -498,3 +503,4 @@ int SG_db_close(void)
 
 	return(OK);
 }
+*/

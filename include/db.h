@@ -56,6 +56,8 @@
  */
 int dbCreateAllTables(void);
 int dbOpen(char *userDBPath, int flags, log_t *log);
+int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**));
+int dbInsert(char *sqlCmd);
 int dbClose(void);
 
 #endif
