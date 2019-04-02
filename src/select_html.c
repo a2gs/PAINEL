@@ -304,12 +304,13 @@ int main(int argc, char *argv[])
 
 	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
+
 		return(-2);
 	}
 
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)NOK){
-		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize select html!\n");
+		logWrite(&log, LOGOPALERT, "Cannt daemonize select html!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 		logClose(&log);
@@ -330,7 +331,7 @@ int main(int argc, char *argv[])
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
 
 		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
-			logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
+			logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 			dbClose();
