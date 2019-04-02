@@ -260,14 +260,11 @@ int hmtl_constructTable(void *htmlsVoid, int argc, char **argv, char **azColName
  */
 int main(int argc, char *argv[])
 {
-	/* sqlite3 *db = NULL; */
 	char *funcao = NULL;
-	/* char *err_msg = NULL; */
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char fHtmlStatic[SZ_HTMLFILENAME + 1] = {'\0'};
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
 	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
-	/* int rc = 0; */
 	pid_t p = (pid_t)0;
 	log_t log;
 	htmlFiles_t htmls = {
@@ -319,15 +316,6 @@ int main(int argc, char *argv[])
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
 	logWrite(&log, LOGMUSTLOGIT, "Select HTML Up! Level: [%s] Generation seconds: [%d] HTML refresh seconds: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s] Files: [%s | %s].\n", funcao, segReaload, segRefresh, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar(), fHtmlStatic, fHtmlRefresh);
-
-	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
-		logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
-
-		dbClose();
-		logClose(&log);
-
-		return(-5);
-	}
 
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
