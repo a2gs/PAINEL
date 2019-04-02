@@ -98,7 +98,8 @@ int main(int argc, char **argv)
 
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)NOK){
-		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server list!\n");
+		logWrite(&log, LOGOPALERT, "Cannt daemonize server list!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 		logClose(&log);
 		return(-3);
