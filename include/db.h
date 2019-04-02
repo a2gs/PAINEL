@@ -45,6 +45,32 @@
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
+/* int dbCreateAllTables(void);
+ *
+ * Create database and its objects: tables, index, etc.
+ *
+ * INPUT:
+ *  none
+ * OUTPUT:
+ *  OK - Ok
+ *  NOK - Error opening or creating database
+ */
+int dbCreateAllTables(void);
+
+/* int dbOpen(char *userDBPath, int flags, log_t *log);
+ *
+ * Open database.
+ *
+ * INPUT:
+ *  userDBPath - 
+ *  flags - 
+ *  log - 
+ * OUTPUT:
+ *  OK - Ok
+ *  NOK - Error opening or creating database
+ */
+int dbOpen(char *userDBPath, int flags, log_t *log);
+
 /* <header function description included by another sources> void function(void)
  *
  * <Description>
@@ -54,10 +80,29 @@
  * OUTPUT:
  *  <None>
  */
-int dbCreateAllTables(void);
-int dbOpen(char *userDBPath, int flags, log_t *log);
 int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**));
+
+/* <header function description included by another sources> void function(void)
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
 int dbInsert(char *sqlCmd);
+
+/* int dbClose(void)
+ *
+ * Closes the databse.
+ *
+ * INPUT:
+ *  none
+ * OUTPUT:
+ *  OK - Ok
+ *  NOK - Error closing
+ */
 int dbClose(void);
 
 #endif

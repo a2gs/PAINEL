@@ -148,18 +148,4 @@ int SG_db_open_or_create(void);
  */
 int SG_db_inserting(SG_registroDB_t *data);
 
-/* int SG_db_close(void)
- *
- * Closes the databse.
- *
- * INPUT:
- *  none
- * OUTPUT:
- *  OK - Ok
- *  NOK - Error closing
- */
-/*
-int SG_db_close(void);
-*/
-
 #endif
