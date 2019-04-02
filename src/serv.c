@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
 	 */
 
 	/*if(SG_db_open_or_create() == NOK){*/
-	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
 		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
 		logClose(&log);
 		return(-4);

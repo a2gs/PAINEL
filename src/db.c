@@ -43,6 +43,9 @@ static log_t *log;
 /* *** FUNCTIONS *********************************************************************** */
 int dbInsert(char *sqlCmd)
 {
+	int rc = 0;
+	char *err_msg = NULL;
+
 	rc = sqlite3_exec(db, sqlCmd, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
@@ -68,8 +71,6 @@ int dbInsert(char *sqlCmd)
 int dbOpen(char *userDBPath, int flags, log_t *userLog)
 {
 	int rc = 0;
-	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
-	char *err_msg = NULL;
 
 	log = userLog;
 
@@ -124,6 +125,8 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 
 int dbCreateAllTables(void)
 {
+	int rc = 0;
+	char *err_msg = NULL;
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA MSGS (tamanhos medios esperados. Todos os dados sao textos):
