@@ -18,11 +18,11 @@
 
 # ------------------------------------------------
 echo '--- Stating serv --------------------------------------'
-$PAINEL_HOME/bin/serv 9998 $PAINEL_HOME/log/serv9998.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV' 1>>$PAINEL_HOME/log/serv.log 2>&1
 if [ ! -f "$PAINEL_HOME/database/database.db" ]; then
 	echo "Creating DB..."
 	sleep 4
 fi
+$PAINEL_HOME/bin/serv 9998 $PAINEL_HOME/log/serv9998.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV' 1>>$PAINEL_HOME/log/serv.log 2>&1
 ALERT_ERROR 'serv 9998'
 
 
