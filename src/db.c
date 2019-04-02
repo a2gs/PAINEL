@@ -31,7 +31,7 @@
 static sqlite3 *db = NULL;
 static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 static char sql[SQL_COMMAND_SZ + 1] = {'\0'};
-static log_t *log;
+static log_t *log = NULL;
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -135,9 +135,7 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 		return(NOK);
 	}
 
-	/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
 	rc = sqlite3_open_v2(DBPath, &db, flags, NULL);
-
 	if(rc != SQLITE_OK){
 		if(rc == SQLITE_BUSY){
 			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
