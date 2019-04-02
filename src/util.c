@@ -54,7 +54,7 @@ char * getPAINELEnvHomeVar(void)
 	return(getenv(PAINEL_HOME_ENV));
 }
 
-size_t cutter(char **buffer, int c, char *out, size_t outSz)
+inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
 {
 	register char *c1, *c2;
 	size_t tam;

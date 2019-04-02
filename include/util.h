@@ -133,7 +133,7 @@ int log_write(char *msg, ...);
  */
 int daemonizeWithoutLock(log_t *log);
 
-/* size_t cutter(char **buffer, int c, char *out, size_t outSz)
+/* inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
  *
  * Parsing a buffer with c delimiter, copy to out and forward buffer pointer.
  * If delimiter was researched, buffer will point to the next char (after delimiter).
