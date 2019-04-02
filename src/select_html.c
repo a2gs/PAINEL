@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 		select_NOROW = SQL_NO_ROW;
 
 		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == NOK){
-			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
+			logWrite(&log, LOGOPALERT, "Error at select database to define reports [%s]!\n", sql);
 
 			logClose(&log);
 			dbClose();
@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
 		select_NOROW = SQL_NO_ROW;
 
 		if(dbSelect(sql, hmtl_constructTable, &htmls) == NOK){
-			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
+			logWrite(&log, LOGOPALERT, "Error at select database to construct tables [%s]!\n", sql);
 
 			logClose(&log);
 			dbClose();
