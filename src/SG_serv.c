@@ -40,7 +40,9 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+/*
 static sqlite3 *SG_db = NULL;
+*/
 static char SG_checkLogin_NOROW = SQL_NO_ROW;
 static log_t *log = NULL;
 
@@ -480,25 +482,8 @@ int SG_db_inserting(SG_registroDB_t *data)
 	logWrite(log, LOGDEV, "Tentando INSERT: [%s]\n", sqlCmd);
 
 	if(dbInsert(sqlCmd) == NOK){
-	}
-
-	rc = sqlite3_exec(SG_db, sqlCmd, 0, 0, &err_msg);
-
-	if(rc != SQLITE_OK){
-		if(rc == SQLITE_BUSY){
-			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else if(rc == SQLITE_LOCKED){
-			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else{
-			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}
-
-		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
-		sqlite3_free(err_msg);
-
-		return(NOK);
+		logWrite(log, LOGOPALERT, "Erro inserindo registro! [%s]\n", sqlCmd);
+		return(OK);
 	}
 
 	return(OK);
