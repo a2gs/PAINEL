@@ -133,6 +133,24 @@ int log_write(char *msg, ...);
  */
 int daemonizeWithoutLock(log_t *log);
 
+/* size_t cutter(char **buffer, int c, char *out, size_t outSz)
+ *
+ * Parsing a buffer with c delimiter, copy to out and forward buffer pointer.
+ * If delimiter was researched, buffer will point to the next char (after delimiter).
+ * If not researched, buffer will point to yourself '\0' (buffer MUST BE A '\0' TERMINATED STRING).
+ * (This function works like strchrnul(), from GNU lib)
+ *
+ * INPUT:
+ *  buffer - String to parse
+ *  c - delimiter
+ *  outSz - Max size of out
+ * OUTPUT:
+ *  buffer - Byte' address after delimiter ('\0' from the same string if not researched)
+ *  out - Token pointed from buffer until delimiter
+ *  return - The token' size
+ */
+size_t cutter(char **buffer, int c, char *out, size_t outSz);
+
 /* char * time_DDMMYYhhmmss(void)
  *
  * Return a static string with data/time format DDMMYYhhmmss.

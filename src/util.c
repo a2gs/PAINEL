@@ -54,6 +54,22 @@ char * getPAINELEnvHomeVar(void)
 	return(getenv(PAINEL_HOME_ENV));
 }
 
+size_t cutter(char **buffer, int c, char *out, size_t outSz)
+{
+	register char *c1, *c2;
+	size_t tam;
+
+	for(c1 = c2 = *buffer; (*c2 != '\0') && (*c2 != c); c2++);
+
+	tam = c2 - c1;
+	strncpy(out, c1, (outSz < tam) ? outSz : tam);
+
+	if(*c2 == '\0') *buffer = c2;
+	else            *buffer = c2+1;
+
+	return(tam);
+}
+
 char * time_DDMMYYhhmmss(void)
 {
 	static char segmil[DATA_LEN + 1] = {'\0'};
