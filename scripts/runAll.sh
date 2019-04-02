@@ -61,6 +61,8 @@ if [ -f "$PAINEL_HOME/bin/select_html" ]; then
 	ALERT_ERROR 'select_html All select_html_All.log'
 	sleep 1
 
+	sleep 2 # just a delay to all select_htmls create html file
+
 else
 
 	echo "There is no [$PAINEL_HOME/bin/select_html] binary!"
