@@ -303,11 +303,13 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\tMSG = Just a message\n");
 		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+
 		return(-1);
 	}
 
 	if(logCreate(&log, argv[2], argv[3]) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Unable to open/create [%s]! [%s]\n", time_DDMMYYhhmmss(), getpid(), argv[2], strerror(errno));
+
 		return(-2);
 	}
 
@@ -330,7 +332,7 @@ int main(int argc, char *argv[])
 	 */
 
 	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
-		logWrite(&log, LOGREDALERT, "Erro em abrir banco de dados!\n");
+		logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 		logClose(&log);
@@ -338,7 +340,7 @@ int main(int argc, char *argv[])
 	}
 
 	if(dbCreateAllTables() == NOK){
-		logWrite(&log, LOGREDALERT, "Erro em criar tabelas/indices em banco de dados!\n");
+		logWrite(&log, LOGOPALERT, "Erro em criar tabelas/indices em banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 		dbClose();
