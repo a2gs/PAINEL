@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <fcntl.h>
+#include <sqlite3.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -34,6 +35,7 @@
 #include <arpa/inet.h>
 
 #include "util.h"
+#include "db.h"
 #include "SG_serv.h"
 
 #include "log.h"
@@ -325,7 +327,8 @@ int main(int argc, char *argv[])
 	 * 	avisa que o servers ja esta no ar (ler do arquivo o PID e mostrar) e parar o programa
 	 */
 
-	if(SG_db_open_or_create() == NOK){
+	/*if(SG_db_open_or_create() == NOK){*/
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == NOK){
 		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
 		logClose(&log);
 		return(-4);
@@ -411,7 +414,7 @@ int main(int argc, char *argv[])
 
 							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient));
 
-							SG_db_close();
+							dbClose();
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 							logClose(&log);
@@ -427,7 +430,7 @@ int main(int argc, char *argv[])
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 
-								SG_db_close();
+								dbClose();
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
 								logClose(&log);
@@ -443,7 +446,7 @@ int main(int argc, char *argv[])
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 
-								SG_db_close();
+								dbClose();
 								shutdown(connfd, SHUT_RDWR);
 								close(connfd);
 								logClose(&log);
@@ -503,7 +506,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGOPALERT, "Erro fork: [%s].\n", strerror(errno));
 	}
 
-	SG_db_close();
+	dbClose();
 	shutdown(connfd, SHUT_RDWR);
 	close(connfd);
 	logClose(&log);

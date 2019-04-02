@@ -54,5 +54,7 @@
  *  <None>
  */
 int createAllTables(char *DBPath);
+int dbOpen(char *userDBPath, int flags);
+int dbClose(void);
 
 #endif

@@ -41,7 +41,6 @@
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 static sqlite3 *SG_db = NULL;
-static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
 static char SG_checkLogin_NOROW = SQL_NO_ROW;
 static log_t *log = NULL;
 
@@ -313,7 +312,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 }
 
 /* ---[DATABASE]------------------------------------------------------------------------------------------- */
-
+#if 0
 int SG_db_open_or_create(void)
 {
 	int rc = 0;
@@ -456,6 +455,7 @@ int SG_db_open_or_create(void)
 
 	return(OK);
 }
+#endif
 
 int SG_db_inserting(SG_registroDB_t *data)
 {
@@ -478,6 +478,9 @@ int SG_db_inserting(SG_registroDB_t *data)
 	         data->percMg, data->percC, data->percS, data->percP, data->percInoculante, data->enerEletTon, data->cadencia, data->oee, data->aspecto, data->refugo, data->ipport);
 
 	logWrite(log, LOGDEV, "Tentando INSERT: [%s]\n", sqlCmd);
+
+	if(dbInsert(sqlCmd) == NOK){
+	}
 
 	rc = sqlite3_exec(SG_db, sqlCmd, 0, 0, &err_msg);
 

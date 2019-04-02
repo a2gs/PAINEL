@@ -132,7 +132,9 @@ int SG_checkLogin(char *user, char *passhash, char *func);
  *  OK - Ok
  *  NOK - Error opening or creating database
  */
+/*
 int SG_db_open_or_create(void);
+*/
 
 /* int SG_db_inserting(SG_registroDB_t *data)
  *
@@ -156,6 +158,8 @@ int SG_db_inserting(SG_registroDB_t *data);
  *  OK - Ok
  *  NOK - Error closing
  */
+/*
 int SG_db_close(void);
+*/
 
 #endif

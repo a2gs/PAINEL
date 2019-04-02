@@ -19,13 +19,19 @@
 
 
 /* *** INCLUDES ************************************************************************ */
+#include <string.h>
 #include <sqlite3.h>
 
+#include "log.h"
 #include "util.h"
 #include "db.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
+static sqlite3 *db = NULL;
+static char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
+static char sql[SQL_COMMAND_SZ + 1] = {'\0'};
+static log_t *log;
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -35,22 +41,87 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int createAllTables(char *DBPath)
+int dbInsert(char *sqlCmd)
 {
-	int rc = 0;
-	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
-	char *err_msg = NULL;
-	sqlite3 *SG_db = NULL;
-
-	rc = sqlite3_open_v2(DBPath, &SG_db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+	rc = sqlite3_exec(db, sqlCmd, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
-		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(SG_db));
-		sqlite3_close(SG_db);
+		if(rc == SQLITE_BUSY){
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
+		sqlite3_free(err_msg);
 
 		return(NOK);
 	}
 
+	return(OK);
+}
+
+int dbOpen(char *userDBPath, int flags)
+{
+	int rc = 0;
+	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
+	char *err_msg = NULL;
+
+	if(userDBPath == NULL)
+		snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
+	else
+		strncpy(DBPath, userDBPath, DB_PATHFILE_SZ);
+
+	db = NULL;
+
+	rc = sqlite3_enable_shared_cache(1);
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		return(NOK);
+	}
+
+	/*rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX, NULL);*/
+	rc = sqlite3_open_v2(DBPath, &db, flags, NULL);
+
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot open database [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		sqlite3_close(db);
+
+		return(NOK);
+	}
+
+
+
+
+	return(OK);
+}
+
+int createAllPAINELTables(void)
+{
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA MSGS (tamanhos medios esperados. Todos os dados sao textos):
@@ -107,7 +178,7 @@ int createAllTables(char *DBPath)
 	                              "PRIMARY KEY(DATAHORA, DRT))",
 	         DB_MSGS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create MSGS error [%s]: [%s].\n", sql, err_msg);
@@ -118,7 +189,7 @@ int createAllTables(char *DBPath)
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON %s (FUNCAO)", DB_MSGS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create index FUNCAO_INDX error [%s]: [%s].\n", sql, err_msg);
@@ -128,7 +199,7 @@ int createAllTables(char *DBPath)
 	}
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS DATAHORA_INDX ON %s (DATAHORA)", DB_MSGS_TABLE);
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create index DATAHORA_INDX error [%s]: [%s].\n", sql, err_msg);
@@ -153,7 +224,7 @@ int createAllTables(char *DBPath)
 	                              "PRIMARY KEY(ID))",
 	         DB_USERS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
@@ -164,7 +235,7 @@ int createAllTables(char *DBPath)
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS ID_INDX ON %s (ID)", DB_USERS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create index ID_INDX error [%s]: [%s].\n", sql, err_msg);
@@ -191,7 +262,7 @@ int createAllTables(char *DBPath)
 	                              "PRIMARY KEY(FUNCAO))",
 	         DB_REPORTS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create RELATS error [%s]: [%s].\n", sql, err_msg);
@@ -202,7 +273,7 @@ int createAllTables(char *DBPath)
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNC_INDX ON %s (FUNCAO)", DB_REPORTS_TABLE);
 
-	rc = sqlite3_exec(SG_db, sql, 0, 0, &err_msg);
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
 		fprintf(stderr, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
@@ -213,8 +284,61 @@ int createAllTables(char *DBPath)
 
 	/* ------------------------------------------------------------------------------------- */
 
-	if(sqlite3_close_v2(SG_db) != SQLITE_OK){
-		fprintf(stderr, "SQL close error!\n");
+	return(OK);
+}
+
+int db_close(void)
+{
+	int rc = 0;
+
+	if(db == NULL){
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for close!\n");
+		return(NOK);
+	}
+
+	rc = sqlite3_close_v2(db);
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}else{
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
+		}
+
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL close error!\n");
+		return(NOK);
+	}
+
+	memset(DBPath, 0, sizeof(DBPath));
+
+	return(OK);
+}
+
+int createAllTables(char *DBPath)
+{
+	int rc = 0;
+	char *err_msg = NULL;
+	sqlite3 *db = NULL;
+	/*
+	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
+
+	if(rc != SQLITE_OK){
+		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
+		sqlite3_close(db);
+
+		return(NOK);
+	}
+	*/
+	if(db_open(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == NOK){
+		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
+		logClose(&log);
+		return(-4);
+	}
+
+	if(createAllPAINELTables() == NOK){
 		return(NOK);
 	}
 
