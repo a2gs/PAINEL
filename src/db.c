@@ -41,6 +41,35 @@ static log_t *log;
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**))
+{
+
+	int rc = 0;
+	char *err_msg = NULL;
+
+	rc = sqlite3_exec(SG_db, sql, SG_checkLogin_callback, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		if(rc == SQLITE_BUSY){
+			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else if(rc == SQLITE_LOCKED){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
+			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}else{
+			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
+		}
+
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(NOK);
+	}
+
+
+	return(OK);
+}
+
 int dbInsert(char *sqlCmd)
 {
 	int rc = 0;

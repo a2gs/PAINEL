@@ -62,34 +62,14 @@ int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColNam
 
 int SG_checkLogin(char *user, char *passhash, char *func)
 {
-	int rc = 0;
-	char *err_msg = NULL;
 	char sql[SZ_SG_SQLCMD + 1] = {'\0'};
 
-	if(SG_db == NULL){
-		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
-		return(NOK);
-	}
-
 	snprintf(sql, SZ_SG_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'", DB_USERS_TABLE, user, func, passhash);
+
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
-	rc = sqlite3_exec(SG_db, sql, SG_checkLogin_callback, 0, &err_msg);
-
-	if(rc != SQLITE_OK){
-		if(rc == SQLITE_BUSY){
-			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else if(rc == SQLITE_LOCKED){
-			logWrite(log, LOGDBALERT, "SQLITE_LOCKED [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else if(rc == SQLITE_LOCKED_SHAREDCACHE){
-			logWrite(log, LOGDBALERT, "SQLITE_LOCKED_SHAREDCACHE [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}else{
-			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(SG_db));
-		}
-
-		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sql, err_msg);
-		sqlite3_free(err_msg);
-
+	if(dbSelect(sql, SG_checkLogin_callback) == NOK){
+		logWrite(log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sqlCmd); /* TODO: melhorar mesagem */
 		return(NOK);
 	}
 
