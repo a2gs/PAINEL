@@ -47,6 +47,8 @@ typedef struct _pageInfos_t{
 	char title[SZ_PAGETITLE_DB + 1];
 }pageInfos_t;
 
+static char select_NOROW = SQL_NO_ROW;
+
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 
@@ -200,6 +202,8 @@ int hmtl_relat_infos(void *htmlsVoid, int argc, char **argv, char **azColName)
 
 	data = (pageInfos_t *)htmlsVoid;
 
+	select_NOROW = SQL_HAS_ROW;
+
 	strncpy(data->title,          (argv[0] ? argv[0] : "\0"), SZ_PAGETITLE_DB    );
 	strncpy(data->columnsTable,   (argv[1] ? argv[1] : "\0"), SZ_COLUMNSTABLE_DB );
 	strncpy(data->columnsHeaders, (argv[2] ? argv[2] : "\0"), SZ_COLUMNSHEADER_DB);
@@ -228,6 +232,8 @@ int hmtl_constructTable(void *htmlsVoid, int argc, char **argv, char **azColName
 	htmlFiles_t *htmls = NULL;
 
 	htmls = (htmlFiles_t *)htmlsVoid;
+
+	select_NOROW = SQL_HAS_ROW;
 
 	html_writeDual(htmls, 0, "\t\t<tr>\n");
     
@@ -333,6 +339,8 @@ int main(int argc, char *argv[])
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
 		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
+		select_NOROW = SQL_NO_ROW;
+
 		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == NOK){
 			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
 
@@ -340,6 +348,10 @@ int main(int argc, char *argv[])
 			dbClose();
         
 			return(-6);
+		}
+
+		if(select_NOROW == SQL_NO_ROW){
+			/* TODO */
 		}
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
@@ -368,6 +380,8 @@ int main(int argc, char *argv[])
 
 		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
+		select_NOROW = SQL_NO_ROW;
+
 		if(dbSelect(sql, hmtl_constructTable, &htmls) == NOK){
 			logWrite(&log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
 
@@ -375,6 +389,10 @@ int main(int argc, char *argv[])
 			dbClose();
         
 			return(-10);
+		}
+
+		if(select_NOROW == SQL_NO_ROW){
+			/* TODO */
 		}
     
 		if(html_endTable(&htmls) == NOK){

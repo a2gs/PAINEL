@@ -31,8 +31,6 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define SQL_NO_ROW			(0)
-#define SQL_HAS_ROW			(!SQL_NO_ROW)
 #define SZ_SG_SQLCMD			(2000)
 
 
@@ -40,9 +38,6 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-/*
-static sqlite3 *SG_db = NULL;
-*/
 static char SG_checkLogin_NOROW = SQL_NO_ROW;
 static log_t *log = NULL;
 
