@@ -46,6 +46,11 @@ int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**))
 	int rc = 0;
 	char *err_msg = NULL;
 
+	if(db == NULL){
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for select!\n");
+		return(NOK);
+	}
+
 	rc = sqlite3_exec(db, sql, callback, 0, &err_msg);
 
 	if(rc != SQLITE_OK){
@@ -72,6 +77,11 @@ int dbInsert(char *sqlCmd)
 {
 	int rc = 0;
 	char *err_msg = NULL;
+
+	if(db == NULL){
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
+		return(NOK);
+	}
 
 	rc = sqlite3_exec(db, sqlCmd, 0, 0, &err_msg);
 
@@ -100,13 +110,14 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 	int rc = 0;
 
 	log = userLog;
+	db = NULL;
 
 	if(userDBPath == NULL)
 		snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 	else
 		strncpy(DBPath, userDBPath, DB_PATHFILE_SZ);
 
-	db = NULL;
+	logWrite(log, LOGDEV, "Database: [%s].\n", DBPath);
 
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){
@@ -154,6 +165,11 @@ int dbCreateAllTables(void)
 {
 	int rc = 0;
 	char *err_msg = NULL;
+
+	if(db == NULL){
+		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for create tables!\n");
+		return(NOK);
+	}
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA MSGS (tamanhos medios esperados. Todos os dados sao textos):
