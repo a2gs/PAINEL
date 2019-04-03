@@ -191,6 +191,27 @@ pid_t daemonize(void)
  */
 int parsingLogin(char *msg, userIdent_t *userSession)
 {
+	char *p = NULL;
+
+	/* <COD|> DRT|DATAHORA|FUNCAO|PASSHASH */
+	memset(userSession, 0, sizeof(userIdent_t));
+	p = msg;
+
+	/* DRT */
+	cutter(&p, '|', userSession->username, DRT_LEN);
+
+	/* DATAHORA */
+	cutter(&p, '|', userSession->dateTime, DATA_LEN);
+
+	/* FUNCAO */
+	cutter(&p, '|', userSession->level, VALOR_FUNCAO_LEN);
+
+	/* PASSHASH */
+	cutter(&p, '|', userSession->passhash, PASS_SHA256_LEN);
+
+	return(OK);
+
+#if 0
 	char *c1 = NULL;
 	char *c2 = NULL;
 	size_t fieldSz = 0;
@@ -225,6 +246,7 @@ int parsingLogin(char *msg, userIdent_t *userSession)
 	strncpy(userSession->passhash, c1, sizeof(userSession->passhash)-1);
 
 	return(OK);
+#endif
 }
 
 
@@ -283,8 +305,9 @@ int main(int argc, char *argv[])
 	int listenfd = 0, connfd = 0, readRet = 0;
 	socklen_t len;
 	struct sockaddr_in servaddr, cliaddr;
+	char *msgP = NULL;
 	char addStr[255 + 1] = {'\0'};
-	char msg[MAXLINE + 1] = {'\0'}, *endLine = NULL;
+	char msg[MAXLINE + 1] = {'\0'} /*, *endLine = NULL*/;
 	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
 	int szCod = 0;
 	char clientFrom[200] = {'\0'};
@@ -407,12 +430,16 @@ int main(int argc, char *argv[])
 					break;
 				}
 
-				endLine = strrchr(msg, '\n');
-				if(endLine != NULL) (*endLine) = '\0';
+				msgP = strrchr(msg, '\n');
+				if(msgP != NULL) (*msgP) = '\0';
 
 				logWrite(&log, LOGDEV, "Msg from [%s:%d]: [%s].\n", clientFrom, portFrom, msg);
 
 				/* Capturando o CODIGO da mensagem */
+				msgP = msg;
+				cutter(&msgP, '|', msgCod, PROT_CODE_LEN);
+
+				/*
 				endLine = strchr(msg, '|');
 				if(endLine != NULL){
 					if(endLine-msg < PROT_CODE_LEN) szCod = endLine-msg;
@@ -424,12 +451,14 @@ int main(int argc, char *argv[])
 					logWrite(&log, LOGOPALERT, "Mensagem de codigo nao reconhecido! [%s].\n", msg);
 					continue;
 				}
+				*/
 
 				switch(atoi(msgCod)){
 
 					case PROT_COD_LOGIN:
 
-						if(parsingLogin(&msg[szCod + 1], &userSession) == NOK){
+						/*if(parsingLogin(&msg[szCod + 1], &userSession) == NOK){*/
+						if(parsingLogin(msgP, &userSession) == NOK){
 							/* Bad formmated protocol */
 							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
 
