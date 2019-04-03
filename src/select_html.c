@@ -128,6 +128,28 @@ int html_header(htmlFiles_t *htmls, char *title, unsigned int refreshSeg)
  */
 int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 {
+	char *p = NULL;
+	char descricao[SZ_DESCRICAO + 1] = {'\0'};
+
+	html_writeDual(htmls, 0, "<body>\n");
+	html_writeDual(htmls, 0, "\t<table>\n");
+	html_writeDual(htmls, 0, "\t\t<tr>\n");
+
+	for(p = columnsHeaders; *p == '\0';){
+		cutter(&p, ',', descricao, SZ_DESCRICAO);
+
+		html_writeDual(htmls, 0, "\t\t\t<th>");
+		html_writeDual(htmls, 0, descricao);
+		html_writeDual(htmls, 0, "</th>\n");
+	}
+
+	html_writeDual(htmls, 0, "\t\t</tr>\n");
+
+	html_fflush(htmls);
+
+	return(OK);
+
+	/*
 	char *c1 = NULL;
 	char *c2 = NULL;
 	char descricao[SZ_DESCRICAO + 1] = {'\0'};
@@ -162,6 +184,7 @@ int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 	html_fflush(htmls);
 
 	return(OK);
+	*/
 }
 
 /* int html_endTable(htmlFiles_t *htmls)
