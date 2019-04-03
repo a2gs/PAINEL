@@ -96,6 +96,98 @@ int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, i
 
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
 {
+	char *p = NULL;
+
+	p = msg;
+
+	/* DRT */
+	cutter(&p, '|', data->drt, DRT_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* DATAHORA */
+	cutter(&p, '|', data->data, DATA_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* LOGINOUT */
+	cutter(&p, '|', data->loginout, 1);
+	if(*p == '\0') return(NOK);
+
+	/* FUNCAO */
+	cutter(&p, '|', data->funcao, VALOR_FUNCAO_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PANELA */
+	cutter(&p, '|', data->panela, FORNELET_PAMELA_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* WS */
+	cutter(&p, '|', data->ws, OPEMAQ_WS_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* FORNELETR */
+	cutter(&p, '|', data->fornEletr, FORNELET_NUMFORELE_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* NUMMAQUINA */
+	cutter(&p, '|', data->numMaquina, OPEMAQ_NUMMAQ_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* DIAMETRO */
+	cutter(&p, '|', data->diamNom, OPEMAQ_DIAMNOM_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* CLASSE */
+	cutter(&p, '|', data->classe, OPEMAQ_CLASSE_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* TEMP */
+	cutter(&p, '|', data->temp, OPEMAQ_TEMP_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCFESI */
+	cutter(&p, '|', data->percFeSi, OPEMAQ_PERC_FESI_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCMG */
+	cutter(&p, '|', data->percMg, FORNELET_PERC_MG_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCC */
+	cutter(&p, '|', data->percC, FORNELET_PERC_C_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCS */
+	cutter(&p, '|', data->percS, FORNELET_PERC_S_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCP */
+	cutter(&p, '|', data->percP, FORNELET_PERC_P_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* PERCINOCLNT */
+	cutter(&p, '|', data->percInoculante, OPEMAQ_PERC_INOC_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* ENELETTON */
+	cutter(&p, '|', data->enerEletTon, OPEMAQ_ENEELETON_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* CADENCIA */
+	cutter(&p, '|', data->cadencia, SUPMAQ_CADENCIA);
+	if(*p == '\0') return(NOK);
+
+	/* OEE */
+	cutter(&p, '|', data->oee, SUPMAQ_OEE);
+	if(*p == '\0') return(NOK);
+
+	/* ASPECTUBO */
+	cutter(&p, '|', data->aspecto, SUPMAQ_ASPEC_LEN);
+	if(*p == '\0') return(NOK);
+
+	/* REFUGO (ultimo) */
+	cutter(&p, '|', data->refugo, SUPMAG_REFUGO_LEN);
+
+#if 0
 	char *c1 = NULL;
 	char *c2 = NULL;
 
@@ -233,6 +325,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 
 	/* REFUGO (ultimo) */
 	strcpy(data->refugo, c1);
+#endif
 
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
