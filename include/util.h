@@ -133,6 +133,19 @@ int log_write(char *msg, ...);
  */
 int daemonizeWithoutLock(log_t *log);
 
+/* inline int changeCharByChar(char *buffer, int to, int from)
+ *
+ *
+ * INPUT:
+ *  buffer - String to search and replace char
+ *  from - char to be replaced
+ *  to - char to replace
+ * OUTPUT:
+ *  OK - ONE char had been replaced.
+ *  NOK - None char found.
+ */
+int changeCharByChar(char *buffer, int to, int from);
+
 /* inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
  *
  * Parsing a buffer with c delimiter, copy to out and forward buffer pointer.

@@ -51,6 +51,19 @@ char * getPAINELEnvHomeVar(void)
 	return(getenv(PAINEL_HOME_ENV));
 }
 
+inline int changeCharByChar(char *buffer, int from, int to)
+{
+	char *p = NULL;
+
+	p = strchr(buffer, from);
+
+	if(p == NULL) return(NOK);
+
+	*p = to;
+
+	return(OK);
+}
+
 inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
 {
 	register char *c1, *c2;
