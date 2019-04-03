@@ -43,9 +43,6 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-/*
-static char logPath[LOGPATH_SZ + 1] = {0};
-*/
 
 
 /* *** FUNCTIONS *********************************************************************** */
@@ -260,51 +257,3 @@ pid_t daemonizeWithoutLock(log_t *log)
 
 	return(getpid());
 }
-
-/* ---[LOG SYSTEM]----------------------------------------------------------------------------------------- */
-#if 0
-int log_open(char *logFile)
-{
-	if(logPath[0] != '\0'){
-		fprintf(stderr, "Log already initialized to: [%s]!\n", logFile);
-		return(NOK);
-	}
-
-	memset(logPath, 0, sizeof(logPath));
-	snprintf(logPath, LOGPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), LOG_PATH, logFile);
-
-	return(OK);
-}
-
-int log_close(void)
-{
-	memset(logPath, 0, sizeof(logPath));
-	return(OK);
-}
-
-int log_write(char *msg, ...)
-{
-	FILE *log = NULL;
-	char logText[MAXLINE] = {'\0'};
-	va_list args;
-
-	if((log = fopen(logPath, "a")) == NULL){
-		fprintf(stderr, "Unable to open/create log file to write [%s]! [%s]\n", logPath, strerror(errno));
-		return(NOK);
-	}
-	setbuf(log, NULL);
-
-	va_start(args, msg);
-
-	vsnprintf(logText, MAXLINE, msg, args);
-
-	va_end(args);
-
-	fprintf(log, "%s", logText);
-
-	fflush(log);
-	fclose(log);
-
-	return(OK);
-}
-#endif
