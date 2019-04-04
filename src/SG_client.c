@@ -509,7 +509,6 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 
 int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
 {
-	char *c = NULL;
 	char pass[PASS_LEN + 1] = {'\0'};
 	uint8_t hash[32] = {0};
 
@@ -523,7 +522,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 		fgets(drt, DRT_LEN, stdin);
 
 
-		changeCharByChar(line, '\n', '\0');
+		changeCharByChar(drt, '\n', '\0');
 		/*
 		c = strchr(drt, '\n');
 		if(c != NULL) *c = '\0';
@@ -541,7 +540,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	printf("Digite sua senha: ");
 	fgets(pass, PASS_LEN, stdin);
 
-	changeCharByChar(line, '\n', '\0');
+	changeCharByChar(pass, '\n', '\0');
 	/*
 	c = strchr(pass, '\n');
 	if(c != NULL) *c = '\0';

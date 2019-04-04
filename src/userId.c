@@ -441,18 +441,27 @@ int main(int argc, char *argv[])
 
 			printf("Usuario (DRT): ");
 			fgets(user, DRT_LEN, stdin);
+			changeCharByChar(user, '\n', '\0');
+			/*
 			c = strchr(user, '\n');
 			if(c != NULL) *c = '\0';
+			*/
 
 			printf("Funcao ......: ");
 			fgets(func, VALOR_FUNCAO_LEN, stdin);
+			changeCharByChar(func, '\n', '\0');
+			/*
 			c = strchr(func, '\n');
 			if(c != NULL) *c = '\0';
+			*/
 
 			printf("Senha .......: ");
 			fgets(pass, PASS_LEN, stdin);
+			changeCharByChar(pass, '\n', '\0');
+			/*
 			c = strchr(pass, '\n');
 			if(c != NULL) *c = '\0';
+			*/
 
 			if(dbAddUser(user, func, pass, DBPath) == NOK){
 				fprintf(stderr, "Erro inserindo formulario de usuario!\n");
@@ -466,8 +475,11 @@ int main(int argc, char *argv[])
 
 			printf("Usuario (DRT): ");
 			fgets(user, DRT_LEN, stdin);
+			changeCharByChar(user, '\n', '\0');
+			/*
 			c = strchr(user, '\n');
 			if(c != NULL) *c = '\0';
+			*/
 
 			if(dbRemoveUser(user, DBPath) == NOK){
 				fprintf(stderr, "Erro removendo formulario de usuario!\n");

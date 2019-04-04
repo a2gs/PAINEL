@@ -81,7 +81,6 @@ void limparCampoProto(char *campo, int c_from, int c_to)
 tipoPreenchimento_t preencherCampo(const char *pergunta, char *campo, size_t szCampo)
 {
 	char usrInput[USER_INPUT_LEN + 1] = {0};
-	char *c = NULL;
 
 	printf("%s", pergunta);
 	fgets(usrInput, USER_INPUT_LEN, stdin);
@@ -89,7 +88,7 @@ tipoPreenchimento_t preencherCampo(const char *pergunta, char *campo, size_t szC
 	c = strchr(usrInput, '\n');
 	if(c != NULL) *c = '\0';
 	*/
-	changeCharByChar(usrInput, ,'\n', '\0');
+	changeCharByChar(usrInput,'\n', '\0');
 
 	limparCampoProto(usrInput, '|', '-');
 
