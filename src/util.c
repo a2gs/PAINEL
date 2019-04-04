@@ -66,8 +66,8 @@ inline int changeCharByChar(char *buffer, int from, int to)
 
 inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
 {
-	register char *c1, *c2;
-	size_t tam;
+	register char *c1 = NULL, *c2 = NULL;
+	size_t tam = 0;
 
 	for(c1 = c2 = *buffer; (*c2 != '\0') && (*c2 != c); c2++);
 
