@@ -425,7 +425,6 @@ int main(int argc, char *argv[])
 	char user[DRT_LEN + 1] = {'\0'};
 	char func[VALOR_FUNCAO_LEN + 1] = {'\0'};
 	char pass[PASS_LEN + 1] = {'\0'};
-	char *c = NULL;
 
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
