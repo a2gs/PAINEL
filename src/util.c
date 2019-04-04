@@ -8,7 +8,7 @@
  */
 
 
-/* sc.c
+/* util.c
  * Project's auxiliary functions (client/server).
  *
  *  Who     | When       | What
