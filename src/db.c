@@ -9,7 +9,7 @@
 
 
 /* db.c
- * SQLite databases acesses (an auxiliary tool).
+ * SQLite databases acesses.
  *
  *  Who     | When       | What
  *  --------+------------+----------------------------
