@@ -33,7 +33,7 @@ SHA256PATH = $(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
 
 # Libs to ALL modules:
-LIBS = -lsqlite3 -llog # Common libs, libs to all modules or system libs
+LIBS = -lsqlite3 -l$(LIB_LOG) # Common libs, libs to all modules or system libs
 
 # Paths normalizes
 SOURCEPATH = ./src
@@ -84,11 +84,11 @@ client: sha256 logtag
 
 serv: logtag
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_html: logtag
 	@echo "=== select_html ============="
-	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_Excel:
 	@echo "=== select_Excel ============"
@@ -104,7 +104,7 @@ servList: logtag
 
 create_db: logtag
 	@echo "=== create_db ==============="
-	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 clean: clean_html clean_log clean_bin #clean_data
 	@echo "=== clean ==================="
