@@ -37,8 +37,8 @@
 #define DB_MSGS_TABLE      "MSGS"
 #define DB_REPORTS_TABLE   "RELATS"
 
-#define SQL_NO_ROW         (0)
-#define SQL_HAS_ROW        (!SQL_NO_ROW)
+#define SQL_NO_ROW         ('0')
+#define SQL_HAS_ROW        ('1')
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
