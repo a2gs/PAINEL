@@ -66,13 +66,16 @@ inline int changeCharByChar(char *buffer, int from, int to)
 
 inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
 {
-	register char *c1 = NULL, *c2 = NULL;
-	size_t tam = 0;
+	char *c1 = NULL, *c2 = NULL;
+	size_t tam = 0, less = 0;
 
 	for(c1 = c2 = *buffer; (*c2 != '\0') && (*c2 != c); c2++);
 
 	tam = c2 - c1;
-	strncpy(out, c1, (outSz < tam) ? outSz : tam);
+	less = ((outSz < tam) ? outSz : tam);
+	strncpy(out, c1, less);
+
+	out[less] = '\0';
 
 	if(*c2 == '\0') *buffer = c2;
 	else            *buffer = c2+1;
