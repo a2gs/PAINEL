@@ -135,7 +135,7 @@ int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 	html_writeDual(htmls, 0, "\t<table>\n");
 	html_writeDual(htmls, 0, "\t\t<tr>\n");
 
-	for(p = columnsHeaders; *p == '\0';){
+	for(p = columnsHeaders; *p != '\0';){
 		cutter(&p, ',', descricao, SZ_DESCRICAO);
 
 		html_writeDual(htmls, 0, "\t\t\t<th>");
