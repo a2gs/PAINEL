@@ -156,11 +156,19 @@ int main(int argc, char **argv)
 
 		f = fopen(fileName, "r");
 		if(f == NULL){
-			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]: [%s]\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss(), strerror(errno));
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]: [%s]. Sent \"PAGE NOT DEFINED!\" to client.\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss(), strerror(errno));
 
-			logClose(&log);
-			return(-8);
+			send(connfd, HTML_START_PROT1, sizeof(HTML_START_PROT1)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
+			send(connfd, HTML_START_PROT2, sizeof(HTML_START_PROT2)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
+
+			send(connfd, "PAGE NOT DEFINED!", sizeof("PAGE NOT DEFINED!"), /*MSG_DONTWAIT|MSG_MORE*/0);
+
+			send(connfd, "\r\n", 2, /*MSG_DONTWAIT*/0);
+
+			shutdown(connfd, SHUT_RDWR);
+			close(connfd);
+
+			continue;
 		}
 
 		for(i = 0; i <= 10; i++){
