@@ -238,6 +238,15 @@ int hmtl_constructTable(void *htmlsVoid, int argc, char **argv, char **azColName
 	return(0);
 }
 
+int hmtl_constructEmptyTable(htmlFiles_t *htmls)
+{
+	char htmlText[MAXLINE] = {'\0'};
+	snprintf(htmlText, MAXLINE, "<center style=\"color:rgb(255, 0, 0); border:2px solid rgb(255, 0, 0); background-color:rgb(0, 0, 0);\"><b>THERE ARE NO DATA SAVED FOR THIS FUNCTION!</b></center><br>\n");
+	html_writeDual(htmls, 0, htmlText);
+
+	return(OK);
+}
+
 /* int main(int argc, char *argv[])
  *
  * select_html starts.
@@ -403,6 +412,7 @@ int main(int argc, char *argv[])
 		if(select_NOROW == SQL_NO_ROW){
 			logWrite(&log, LOGDEV, "NO ROW for select: [%s].\n", sql);
 			logWrite(&log, LOGOPMSG, "Zero register for [%s]! Empty report.\n", funcao);
+			hmtl_constructEmptyTable(&htmls);
 		}
     
 		if(html_endTable(&htmls) == NOK){
