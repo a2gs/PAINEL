@@ -148,43 +148,6 @@ int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 	html_fflush(htmls);
 
 	return(OK);
-
-	/*
-	char *c1 = NULL;
-	char *c2 = NULL;
-	char descricao[SZ_DESCRICAO + 1] = {'\0'};
-
-	html_writeDual(htmls, 0, "<body>\n");
-	html_writeDual(htmls, 0, "\t<table>\n");
-	html_writeDual(htmls, 0, "\t\t<tr>\n");
-
-	for(c1 = c2 = columnsHeaders;;){
-
-		c2 = strchr(c1, ',');
-
-		if(c2 != NULL){
-			unsigned int szC = ((c2-c1) < SZ_DESCRICAO ? c2-c1 : SZ_DESCRICAO);
-
-			strncpy(descricao, c1, szC);
-			descricao[szC] = '\0';
-			c1 = c2+1;
-		}else
-			strcpy(descricao, c1);
-
-		html_writeDual(htmls, 0, "\t\t\t<th>");
-		html_writeDual(htmls, 0, descricao);
-		html_writeDual(htmls, 0, "</th>\n");
-
-		if(c2 == NULL)
-			break;
-	}
-
-	html_writeDual(htmls, 0, "\t\t</tr>\n");
-
-	html_fflush(htmls);
-
-	return(OK);
-	*/
 }
 
 /* int html_endTable(htmlFiles_t *htmls)
