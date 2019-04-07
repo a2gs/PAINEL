@@ -367,7 +367,6 @@ int main(int argc, char *argv[])
 
 		memset(sql, '\0', sizeof(sql));
 		snprintf(sql, SQL_COMMAND_SZ, "SELECT TITULO, CAMPOS, HEADERS FROM %s WHERE FUNCAO = '%s'", DB_REPORTS_TABLE, funcao);
-		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
 		select_NOROW = SQL_NO_ROW;
 
@@ -380,11 +379,11 @@ int main(int argc, char *argv[])
         
 			return(-6);
 		}
+		logWrite(&log, LOGDEV, "Data returned: [%s][%s][%s]\n", pageInfo.title, pageInfo.columnsHeaders, pageInfo.columnsTable);
 
 		if(select_NOROW == SQL_NO_ROW){
 			dbClose();
 
-			logWrite(&log, LOGDEV, "SQL executed [%s].\n", sql);
 			logWrite(&log, LOGOPALERT, "There is no register to level [%s] waiting [%d] seconds to retry.\n", funcao, segReaload * 3);
 
 			sleep(segReaload * 3);
@@ -425,8 +424,6 @@ int main(int argc, char *argv[])
 
 		if(strncmp(funcao, "All", 3) == 0) snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s", pageInfo.columnsTable, DB_MSGS_TABLE);
 		else                               snprintf(sql, SQL_COMMAND_SZ, "SELECT %s FROM %s WHERE FUNCAO = '%s'", pageInfo.columnsTable, DB_MSGS_TABLE, funcao);
-
-		logWrite(&log, LOGDEV, "Command: %s\n", sql);
 
 		select_NOROW = SQL_NO_ROW;
 

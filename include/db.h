@@ -83,7 +83,7 @@ int dbOpen(char *userDBPath, int flags, log_t *log);
  * OUTPUT:
  *  <None>
  */
-int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**), void *argCallback);
+int dbSelect(char *sqlCmd, int (*callback)(void *,int ,char **,char **), void *argCallback);
 
 /* <header function description included by another sources> void function(void)
  *

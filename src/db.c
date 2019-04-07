@@ -41,7 +41,7 @@ static log_t *log = NULL;
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**), void *argCallback)
+int dbSelect(char *sqlCmd, int (*callback)(void *,int ,char **,char **), void *argCallback)
 {
 	int rc = 0;
 	char *err_msg = NULL;
@@ -51,9 +51,14 @@ int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**), void *argCa
 		return(NOK);
 	}
 
-	rc = sqlite3_exec(db, sql, callback, argCallback, &err_msg);
+	logWrite(log, LOGDEV, "dbSelect SQL cmd = [%s]\n", sqlCmd);
+
+	rc = sqlite3_exec(db, sqlCmd, callback, argCallback, &err_msg);
+
+	logWrite(log, LOGDEV, "dbSelect SQL rc = [%d]\n", rc);
 
 	if(rc != SQLITE_OK){
+
 		if(rc == SQLITE_BUSY){
 			logWrite(log, LOGDBALERT, "SQLITE_BUSY [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
 		}else if(rc == SQLITE_LOCKED){
@@ -64,7 +69,7 @@ int dbSelect(char *sqlCmd, int (*callback)(void*,int,char**,char**), void *argCa
 			logWrite(log, LOGDBALERT, "Another error [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
 		}
 
-		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
 		sqlite3_free(err_msg);
 
 		return(NOK);
