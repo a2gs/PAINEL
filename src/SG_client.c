@@ -86,6 +86,8 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	for(srRet = 0; srRet < (ssize_t)sendSz; ){
 		srRet += send(sockfd, &lineToSend[srRet], sendSz - srRet, 0);
 
+		logWrite(log, LOGDEV, "Sending to server: [%*s] [%l]B.\n", srRet, &lineToSend[srRet], srRet);
+
 		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
 			return(NOK);
@@ -98,7 +100,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	for(srRet = 0;;){
 		srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
 
-		logWrite(log, LOGDEV, "receiving from server: [%s] [%l]B.\n", lineToSend, srRet);
+		logWrite(log, LOGDEV, "Receiving from server: [%s] [%l]B.\n", lineToSend, srRet);
 
 		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: receiving server response.\n");
