@@ -77,7 +77,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	ssize_t srRet = 0;
 	size_t srSz = 0;
 
-	memset(lineToSend, '\0', MAXLINE);
+	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Sending user validation */
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
@@ -94,7 +94,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 		}
 	}
 
-	memset(lineToSend, '\0', MAXLINE);
+	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Receiving user validation response */
 
