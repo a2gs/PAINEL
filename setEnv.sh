@@ -26,6 +26,8 @@ export PAINEL_HOME=`pwd`
 
 export PATH=$PATH:$PAINEL_HOME/scripts
 
+alias testcli="./client localhost 9998 client_test.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
+
 ALERT_ERROR()
 {
 	ret=$?
