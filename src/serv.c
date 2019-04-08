@@ -309,7 +309,6 @@ int main(int argc, char *argv[])
 	char addStr[255 + 1] = {'\0'};
 	char msg[MAXLINE + 1] = {'\0'} /*, *endLine = NULL*/;
 	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
-	int szCod = 0;
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
@@ -417,7 +416,7 @@ int main(int argc, char *argv[])
 			while(1){
 				memset(msg,    '\0', sizeof(msg)   );
 				memset(msgCod, '\0', sizeof(msgCod));
-				szCod = 0;
+				/*szCod = 0;*/
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
@@ -529,7 +528,7 @@ int main(int argc, char *argv[])
 					case PROT_COD_INSREG:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-						if(SG_parsingDataInsertRegistro(&msg[szCod + 1], clientFrom, portFrom, &msgCleaned) == NOK){
+						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == NOK){
 							logWrite(&log, LOGOPALERT, "PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
 							continue;
 						}else{
