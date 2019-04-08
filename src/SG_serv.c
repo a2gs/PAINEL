@@ -64,7 +64,7 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
 	if(dbSelect(sql, SG_checkLogin_callback, NULL) == NOK){
-		logWrite(log, LOGOPALERT, "aaaaaaaaaaaaaaaa [%s]\n", sql); /* TODO: melhorar mesagem */
+		logWrite(log, LOGOPALERT, "Error selecting user from table.\n");
 		return(NOK);
 	}
 

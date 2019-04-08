@@ -74,14 +74,44 @@ void getLogSystem(log_t *logClient)
  */
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
+	ssize_t recvRet = 0;
+
 	memset(lineToSend, '\0', MAXLINE);
 
+	/* Sending user validation */
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
 	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
 	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
 		logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
 		return(NOK);
+	}
+
+	memset(lineToSend, '\0', MAXLINE);
+
+	/*
+RETURN VALUE
+       These calls return the number of bytes received, or -1 if an error occurred.  In the event of an error, errno is set to indicate the error.
+
+       When a stream socket peer has performed an orderly shutdown, the return value will be 0 (the traditional "end-of-file" return).
+
+       Datagram sockets in various domains (e.g., the UNIX and Internet domains) permit zero-length datagrams.  When such a datagram is received, the return value is 0.
+
+       The value 0 may also be returned if the requested number of bytes to receive from a stream socket was 0.
+*/
+	
+	/* Receiving user validation response */
+	for(recvRet = 0;;){
+		recvRet += recv(sockfd, &lineToSend[recvRet], MAXLINE, 0);
+
+		logWrite(log, LOGDEV, "receiving from server: [%s] [%l]B.\n", lineToSend, recvRet);
+
+		if(recvRet == -1){
+			logWrite(log, LOGOPALERT, "ERRO: receiving server response.\n");
+			return(NOK);
+		}else if(recvRet == 0){
+			break;
+		}
 	}
 
 	return(OK);
