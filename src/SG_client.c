@@ -74,42 +74,36 @@ void getLogSystem(log_t *logClient)
  */
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
-	ssize_t recvRet = 0;
+	ssize_t srRet = 0;
+	size_t sendSz = 0;
 
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* Sending user validation */
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
-	snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
+	sendSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
-	if(send(sockfd, lineToSend, strlen(lineToSend), 0) == -1){
-		logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
-		return(NOK);
+	for(srRet = 0; srRet < (ssize_t)sendSz; ){
+		srRet += send(sockfd, &lineToSend[srRet], sendSz - srRet, 0);
+
+		if(srRet == -1){
+			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
+			return(NOK);
+		}
 	}
 
 	memset(lineToSend, '\0', MAXLINE);
 
-	/*
-RETURN VALUE
-       These calls return the number of bytes received, or -1 if an error occurred.  In the event of an error, errno is set to indicate the error.
-
-       When a stream socket peer has performed an orderly shutdown, the return value will be 0 (the traditional "end-of-file" return).
-
-       Datagram sockets in various domains (e.g., the UNIX and Internet domains) permit zero-length datagrams.  When such a datagram is received, the return value is 0.
-
-       The value 0 may also be returned if the requested number of bytes to receive from a stream socket was 0.
-*/
-	
 	/* Receiving user validation response */
-	for(recvRet = 0;;){
-		recvRet += recv(sockfd, &lineToSend[recvRet], MAXLINE, 0);
+	for(srRet = 0;;){
+		srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
 
-		logWrite(log, LOGDEV, "receiving from server: [%s] [%l]B.\n", lineToSend, recvRet);
+		logWrite(log, LOGDEV, "receiving from server: [%s] [%l]B.\n", lineToSend, srRet);
 
-		if(recvRet == -1){
+		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: receiving server response.\n");
 			return(NOK);
-		}else if(recvRet == 0){
+		}else if(srRet == 0){
 			break;
 		}
 	}
