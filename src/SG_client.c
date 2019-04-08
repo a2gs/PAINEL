@@ -48,7 +48,7 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-static char lineToSend[MAXLINE] = {0};
+static char lineToSend[MAXLINE + 1] = {0};
 static log_t *log = NULL;
 
 
@@ -75,16 +75,16 @@ void getLogSystem(log_t *logClient)
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
 	ssize_t srRet = 0;
-	size_t sendSz = 0;
+	size_t srSz = 0;
 
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* Sending user validation */
 	/* COD|DRT|DATAHORA|FUNCAO|PASSHASH */
-	sendSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
+	srSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
-	for(srRet = 0; srRet < (ssize_t)sendSz; ){
-		srRet += send(sockfd, &lineToSend[srRet], sendSz - srRet, 0);
+	for(srRet = 0; srRet < (ssize_t)srSz; ){
+		srRet += send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
 
 		logWrite(log, LOGDEV, "Sending to server: [%*s] [%l]B.\n", srRet, &lineToSend[srRet], srRet);
 
@@ -97,16 +97,15 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* Receiving user validation response */
-	for(srRet = 0;;){
-		srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
+
+	for(srSz = 0; srRet == 0; srSz += srRet){
+		srRet = recv(sockfd, &lineToSend[srSz], MAXLINE, 0);
 
 		logWrite(log, LOGDEV, "Receiving from server: [%s] [%l]B.\n", lineToSend, srRet);
 
 		if(srRet == -1){
-			logWrite(log, LOGOPALERT, "ERRO: receiving server response.\n");
+			logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt);
 			return(NOK);
-		}else if(srRet == 0){
-			break;
 		}
 	}
 
