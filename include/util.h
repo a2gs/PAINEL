@@ -89,43 +89,6 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *rec
  */
 char * getPAINELEnvHomeVar(void);
 
-/* int log_open(char *logFile)
- *
- * Initializes the logging system.
- *
- * INPUT:
- *  logFile - path to log file
- * OUTPUT:
- *  OK - Ok
- *  NOK - Error (unable to create file)
-int log_open(char *logFile);
- */
-
-/* int log_close(void)
- *
- * Closes the logging system.
- *
- * INPUT:
- *  none
- * OUTPUT:
- *  OK - Ok
- *  NOK - Error (unable to close file)
-int log_close(void);
- */
-
-/* int log_write(char *msg, ...)
- *
- * Writes a message to log, with printf() style usage.
- *
- * INPUT:
- *  msg - Message template
- *  ... - variables
- * OUTPUT:
- *  OK - Ok
- *  NOK - Unable to open or write to log
-int log_write(char *msg, ...);
- */
-
 /* int daemonizeWithoutLock(void)
  *
  * Daemonizes the process without create a 'process lock file' (guaranteeing only one instance).

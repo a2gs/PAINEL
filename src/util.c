@@ -83,7 +83,7 @@ int sendToNet(int sockfd, char *msg, int prot_code)
 }
 
 /*
-retornando (NOK && recvError == 0): recv erro. Connection close unexpected!
+retornando (NOK && recvError == 0): recv erro: Connection close unexpected!
 retornando (NOK && recvError != 0): recv erro. recvError mesmo valor de errno
 retornando (OK): 
 */
