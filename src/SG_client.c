@@ -92,18 +92,13 @@ int validatingLoginServerResponse(char *servResp)
 	}
 
 	ret = OK;
-	if(strncpy(buf, "ERRO", 4) != 0){
-		logWrite(log, LOGOPALERT, "\n");
+	if(strncmp(buf, "ERRO", 4) == 0){
+		logWrite(log, LOGOPALERT, "Server didn't validate the user/level/pass!\n");
 		ret = NOK;
 	}
 
 	/* Getting the server message */
 	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	if(*p == '\0'){
-		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get MESSAGE)!\n");
-		return(NOK);
-	}
 
 	logWrite(log, LOGDEV, "Server login message: [%s].\n", buf);
 
