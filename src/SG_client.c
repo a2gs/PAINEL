@@ -61,7 +61,7 @@ void getLogSystem(log_t *logClient)
 	return;
 }
 
-int validatingLoginServerResponse()
+int validatingLoginServerResponse(char *servResp)
 {
 	return(OK);
 }
