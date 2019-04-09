@@ -209,8 +209,7 @@ int main(int argc, char *argv[])
 		if(SG_sendLogin(sockfd, id, passhash, level) == NOK){
 			logWrite(&log, LOGOPALERT, "The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
 			printf("Usuario, funcao ou senha invalidos!\n");
-			logClose(&log);
-			return(-5);
+			continue;
 		}
 
 		SG_clientScreen(sockfd, id, level, usrType);
