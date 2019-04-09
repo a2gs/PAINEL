@@ -39,11 +39,12 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define PASS_LEN							(100)
-#define CONFIRMA_ENFIO_LEN				(5)
-#define LINE_DRT_FILE_LEN				(200)
-#define DRT_FULLFILEPATH_SZ			(300)
-#define SUBPATH_RUNNING_DATA_CLI 	SUBPATH_RUNNING_DATA
+#define PASS_LEN                 (100)
+#define CONFIRMA_ENFIO_LEN       (5)
+#define LINE_DRT_FILE_LEN        (200)
+#define DRT_FULLFILEPATH_SZ      (300)
+#define SUBPATH_RUNNING_DATA_CLI SUBPATH_RUNNING_DATA
+#define BUF_VALIDATING_LOGIN_SZ  (100)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -63,7 +64,50 @@ void getLogSystem(log_t *logClient)
 
 int validatingLoginServerResponse(char *servResp)
 {
-	return(OK);
+	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
+	char *p = NULL;
+	int ret = 0;
+
+	p = servResp;
+
+	/* Getting the PROTO_CODE */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get PROTO_COD)!\n");
+		return(NOK);
+	}
+
+	if(atoi(buf) != PROT_COD_LOGIN){
+		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_LOGIN [%d] expected!\n", buf, PROT_COD_LOGIN);
+		return(NOK);
+	}
+
+	/* Getting the OK or ERRO indicator */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get OK/ERRO indicator)!\n");
+		return(NOK);
+	}
+
+	ret = OK;
+	if(strncpy(buf, "ERRO", 4) != 0){
+		logWrite(log, LOGOPALERT, "\n");
+		ret = NOK;
+	}
+
+	/* Getting the server message */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get MESSAGE)!\n");
+		return(NOK);
+	}
+
+	logWrite(log, LOGDEV, "Server login message: [%s].\n", buf);
+
+	return(ret);
 }
 
 /* int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
@@ -88,11 +132,11 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Sending user validation */
-	/* <SZ 4 BYTES>COD|DRT|DATAHORA|FUNCAO|PASSHASH */
+	/* <SZ 4 BYTES (BINARY)>COD|DRT|DATAHORA|FUNCAO|PASSHASH */
 	msgHostOderSz = srSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
 	msgNetOrderSz = htonl(msgHostOderSz);
-	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size. 4 bytes at the begin */
+	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
 		srRet += send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
@@ -108,6 +152,11 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Receiving user validation response */
+	/* <SZ 4 BYTES (BINARY)>COD|OK/ERRO|Message
+	 * Samples (without 4 bytes BINARY at the beginning):
+	1|OK|User registred into database!
+	1|ERRO|User/funcion/password didnt find into database!
+	*/
 
 	recv(sockfd, &msgNetOrderSz, 4, 0);
 	msgHostOderSz = ntohl(msgNetOrderSz);
