@@ -174,6 +174,11 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 			logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt);
 			return(NOK);
 		}
+
+		if(srRet == 0){
+			logWrite(log, LOGOPALERT, "ERRO: Connection close unexpected!\n");
+			return(NOK);
+		}
 	}
 
 	if(validatingLoginServerResponse(lineToSend) == NOK)

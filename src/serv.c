@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
 				recv(connfd, &msgNetOrderSz, 4, 0);
 				msgHostOderSz = ntohl(msgNetOrderSz);
 
-				logWrite(&log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO */
+				logWrite(&log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO: ver SG_sendLogin() */
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
