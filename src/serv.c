@@ -257,19 +257,19 @@ int parsingLogin(char *msg, userIdent_t *userSession)
  * INPUT:
  *  connfd - 
  *  ProtCode - 
- *  data - 
- *  szData = 
+ *  data - NULL TERMINATED!!
  * OUTPUT:
  *  OK - Sent ok
  *  NOK - Didnt send
  */
-int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
+int sendClientResponse(int connfd, int ProtCode, void *data/*, size_t szData*/)
 {
 	char msg[MAXLINE + 1] = {'\0'};
+	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	switch(ProtCode){
 		case PROT_COD_LOGIN:
-			snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
 			break;
 
 		case PROT_COD_LOGOUT:
@@ -279,9 +279,12 @@ int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 			return(NOK);
 	}
 
-	logWrite(&log, LOGDEV, "Sending response to client: [%s].\n", msg);
+	msgNetOrderSz = htonl(msgHostOderSz);
+	send(connfd, &msgNetOrderSz, 4, 0); /* Sending the message size. 4 bytes at the begin */
 
-	if(send(connfd, msg, strlen(msg), 0) == -1){
+	logWrite(&log, LOGDEV, "Sending response to client: [%s][%li].\n", msg, msgHostOderSz);
+
+	if(send(connfd, msg, msgHostOderSz, 0) == -1){
 		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
 		return(NOK);
 	}
@@ -315,6 +318,7 @@ int main(int argc, char *argv[])
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
 	userIdent_t userSession = {0};
+	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	if(argc != 4){
 		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
@@ -418,7 +422,13 @@ int main(int argc, char *argv[])
 			while(1){
 				memset(msg,    '\0', sizeof(msg)   );
 				memset(msgCod, '\0', sizeof(msgCod));
-				/*szCod = 0;*/
+				msgNetOrderSz = 0; msgHostOderSz = 0;
+
+				/* Reading the message size (4bytes) */
+				recv(connfd, &msgNetOrderSz, 4, 0);
+				msgHostOderSz = ntohl(msgNetOrderSz);
+
+				logWrite(&log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO */
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
@@ -466,7 +476,7 @@ int main(int argc, char *argv[])
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 							logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
-							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient));
+							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/);
 
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
@@ -481,7 +491,7 @@ int main(int argc, char *argv[])
 
 							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -498,7 +508,7 @@ int main(int argc, char *argv[])
 
 							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient, strlen(loginErrorMsgToClient)) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
