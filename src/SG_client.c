@@ -168,17 +168,15 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	srSz = msgHostOderSz;
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
+		if((srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0)) == 0){
+			logWrite(log, LOGOPALERT, "ERRO: Connection close unexpected!\n");
+			return(NOK);
+		}
 
 		logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", lineToSend, srRet);
 
 		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt);
-			return(NOK);
-		}
-
-		if(srRet == 0){
-			logWrite(log, LOGOPALERT, "ERRO: Connection close unexpected!\n");
 			return(NOK);
 		}
 	}

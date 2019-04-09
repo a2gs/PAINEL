@@ -71,14 +71,10 @@ int sendToNet(int sockfd, char *msg, int prot_code)
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
 		srRet += send(sockfd, &netBuff[srRet], srSz - srRet, 0);
 
-		/*
-		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, netBuff, srRet);
-		*/
+		/* logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, netBuff, srRet); */
 
 		if(srRet == -1){
-			/*
-			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
-			*/
+			/* logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt); */
 			return(NOK);
 		}
 	}
@@ -86,8 +82,48 @@ int sendToNet(int sockfd, char *msg, int prot_code)
 	return(OK);
 }
 
-int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *recvSz)
+/*
+retornando (NOK && recvError == 0): recv erro. Connection close unexpected!
+retornando (NOK && recvError != 0): recv erro. recvError mesmo valor de errno
+retornando (OK): 
+*/
+int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *recvSz, int *recvError)
 {
+	ssize_t srRet = 0;
+	size_t srSz = 0;
+	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+
+	memset(netBuff, '\0', MAXLINE + 1);
+
+	*recvError = 0;
+
+	/* Receiving user validation response */
+	/* <SZ 4 BYTES (BINARY)>COD|OK/ERRO|Message
+	* Samples (without 4 bytes BINARY at the beginning):
+	 1|OK|User registred into database!
+	 1|ERRO|User/funcion/password didnt find into database!
+	*/
+
+	recv(sockfd, &msgNetOrderSz, 4, 0);
+	msgHostOderSz = ntohl(msgNetOrderSz);
+	/* logWrite(log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); */
+
+	srSz = msgHostOderSz;
+
+	for(srRet = 0; srRet < (ssize_t)srSz; ){
+		if((srRet += recv(sockfd, &netBuff[srRet], MAXLINE, 0)) == 0){
+			return(NOK);
+		}
+
+		/* logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", netBuff, srRet); */
+
+		if(srRet == -1){
+			/* logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt); */
+			*recvError = errno;
+			return(NOK);
+		}
+	}
+
 	return(OK);
 }
 
