@@ -98,7 +98,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 
 	/* Receiving user validation response */
 
-	for(srSz = 0; srRet == 0; srSz += srRet){
+	for(srSz = 0, srRet = - 1; srRet == 0; srSz += srRet){
 		srRet = recv(sockfd, &lineToSend[srSz], MAXLINE, 0);
 
 		logWrite(log, LOGDEV, "Receiving from server: [%s] [%l]B.\n", lineToSend, srRet);
