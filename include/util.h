@@ -74,6 +74,10 @@ typedef struct _htmlFiles_t{
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
+
+int sendToNet(int sockfd, char *msg, int prot_code);
+int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *recvSz);
+
 /* char * getPAINELEnvHomeVar(void)
  *
  * Return a poiter to PAINEL_HOME enviroument variable.

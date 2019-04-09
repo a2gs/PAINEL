@@ -34,6 +34,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+
+#include <stdint.h>
+
+
+
 #include "util.h"
 #include "db.h"
 #include "SG_serv.h"

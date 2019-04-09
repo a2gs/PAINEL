@@ -30,6 +30,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+
+
 #include "util.h"
 
 #include "log.h"
@@ -40,12 +48,49 @@
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+static char netBuff[MAXLINE + 1] = {0};
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int sendToNet(int sockfd, char *msg, int prot_code)
+{
+	ssize_t srRet = 0;
+	size_t srSz = 0;
+	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+
+	memset(netBuff, '\0', MAXLINE + 1);
+
+	msgHostOderSz = srSz = snprintf(netBuff, MAXLINE, "%d|%s", PROT_COD_LOGIN, msg);
+
+	msgNetOrderSz = htonl(msgHostOderSz);
+	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+
+	for(srRet = 0; srRet < (ssize_t)srSz; ){
+		srRet += send(sockfd, &netBuff[srRet], srSz - srRet, 0);
+
+		/*
+		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, netBuff, srRet);
+		*/
+
+		if(srRet == -1){
+			/*
+			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
+			*/
+			return(NOK);
+		}
+	}
+
+	return(OK);
+}
+
+int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *recvSz)
+{
+	return(OK);
+}
+
 char * getPAINELEnvHomeVar(void)
 {
 	return(getenv(PAINEL_HOME_ENV));
