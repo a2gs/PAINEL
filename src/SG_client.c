@@ -61,6 +61,11 @@ void getLogSystem(log_t *logClient)
 	return;
 }
 
+int validatingLoginServerResponse()
+{
+	return(OK);
+}
+
 /* int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
  *
  * Formats the outgoing login message.
@@ -121,6 +126,9 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 			return(NOK);
 		}
 	}
+
+	if(validatingLoginServerResponse(lineToSend) == NOK)
+		return(NOK);
 
 	return(OK);
 }
