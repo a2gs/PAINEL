@@ -210,43 +210,6 @@ int parsingLogin(char *msg, userIdent_t *userSession)
 	cutter(&p, '|', userSession->passhash, PASS_SHA256_LEN);
 
 	return(OK);
-
-#if 0
-	char *c1 = NULL;
-	char *c2 = NULL;
-	size_t fieldSz = 0;
-
-	memset(userSession, 0, sizeof(userIdent_t));
-
-	/* <COD|> DRT|DATAHORA|FUNCAO|PASSHASH */
-	c1 = c2 = msg;
-
-	/* DRT */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession->username, c1, ((fieldSz < sizeof(userSession->username)) ? fieldSz : sizeof(userSession->username)-1));
-	c1 = c2+1;
-
-	/* DATAHORA */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession->dateTime, c1, ((fieldSz < sizeof(userSession->dateTime)) ? fieldSz : sizeof(userSession->dateTime)-1));
-	c1 = c2+1;
-
-	/* FUNCAO */
-	c2 = strchr(c1, '|');
-	if(c2 == NULL) return(NOK);
-	fieldSz = (size_t) (c2-c1);
-	strncpy(userSession->level, c1, ((fieldSz < sizeof(userSession->level)) ? fieldSz : sizeof(userSession->level)-1));
-	c1 = c2+1;
-
-	/* PASSHASH */
-	strncpy(userSession->passhash, c1, sizeof(userSession->passhash)-1);
-
-	return(OK);
-#endif
 }
 
 
@@ -449,20 +412,6 @@ int main(int argc, char *argv[])
 				/* Capturando o CODIGO da mensagem */
 				msgP = msg;
 				cutter(&msgP, '|', msgCod, PROT_CODE_LEN);
-
-				/*
-				endLine = strchr(msg, '|');
-				if(endLine != NULL){
-					if(endLine-msg < PROT_CODE_LEN) szCod = endLine-msg;
-					else                            szCod = PROT_CODE_LEN;
-
-					strncpy(msgCod, msg, szCod);
-					msgCod[szCod] = '\0';
-				}else{
-					logWrite(&log, LOGOPALERT, "Mensagem de codigo nao reconhecido! [%s].\n", msg);
-					continue;
-				}
-				*/
 
 				switch(atoi(msgCod)){
 

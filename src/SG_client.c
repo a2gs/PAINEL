@@ -561,10 +561,6 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 		if(fgets(line, LINE_DRT_FILE_LEN, fDRT) == NULL) break;
 
 		changeCharByChar(line, '\n', '\0');
-		/*
-		c = strchr(line, '\n');
-		if(c != NULL) *c = '\0';
-		*/
 
 		c = strchr(line, '-');
 		if(c == NULL) continue; /* linha mal formatada, sem '-' */
@@ -616,12 +612,8 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 		printf("Digite sua DRT ('%s' para sair): ", LOGOUT_CMD);
 		fgets(drt, DRT_LEN, stdin);
 
-
 		changeCharByChar(drt, '\n', '\0');
-		/*
-		c = strchr(drt, '\n');
-		if(c != NULL) *c = '\0';
-		*/
+
 	}while(drt[0] == '\0');
 
 	if(strncmp(drt, LOGOUT_CMD, sizeof(LOGOUT_CMD)-1) == 0){
@@ -636,10 +628,6 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	fgets(pass, PASS_LEN, stdin);
 
 	changeCharByChar(pass, '\n', '\0');
-	/*
-	c = strchr(pass, '\n');
-	if(c != NULL) *c = '\0';
-	*/
 
 	/* HASH PASS */
 	calc_sha_256(hash, pass, strlen(pass));
