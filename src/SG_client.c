@@ -86,7 +86,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
 		srRet += send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
 
-		logWrite(log, LOGDEV, "Sending to server: [%*s] [%l]B.\n", srRet, &lineToSend[srRet], srRet);
+		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, lineToSend, srRet);
 
 		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);

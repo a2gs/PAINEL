@@ -55,7 +55,7 @@ int dbSelect(char *sqlCmd, int (*callback)(void *,int ,char **,char **), void *a
 
 	rc = sqlite3_exec(db, sqlCmd, callback, argCallback, &err_msg);
 
-	logWrite(log, LOGDEV, "dbSelect SQL rc = [%d]\n", rc);
+	logWrite(log, LOGDEV, "dbSelect SQL rc = [%s]\n", (rc == 0) ? "OK" : "ERROR");
 
 	if(rc != SQLITE_OK){
 

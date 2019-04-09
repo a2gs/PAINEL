@@ -279,6 +279,8 @@ int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
 			return(NOK);
 	}
 
+	logWrite(&log, LOGDEV, "Sending response to client: [%s].\n", msg);
+
 	if(send(connfd, msg, strlen(msg), 0) == -1){
 		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
 		return(NOK);
