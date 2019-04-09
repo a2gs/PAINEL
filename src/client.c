@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 
 		SG_clientScreen(sockfd, id, level, usrType);
 
-		SG_sendExit(sockfd, id, level);
+		SG_sendLogoutExit(sockfd, id, level);
 	}
 
 	shutdown(sockfd, SHUT_RDWR);

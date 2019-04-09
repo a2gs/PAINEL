@@ -91,7 +91,7 @@ typedef struct _supMaquina_t{
  */
 void getLogSystem(log_t *logClient);
 
-/* int SG_sendExit(int socket, char *drt, char *funcao)
+/* int SG_sendLogoutExit(int socket, char *drt, char *funcao)
  *
  * Send logoff message to server.
  *
@@ -103,7 +103,7 @@ void getLogSystem(log_t *logClient);
  *  OK - Ok
  *  NOK - Error sending (send(2))
  */
-int SG_sendExit(int socket, char *drt, char *funcao);
+int SG_sendLogoutExit(int socket, char *drt, char *funcao);
 
 /* int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao)
  *

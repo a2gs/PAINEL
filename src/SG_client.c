@@ -182,7 +182,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	return(OK);
 }
 
-int SG_sendExit(int sockfd, char *drt, char *funcao)
+int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 {
 	memset(lineToSend, '\0', MAXLINE);
 
