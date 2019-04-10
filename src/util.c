@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <string.h>
 #include <errno.h>
@@ -29,14 +30,8 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-
-#include <stdint.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-
 
 #include "util.h"
 
@@ -55,7 +50,7 @@ static char netBuff[MAXLINE + 1] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int sendToNet(int sockfd, char *msg, int prot_code)
+int sendToNet(int sockfd, char *msg/*, int prot_code*/, size_t msgSz) /* TODO: receber size_t * indicando o quanto foi enviado */
 {
 	ssize_t srRet = 0;
 	size_t srSz = 0;
@@ -63,7 +58,8 @@ int sendToNet(int sockfd, char *msg, int prot_code)
 
 	memset(netBuff, '\0', MAXLINE + 1);
 
-	msgHostOderSz = srSz = snprintf(netBuff, MAXLINE, "%d|%s", PROT_COD_LOGIN, msg);
+	/*msgHostOderSz = srSz = snprintf(netBuff, MAXLINE, "%d|%s", PROT_COD_LOGIN, msg);*/
+	msgHostOderSz = srSz = msgSz;
 
 	msgNetOrderSz = htonl(msgHostOderSz);
 	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
@@ -87,18 +83,22 @@ retornando (NOK && recvError == 0): recv erro: Connection close unexpected!
 retornando (NOK && recvError != 0): recv erro. recvError mesmo valor de errno
 retornando (OK): 
 */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *recvSz, int *recvError)
+int recvFromNet(int sockfd, char *msg, size_t msgSz, /*int *prot_code,*/ size_t *recvSz, int *recvError)
 {
 	ssize_t srRet = 0;
 	size_t srSz = 0;
+	size_t lessSz = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	memset(netBuff, '\0', MAXLINE + 1);
+	memset(msg, '\0', msgSz);
 
 	*recvError = 0;
+	*recvSz = 0;
+	/* *prot_code = 0; */
 
 	/* Receiving user validation response */
-	/* <SZ 4 BYTES (BINARY)>COD|OK/ERRO|Message
+	/* --- <SZ 4 BYTES (BINARY)>COD|OK/ERRO|Message
 	* Samples (without 4 bytes BINARY at the beginning):
 	 1|OK|User registred into database!
 	 1|ERRO|User/funcion/password didnt find into database!
@@ -106,23 +106,39 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, int *prot_code, size_t *rec
 
 	recv(sockfd, &msgNetOrderSz, 4, 0);
 	msgHostOderSz = ntohl(msgNetOrderSz);
-	/* logWrite(log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); */
+	/* --- logWrite(log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); */
 
-	srSz = msgHostOderSz;
+	/* What is smallest? MAXLINE (network buffer), msgSz (user msg buffer) or size sent into protocol? */
+	lessSz = ((MAXLINE < msgSz) ? (MAXLINE < msgHostOderSz ? MAXLINE : msgSz) : (msgSz < msgHostOderSz ? msgSz : msgSz));
+
+
+	/* lessSz MUST BE the smallest size inside msg. If there will be more data (msgHostOderSz - lessSz), netBuff will be
+	 * copied to msg and the rest os bytes into socket will be burned!
+	 */
+
+	srSz = lessSz;
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
 		if((srRet += recv(sockfd, &netBuff[srRet], MAXLINE, 0)) == 0){
 			return(NOK);
 		}
 
-		/* logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", netBuff, srRet); */
+		/* --- logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", netBuff, srRet); */
 
 		if(srRet == -1){
-			/* logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt); */
+			/* --- logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt); */
 			*recvError = errno;
 			return(NOK);
 		}
 	}
+
+	*recvSz = msgHostOderSz;
+
+	memcpy(msg, netBuff, lessSz); /* Coping the safe amount of data (the rest will the burned) */
+
+	srSz = msgHostOderSz - lessSz;
+	if(srSz > 0)
+		recv(sockfd, netBuff, MAXLINE, 0);
 
 	return(OK);
 }
@@ -164,7 +180,7 @@ inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
 	return(tam);
 }
 
-char * time_DDMMYYhhmmss(void)
+inline char * time_DDMMYYhhmmss(void)
 {
 	static char segmil[DATA_LEN + 1] = {'\0'};
 	time_t rawtime;
