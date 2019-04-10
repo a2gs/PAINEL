@@ -104,132 +104,132 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 	cutter(&p, '|', data->drt, DRT_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui1\n");
+	logWrite(log, LOGDEV, "aqui1 [%s]\n", data->drt);
 
 	/* DATAHORA */
 	cutter(&p, '|', data->data, DATA_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui2\n");
+	logWrite(log, LOGDEV, "aqui2 [%s]\n", data->data);
 
 	/* LOGINOUT */
 	cutter(&p, '|', data->loginout, 1);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui3\n");
+	logWrite(log, LOGDEV, "aqui3 [%s]\n", data->loginout);
 
 	/* FUNCAO */
 	cutter(&p, '|', data->funcao, VALOR_FUNCAO_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui4\n");
+	logWrite(log, LOGDEV, "aqui4 [%s]\n", data->funcao);
 
 	/* PANELA */
 	cutter(&p, '|', data->panela, FORNELET_PAMELA_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui5\n");
+	logWrite(log, LOGDEV, "aqui5 [%s]\n", data->panela);
 
 	/* WS */
 	cutter(&p, '|', data->ws, OPEMAQ_WS_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui6\n");
+	logWrite(log, LOGDEV, "aqui6 [%s]\n", data->ws);
 
 	/* FORNELETR */
 	cutter(&p, '|', data->fornEletr, FORNELET_NUMFORELE_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui7\n");
+	logWrite(log, LOGDEV, "aqui7 [%s]\n", data->fornEletr);
 
 	/* NUMMAQUINA */
 	cutter(&p, '|', data->numMaquina, OPEMAQ_NUMMAQ_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui8\n");
+	logWrite(log, LOGDEV, "aqui8 [%s]\n", data->numMaquina);
 
 	/* DIAMETRO */
 	cutter(&p, '|', data->diamNom, OPEMAQ_DIAMNOM_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui9\n");
+	logWrite(log, LOGDEV, "aqui9 [%s]\n", data->diamNom);
 
 	/* CLASSE */
 	cutter(&p, '|', data->classe, OPEMAQ_CLASSE_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui10\n");
+	logWrite(log, LOGDEV, "aqui10 [%s]\n", data->classe);
 
 	/* TEMP */
 	cutter(&p, '|', data->temp, OPEMAQ_TEMP_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui11\n");
+	logWrite(log, LOGDEV, "aqui11 [%s]\n", data->temp);
 
 	/* PERCFESI */
 	cutter(&p, '|', data->percFeSi, OPEMAQ_PERC_FESI_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui12\n");
+	logWrite(log, LOGDEV, "aqui12 [%s]\n", data->percFeSi);
 
 	/* PERCMG */
 	cutter(&p, '|', data->percMg, FORNELET_PERC_MG_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui13\n");
+	logWrite(log, LOGDEV, "aqui13 [%s]\n", data->percMg);
 
 	/* PERCC */
 	cutter(&p, '|', data->percC, FORNELET_PERC_C_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui14\n");
+	logWrite(log, LOGDEV, "aqui14 [%s]\n", data->percC);
 
 	/* PERCS */
 	cutter(&p, '|', data->percS, FORNELET_PERC_S_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui15\n");
+	logWrite(log, LOGDEV, "aqui15 [%s]\n", data->percS);
 
 	/* PERCP */
 	cutter(&p, '|', data->percP, FORNELET_PERC_P_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui16\n");
+	logWrite(log, LOGDEV, "aqui16 [%s]\n", data->percP);
 
 	/* PERCINOCLNT */
 	cutter(&p, '|', data->percInoculante, OPEMAQ_PERC_INOC_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui17\n");
+	logWrite(log, LOGDEV, "aqui17 [%s]\n", data->percInoculante);
 
 	/* ENELETTON */
 	cutter(&p, '|', data->enerEletTon, OPEMAQ_ENEELETON_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui18\n");
+	logWrite(log, LOGDEV, "aqui18 [%s]\n", data->enerEletTon);
 
 	/* CADENCIA */
 	cutter(&p, '|', data->cadencia, SUPMAQ_CADENCIA);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui19\n");
+	logWrite(log, LOGDEV, "aqui19 [%s]\n", data->cadencia);
 
 	/* OEE */
 	cutter(&p, '|', data->oee, SUPMAQ_OEE);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui20\n");
+	logWrite(log, LOGDEV, "aqui20 [%s]\n", data->oee);
 
 	/* ASPECTUBO */
 	cutter(&p, '|', data->aspecto, SUPMAQ_ASPEC_LEN);
 	if(*p == '\0') return(NOK);
 
-	logWrite(log, LOGDEV, "aqui21\n");
+	logWrite(log, LOGDEV, "aqui21 [%s]\n", data->aspecto);
 
 	/* REFUGO (ultimo) */
 	cutter(&p, '|', data->refugo, SUPMAG_REFUGO_LEN);
 
-	logWrite(log, LOGDEV, "aqui22\n");
+	logWrite(log, LOGDEV, "aqui22 [%s]\n", data->refugo);
 
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
