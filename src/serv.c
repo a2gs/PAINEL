@@ -410,11 +410,13 @@ int main(int argc, char *argv[])
 				msgP = strrchr(msg, '\n');
 				if(msgP != NULL) (*msgP) = '\0';
 
-				logWrite(&log, LOGDEV, "Msg from [%s:%d]: [%s] [%lu]B.\n", clientFrom, portFrom, msg, msgHostOderSz);
+				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%s] [%lu]B.\n", clientFrom, portFrom, msg, msgHostOderSz);
 
 				/* Capturando o CODIGO da mensagem */
 				msgP = msg;
 				cutter(&msgP, '|', msgCod, PROT_CODE_LEN);
+
+				logWrite(&log, LOGDEV, "Msg code: [%s] msgP: [%s]\n", msgCod, msgP);
 
 				switch(atoi(msgCod)){
 
@@ -493,7 +495,7 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == NOK){
-							logWrite(&log, LOGOPALERT, "PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
+							logWrite(&log, LOGOPALERT, "PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP); /* TODO: melhorar mensagem */
 							continue;
 						}else{
 							if(SG_db_inserting(&msgCleaned) == NOK){
