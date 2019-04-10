@@ -127,7 +127,7 @@ int validatingLoginServerResponse(char *servResp)
  */
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
-	ssize_t srRet = 0;
+	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
@@ -141,14 +141,15 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRet += send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
-
-		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, lineToSend, srRet);
-
+		srRetAux = send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
 		if(srRet == -1){
 			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
 			return(NOK);
 		}
+
+		srRet += srRetAux;
+
+		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, lineToSend, srRet);
 	}
 
 	memset(lineToSend, '\0', MAXLINE + 1);
@@ -168,10 +169,12 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	srSz = msgHostOderSz;
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		if((srRet += recv(sockfd, &lineToSend[srRet], MAXLINE, 0)) == 0){
+		srRetAux = recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
+		if(srRetAux == 0){
 			logWrite(log, LOGOPALERT, "ERRO: Connection close unexpected!\n");
 			return(NOK);
 		}
+		srRet += srRetAux;
 
 		logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", lineToSend, srRet);
 
@@ -288,17 +291,28 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 		}while(confirmaEnvio[0] != 's' && confirmaEnvio[0] != 'S' && confirmaEnvio[0] != 'n' && confirmaEnvio[0] != 'N');
 
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
-			memset(lineToSend, '\0', MAXLINE);
-			/* COD|DRT|DATAHORA||FUNCAO|PANELA||FORNELETR||||TEMP|PERCFESI|PERCMG||PERCS||||||| */
-			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s||%s||||%s|%s|%s||%s|||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_FORNOELETRICO, fornElet.panela, fornElet.fornEletr, fornElet.temp, fornElet.percFeSi, fornElet.percMg, fornElet.percS);
+			size_t msgSz = 0;
 
-			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
+			memset(lineToSend, '\0', MAXLINE);
+
+			/* COD|DRT|DATAHORA||FUNCAO|PANELA||FORNELETR||||TEMP|PERCFESI|PERCMG||PERCS||||||| */
+			msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s||%s||||%s|%s|%s||%s|||||||", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_FORNOELETRICO, fornElet.panela, fornElet.fornEletr, fornElet.temp, fornElet.percFeSi, fornElet.percMg, fornElet.percS);
+
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
+
+			if(sendToNet(socket, lineToSend, msgSz) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
+				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
+			}
 							 
+			/*
 			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 				break;
 			}
+			*/
+
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
 	}

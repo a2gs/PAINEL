@@ -394,9 +394,7 @@ int main(int argc, char *argv[])
 
 				/* Reading the message size (4bytes) */
 				recv(connfd, &msgNetOrderSz, 4, 0);
-				msgHostOderSz = ntohl(msgNetOrderSz);
-
-				logWrite(&log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO: ver SG_sendLogin() */
+				msgHostOderSz = ntohl(msgNetOrderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO: ver SG_sendLogin() */
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
@@ -412,7 +410,7 @@ int main(int argc, char *argv[])
 				msgP = strrchr(msg, '\n');
 				if(msgP != NULL) (*msgP) = '\0';
 
-				logWrite(&log, LOGDEV, "Msg from [%s:%d]: [%s].\n", clientFrom, portFrom, msg);
+				logWrite(&log, LOGDEV, "Msg from [%s:%d]: [%s] [%lu]B.\n", clientFrom, portFrom, msg, msgHostOderSz);
 
 				/* Capturando o CODIGO da mensagem */
 				msgP = msg;
