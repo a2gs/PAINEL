@@ -438,16 +438,19 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 		}while(confirmaEnvio[0] != 's' && confirmaEnvio[0] != 'S' && confirmaEnvio[0] != 'n' && confirmaEnvio[0] != 'N');
 
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
+			size_t msgSz = 0;
+
 			memset(lineToSend, '\0', MAXLINE);
+
 			/* COD|DRT|DATAHORA||FUNCAO|PANELA|WS||NUMMAQUINA|||TEMP|PERCFESI|||||INOCULANTE||||ASPECTUBO| */
-			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s|%s||%s|||%s|%s|||||%s||||%s|", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_OPERMAQUINA, operMaquina.panela, operMaquina.ws, operMaquina.numMaquina, operMaquina.temp, operMaquina.percFeSi, operMaquina.percInoculante, operMaquina.aspecto);
+			msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|%s|%s||%s|||%s|%s|||||%s||||%s|", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_OPERMAQUINA, operMaquina.panela, operMaquina.ws, operMaquina.numMaquina, operMaquina.temp, operMaquina.percFeSi, operMaquina.percInoculante, operMaquina.aspecto);
 
-			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
+			if(sendToNet(socket, lineToSend, msgSz) == NOK){
+			/*if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){*/
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
-				break;
 			}  
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
@@ -507,16 +510,19 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 		}while(confirmaEnvio[0] != 's' && confirmaEnvio[0] != 'S' && confirmaEnvio[0] != 'n' && confirmaEnvio[0] != 'N');
 
 		if(confirmaEnvio[0] == 's' || confirmaEnvio[0] == 'S'){
+			size_t msgSz = 0;
+
 			memset(lineToSend, '\0', MAXLINE);
+
 			/* COD|DRT|DATAHORA||FUNCAO|||||||||||||||CADENCIA|OEE|ASPECTUBO|REFUGO */
-			snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|||||||||||||||%s|%s|%s|%s", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_SUPMAQUINA, supMaquina.cadencia, supMaquina.oee, supMaquina.aspecto, supMaquina.refugo);
+			msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s||%s|||||||||||||||%s|%s|%s|%s", PROT_COD_INSREG, drt, time_DDMMYYhhmmss(), STR_SUPMAQUINA, supMaquina.cadencia, supMaquina.oee, supMaquina.aspecto, supMaquina.refugo);
 
-			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada.\n", lineToSend);
+			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
+			if(sendToNet(socket, lineToSend, msgSz) == NOK){
+			/*if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){*/
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
-				break;
 			}  
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
