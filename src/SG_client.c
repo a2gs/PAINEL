@@ -20,22 +20,14 @@
 
 /* *** INCLUDES ************************************************************************ */
 #include <stdio.h>
-#include <stdint.h>
+#include <stdint.h> /* TODO: quando sendLogin() usar sendToNet() e recvFromNet(), este include pode ser removido */
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-
-
-
-
-#include <stdint.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-
-
 
 #include "util.h"
 #include "client.h"
@@ -304,15 +296,6 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 			}
-							 
-			/*
-			if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){
-				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
-				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
-				break;
-			}
-			*/
-
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
 	}
@@ -448,7 +431,6 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
 			if(sendToNet(socket, lineToSend, msgSz) == NOK){
-			/*if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){*/
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 			}  
@@ -520,7 +502,6 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
 			if(sendToNet(socket, lineToSend, msgSz) == NOK){
-			/*if(send(socket, lineToSend, strlen(lineToSend), 0) == -1){*/
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
 			}  

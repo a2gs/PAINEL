@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+/*#include <stdint.h>*/
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
@@ -33,11 +34,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-
-#include <stdint.h>
-
-
 
 #include "util.h"
 #include "db.h"
