@@ -417,8 +417,6 @@ int main(int argc, char *argv[])
 				switch(atoi(msgCod)){
 
 					case PROT_COD_LOGIN:
-
-						/*if(parsingLogin(&msg[szCod + 1], &userSession) == NOK){*/
 						if(parsingLogin(msgP, &userSession) == NOK){
 							/* Bad formmated protocol */
 							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
@@ -441,7 +439,7 @@ int main(int argc, char *argv[])
 
 							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -458,7 +456,7 @@ int main(int argc, char *argv[])
 
 							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
