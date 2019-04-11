@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 							logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
-							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient/*, strlen(loginErrorMsgToClient)*/);
+							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient);
 
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
