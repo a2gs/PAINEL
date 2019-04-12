@@ -452,9 +452,20 @@ int main(int argc, char *argv[])
 							}
 
 						}else{
-							char *loginErrorMsgToClient = "OK|User registred into database!";
+							char *loginErrorMsgToClient = NULL;
 
 							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
+
+							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+
+							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+
+							if(SG_db_inserting(&msgCleaned) == NOK){
+								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
+								loginErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED INTO DATABASE (server insert error)!";
+							}else{
+								loginErrorMsgToClient = "OK|User registred into database!";
+							}
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
@@ -467,22 +478,37 @@ int main(int argc, char *argv[])
 
 								return(-11);
 							}
-
-							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
-
-							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
-
-							if(SG_db_inserting(&msgCleaned) == NOK){
-								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
-							}
 						}
 						break;
 
 					case PROT_COD_LOGOUT:
-						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
-						/* TODO: IMPLEMENTAR ESTE COMANDO */
 
-						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
+
+
+
+						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+
+						SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+
+						if(SG_db_inserting(&msgCleaned) == NOK){
+							logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
+						}
+
+
+						if(sendClientResponse(connfd, PROT_COD_LOGIN, "") == NOK){
+							logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
+							logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
+							dbClose();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+							logClose(&log);
+
+							return(-11);
+						}
+
+
+
 						break;
 
 					case PROT_COD_INSREG:
