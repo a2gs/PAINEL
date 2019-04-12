@@ -255,7 +255,7 @@ int parsingLogin(char *msg, userIdent_t *userSession)
  *  OK - Sent ok
  *  NOK - Didnt send
  */
-int sendClientResponse(int connfd, int ProtCode, void *data/*, size_t szData*/)
+int sendClientResponse(int connfd, int ProtCode, void *data)
 {
 	char msg[MAXLINE + 1] = {'\0'};
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
@@ -266,6 +266,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data/*, size_t szData*/)
 			break;
 
 		case PROT_COD_LOGOUT:
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGOUT, (char *)data);
 			break;
 
 		default:
