@@ -492,9 +492,9 @@ int main(int argc, char *argv[])
 
 							if(SG_db_inserting(&msgCleaned) == NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
-								loginErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED INTO DATABASE (server insert error)!";
+								loginErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED LOGIN INTO DATABASE (server insert error)!";
 							}else{
-								loginErrorMsgToClient = "OK|User registred into database!";
+								loginErrorMsgToClient = "OK|User registred login into database!";
 							}
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
@@ -514,30 +514,47 @@ int main(int argc, char *argv[])
 					case PROT_COD_LOGOUT:
 
 						if(parsingLogout(msgP, &userSession) == NOK){
-						}
+							/* Bad formmated protocol */
+							char *logoutErrorMsgToClient = "ERRO|logout protocol is bad formatted!";
 
-						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
-
-						SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
-
-						if(SG_db_inserting(&msgCleaned) == NOK){
-							logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
-						}
-
-
-						if(sendClientResponse(connfd, PROT_COD_LOGIN, "") == NOK){
-							logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
+							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 							logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
+							sendClientResponse(connfd, PROT_COD_LOGOUT, logoutErrorMsgToClient);
 
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 							logClose(&log);
 
-							return(-11);
+							return(-9);
+
+						}else{
+							char *logoutErrorMsgToClient = NULL;
+
+							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+
+							SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+
+							if(SG_db_inserting(&msgCleaned) == NOK){
+								logWrite(&log, LOGDBALERT, "Error inserting user logout database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
+								logoutErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED LOGOUT INTO DATABASE (server insert error)!";
+							}else{
+								logoutErrorMsgToClient = "OK|User registered logout into database!";
+							}
+
+							if(sendClientResponse(connfd, PROT_COD_LOGOUT, logoutErrorMsgToClient) == NOK){
+								logWrite(&log, LOGOPALERT, "Problem sent logout success message! Disconnecting.\n");
+								logWrite(&log, LOGREDALERT, "Terminating application!\n");
+
+								dbClose();
+								shutdown(connfd, SHUT_RDWR);
+								close(connfd);
+								logClose(&log);
+
+								return(-11);
+							}
 						}
-
-
 
 						break;
 
