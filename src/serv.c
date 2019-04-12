@@ -181,6 +181,35 @@ pid_t daemonize(void)
 	return(getpid());
 }
 
+/* int parsingLogout(char *msg, userIdent_t *userSession)
+ *
+ * Parser the login message.
+ *
+ * INPUT:
+ * OUTPUT:
+ *  OK - Valid login
+ *  NOK - Not valid login
+ */
+int parsingLogout(char *msg, userIdent_t *userSession)
+{
+	char *p = NULL;
+
+	/* <COD|> DRT|DATAHORA|FUNCAO */
+	memset(userSession, 0, sizeof(userIdent_t));
+	p = msg;
+
+	/* DRT */
+	cutter(&p, '|', userSession->username, DRT_LEN);
+
+	/* DATAHORA */
+	cutter(&p, '|', userSession->dateTime, DATA_LEN);
+
+	/* FUNCAO */
+	cutter(&p, '|', userSession->level, VALOR_FUNCAO_LEN);
+
+	return(OK);
+}
+
 /* int parsingLogin(char *msg, userIdent_t *userSession)
  *
  * Parser the login message.
@@ -417,6 +446,7 @@ int main(int argc, char *argv[])
 				switch(atoi(msgCod)){
 
 					case PROT_COD_LOGIN:
+
 						if(parsingLogin(msgP, &userSession) == NOK){
 							/* Bad formmated protocol */
 							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
@@ -483,12 +513,12 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_LOGOUT:
 
-
-
+						if(parsingLogout(msgP, &userSession) == NOK){
+						}
 
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-						SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+						SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
 						if(SG_db_inserting(&msgCleaned) == NOK){
 							logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);

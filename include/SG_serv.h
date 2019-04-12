@@ -91,6 +91,23 @@ void getLogSystem(log_t *logServ);
  */
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data);
 
+/* int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+ *
+ * Parses the logout's message data.
+ *
+ * INPUT:
+ *  user - UserId (DRT)
+ *  func - User Level (office responsibility)
+ *  dateTime - Login date and time
+ *  ip - Client IP
+ *  port - Client PORT
+ * OUTPUT:
+ *  data - Message's data breakdown
+ *  OK - Ok
+ *  NOK - Parsing error
+ */
+int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
+
 /* int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
  *
  * Parses the login's message data.

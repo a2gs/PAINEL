@@ -74,6 +74,26 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 	return(OK);
 }
 
+int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+{
+	/* DRT */
+	strcpy(data->drt, user);
+
+	/* DATAHORA */
+	strcpy(data->data, dateTime);
+
+	/* FUNCAO */
+	strcpy(data->funcao, func);
+
+	/* LOGINOUT */
+	strncpy(data->loginout, "O", 1);
+
+	/* CLIENT IP/PORT */
+	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
+
+	return(OK);
+}
+
 int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
 {
 	/* DRT */
