@@ -242,12 +242,14 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 		return(NOK);
 	}
 
+	logWrite(log, LOGDEV, "Aguardando logout...\n");
 	memset(lineToSend, '\0', MAXLINE);
 	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
 		return(NOK);
 	}
 
+	logWrite(log, LOGDEV, "Validando logout.\n");
 	if(validatingLogoutServerResponse(lineToSend) == NOK){
 		logWrite(log, LOGDEV, "ERRO: server return erro at logout.\n");
 		return(NOK);
