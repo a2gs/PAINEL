@@ -228,7 +228,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 {
 	size_t msgSz = 0;
-	int recvError = 0;
+	int srError = 0;
 
 	memset(lineToSend, '\0', MAXLINE);
 
@@ -236,15 +236,15 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 	msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
 	logWrite(log, LOGDEV, "Enviando logout [%s] [%lu].\n", lineToSend, msgSz);
 
-	if(sendToNet(sockfd, lineToSend, msgSz) == NOK){
-		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
-		printf("ERRO no envio de exit motivo [%s]!\n", strerror(errno));
+	if(sendToNet(sockfd, lineToSend, msgSz, &srError) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
+		printf("ERRO no envio de exit motivo [%s]!\n", strerror(srError));
 		return(NOK);
 	}
 
 	memset(lineToSend, '\0', MAXLINE);
-	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &recvError) == NOK){
-		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
 		return(NOK);
 	}
 
@@ -259,6 +259,7 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 int SG_interfaceFornoEletrico(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
+	int srError = 0;
 	tipoPreenchimento_t retCampo = OK;
 	fornoElet_t fornElet = {
 		.perguntas = {"Porcentagem de FeSi (xxx,yy): ",
@@ -350,9 +351,9 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz) == NOK){
-				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(errno));
-				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(srError));
+				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
@@ -364,6 +365,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 int SG_interfaceOperadorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
+	int srError = 0;
 	tipoPreenchimento_t retCampo = OK;
 	operMaquina_t operMaquina = {
 		.perguntas = {"Porcentagem de FeSi (xxx,yy): ",
@@ -488,9 +490,9 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz) == NOK){
-				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
-				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
+				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}  
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
@@ -502,6 +504,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 int SG_interfaceSupervisorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
+	int srError = 0;
 	tipoPreenchimento_t retCampo = OK;
 	supMaquina_t supMaquina = {
 		.perguntas = {"Aspecto (200 texto): ",
@@ -559,9 +562,9 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz) == NOK){
-				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(errno));
-				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(errno));
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
+				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}  
 		}else
 			printf("REGISTRO NAO ENVIADO!\n");
