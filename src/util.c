@@ -99,7 +99,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	msgHostOderSz = ntohl(msgNetOrderSz);
 
 	/* What is smallest? MAXLINE (network buffer), msgSz (user msg buffer) or size sent into protocol? */
-	lessSz = ((MAXLINE < msgSz) ? (MAXLINE < msgHostOderSz ? MAXLINE : msgSz) : (msgSz < msgHostOderSz ? msgSz : msgSz));
+	lessSz = ((MAXLINE < msgSz) ? (MAXLINE < msgHostOderSz ? MAXLINE : msgHostOderSz) : (msgSz < msgHostOderSz ? msgSz : msgHostOderSz));
 
 	/* lessSz MUST BE the smallest size inside msg. If there will be more data (msgHostOderSz - lessSz), netBuff will be
 	 * copied to msg and the rest os bytes into socket will be burned!
