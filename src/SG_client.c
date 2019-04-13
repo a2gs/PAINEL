@@ -61,6 +61,49 @@ void getLogSystem(log_t *logClient)
 	return;
 }
 
+int validatingLogoutServerResponse(char *servResp)
+{
+	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
+	char *p = NULL;
+	int ret = 0;
+
+	p = servResp;
+
+	/* Getting the PROTO_CODE */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted LOGOUT protocol from server (cannt get PROTO_COD)!\n");
+		return(NOK);
+	}
+
+	if(atoi(buf) != PROT_COD_LOGOUT){
+		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_LOGOUT [%d] expected!\n", buf, PROT_COD_LOGIN);
+		return(NOK);
+	}
+
+	/* Getting the OK or ERRO indicator */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted LOGOUT protocol from server (cannt get OK/ERRO indicator)!\n");
+		return(NOK);
+	}
+
+	ret = OK;
+	if(strncmp(buf, "ERRO", 4) == 0){
+		logWrite(log, LOGOPALERT, "Server didn't register user logout!\n");
+		ret = NOK;
+	}
+
+	/* Getting the server message */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	logWrite(log, LOGDEV, "Server logout message: [%s].\n", buf);
+
+	return(ret);
+}
+
 int validatingLoginServerResponse(char *servResp)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
@@ -199,8 +242,14 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 		return(NOK);
 	}
 
+	memset(lineToSend, '\0', MAXLINE);
 	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &recvError) == NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
+		return(NOK);
+	}
+
+	if(validatingLogoutServerResponse(lineToSend) == NOK){
+		logWrite(log, LOGDEV, "ERRO: server return erro at logout.\n");
 		return(NOK);
 	}
 
