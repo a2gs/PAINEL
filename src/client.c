@@ -210,7 +210,9 @@ int main(int argc, char *argv[])
 
 		SG_clientScreen(sockfd, id, level, usrType);
 
-		SG_sendLogoutExit(sockfd, id, level);
+		if(SG_sendLogoutExit(sockfd, id, level) == NOK){
+			logWrite(&log, LOGOPALERT, "ERRO logout from server.\n");
+		}
 	}
 
 	shutdown(sockfd, SHUT_RDWR);

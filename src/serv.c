@@ -276,7 +276,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 	msgNetOrderSz = htonl(msgHostOderSz);
 	send(connfd, &msgNetOrderSz, 4, 0); /* Sending the message size. 4 bytes at the begin */
 
-	logWrite(&log, LOGDEV, "Sending response to client: [%s][%li].\n", msg, msgHostOderSz);
+	logWrite(&log, LOGDEV, "Sending response to client: [%s][%lu].\n", msg, msgHostOderSz);
 
 	if(send(connfd, msg, msgHostOderSz, 0) == -1){
 		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));

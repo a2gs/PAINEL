@@ -185,15 +185,22 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 {
 	size_t msgSz = 0;
+	int recvError = 0;
 
 	memset(lineToSend, '\0', MAXLINE);
 
 	/* COD|DRT|DATAHORA|FUNCAO */
 	msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
+	logWrite(log, LOGDEV, "Enviando logout [%s] [%lu].\n", lineToSend, msgSz);
 
 	if(sendToNet(sockfd, lineToSend, msgSz) == NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
 		printf("ERRO no envio de exit motivo [%s]!\n", strerror(errno));
+		return(NOK);
+	}
+
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &recvError) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(errno));
 		return(NOK);
 	}
 
