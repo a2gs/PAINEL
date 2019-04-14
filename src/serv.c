@@ -301,7 +301,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 int main(int argc, char *argv[])
 {
 	pid_t p = 0;
-	int listenfd = 0, connfd = 0, readRet = 0;
+	int listenfd = 0, connfd = 0/*, readRet = 0*/;
 	socklen_t len;
 	struct sockaddr_in servaddr, cliaddr;
 	char *msgP = NULL;
@@ -311,8 +311,10 @@ int main(int argc, char *argv[])
 	char clientFrom[200] = {'\0'};
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
+	size_t srSz = 0;
+	int recvError = 0;
 	userIdent_t userSession = {0};
-	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+	/* uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;*/
 
 	if(argc != 4){
 		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
@@ -416,11 +418,18 @@ int main(int argc, char *argv[])
 			while(1){
 				memset(msg,    '\0', sizeof(msg)   );
 				memset(msgCod, '\0', sizeof(msgCod));
-				msgNetOrderSz = 0; msgHostOderSz = 0;
+				srSz = 0; recvError = 0;
+				/* msgNetOrderSz = 0; msgHostOderSz = 0; */
+
+				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError) == NOK){
+					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
+					break;
+				}
 
 				/* Reading the message size (4bytes) */
+				/*
 				recv(connfd, &msgNetOrderSz, 4, 0);
-				msgHostOderSz = ntohl(msgNetOrderSz); /* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO: ver SG_sendLogin() */
+				msgHostOderSz = ntohl(msgNetOrderSz); -* TODO: UTILIZAR ESTE TAMANHO LOGO ABAIXO: ver SG_sendLogin() *-
 
 				readRet = recv(connfd, msg, MAXLINE, 0);
 				if(readRet == 0){
@@ -432,11 +441,14 @@ int main(int argc, char *argv[])
 					logWrite(&log, LOGOPALERT, "Erro recv(): [%s].\n", strerror(errno));
 					break;
 				}
+				*/
 
+				/*
 				msgP = strrchr(msg, '\n');
 				if(msgP != NULL) (*msgP) = '\0';
+				*/
 
-				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%s] [%lu]B.\n", clientFrom, portFrom, msg, msgHostOderSz);
+				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%s] [%lu]B.\n", clientFrom, portFrom, msg, srSz);
 
 				/* Capturando o CODIGO da mensagem */
 				msgP = msg;
