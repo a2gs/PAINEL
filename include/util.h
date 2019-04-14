@@ -75,7 +75,35 @@ typedef struct _htmlFiles_t{
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError);
+/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError)
+ *
+ * PAINEL Oficial network send. It adds 4 bytes (binary) in front of msg.
+ *
+ * INPUT:
+ *  sockfd - 
+ *  msg - 
+ *  msgSz - 
+ * OUTPUT:
+ *  sendError - send(2) errno
+ *  OK - 
+ *  NOK - 
+ */
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError);
+
+/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError)
+ *
+ * PAINEL Oficial network receive. It reads 4 bytes (binary) in front of msg.
+ *
+ * INPUT:
+ *  sockfd - 
+ *  msg - 
+ *  msgSz - 
+ * OUTPUT:
+ *  recvSz - 
+ *  recvError - recv(2) errno
+ *  OK - 
+ *  NOK - 
+ */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError);
 
 /* char * getPAINELEnvHomeVar(void)

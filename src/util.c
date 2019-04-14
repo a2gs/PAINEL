@@ -50,7 +50,7 @@ static char netBuff[MAXLINE + 1] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError) /* TODO: receber size_t * indicando o quanto foi enviado */
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: receber size_t * indicando o quanto foi enviado */
 {
 	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
@@ -67,7 +67,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError) /* TODO: rece
 		srRetAux = send(sockfd, &msg[srRet], srSz - srRet, 0);
 
 		if(srRetAux == -1){
-			*recvError = errno;
+			*sendError = errno;
 			return(NOK);
 		}
 
