@@ -162,65 +162,43 @@ int validatingLoginServerResponse(char *servResp)
  */
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
-	ssize_t srRet = 0, srRetAux = 0;
+	int recvError = 0;
 	size_t srSz = 0;
-	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Sending user validation */
 	/* <SZ 4 BYTES (BINARY)>COD|DRT|DATAHORA|FUNCAO|PASSHASH */
-	msgHostOderSz = srSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
+	srSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s|%s", PROT_COD_LOGIN, drt, time_DDMMYYhhmmss(), funcao, passhash);
 
-	msgNetOrderSz = htonl(msgHostOderSz);
-	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+	logWrite(log, LOGDEV, "Sending to server: [%s] [%lu]B.\n", lineToSend, srSz);
 
-	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRetAux = send(sockfd, &lineToSend[srRet], srSz - srRet, 0);
-		if(srRet == -1){
-			logWrite(log, LOGOPALERT, "ERRO: wellcome send() [%s] for [%s].\n", strerror(errno), drt);
-			return(NOK);
-		}
-
-		srRet += srRetAux;
-
-		logWrite(log, LOGDEV, "Sending to server: [%*s] [%li]B.\n", srRet, lineToSend, srRet);
+	if(sendToNet(sockfd, lineToSend, srSz, &recvError) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: send() SG_sendLogin [%s].\n", strerror(recvError));
+		printf("ERRO no envio do registro [%s]!\n", strerror(recvError));
+		return(NOK);
 	}
 
 	memset(lineToSend, '\0', MAXLINE + 1);
 
 	/* Receiving user validation response */
 	/* <SZ 4 BYTES (BINARY)>COD|OK/ERRO|Message
-	 * Samples (without 4 bytes BINARY at the beginning):
-	1|OK|User registred into database!
-	1|ERRO|User/funcion/password didnt find into database!
+		Samples (without 4 bytes BINARY at the beginning):
+		1|OK|User registred into database!
+		1|ERRO|User/funcion/password didnt find into database!
 	*/
 
-	recv(sockfd, &msgNetOrderSz, 4, 0);
-	msgHostOderSz = ntohl(msgNetOrderSz);
-
-	logWrite(log, LOGDEV, "Tamanho recebido: [%d]B.\n", msgHostOderSz);
-	
-	srSz = msgHostOderSz;
-
-	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRetAux = recv(sockfd, &lineToSend[srRet], MAXLINE, 0);
-		if(srRetAux == 0){
-			logWrite(log, LOGOPALERT, "ERRO: Connection close unexpected!\n");
-			return(NOK);
-		}
-		srRet += srRetAux;
-
-		logWrite(log, LOGDEV, "Receiving from server: [%s] [%li]B.\n", lineToSend, srRet);
-
-		if(srRet == -1){
-			logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(errno), drt);
-			return(NOK);
-		}
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &srSz, &recvError) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(recvError), drt);
+		return(NOK);
 	}
 
-	if(validatingLoginServerResponse(lineToSend) == NOK)
+	logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, srSz);
+
+	if(validatingLoginServerResponse(lineToSend) == NOK){
+		logWrite(log, LOGOPALERT, "ERRO: validating login server response.\n");
 		return(NOK);
+	}
 
 	return(OK);
 }
