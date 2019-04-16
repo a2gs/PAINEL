@@ -60,6 +60,16 @@ void getLogSystem(log_t *logClient)
 	return;
 }
 
+/* int validatingLogoutServerResponse(char *servResp)
+ *
+ * 
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ *  NOK - 
+ *  OK - 
+ */
 int validatingLogoutServerResponse(char *servResp)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
@@ -103,12 +113,32 @@ int validatingLogoutServerResponse(char *servResp)
 	return(ret);
 }
 
+/* int validatingInsertRegisterServerResponse(char *msg)
+ *
+ * 
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ *  NOK - 
+ *  OK - 
+ */
 int validatingInsertRegisterServerResponse(char *msg)
 {
 
 	return(OK);
 }
 
+/* int validatingLoginServerResponse(char *servResp)
+ *
+ * 
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ *  NOK - 
+ *  OK - 
+ */
 int validatingLoginServerResponse(char *servResp)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
@@ -152,19 +182,6 @@ int validatingLoginServerResponse(char *servResp)
 	return(ret);
 }
 
-/* int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
- *
- * Formats the outgoing login message.
- *
- * INPUT:
- *  sockfd - Socket to server
- *  drt - User ID
- *  passhash - Hashed password
- *  funcao - User level (or office responsibility)
- * OUTPUT:
- *  OK - Ok
- *  NOK - Problem writing to socket
- */
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
 	int recvError = 0;
