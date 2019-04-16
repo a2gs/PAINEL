@@ -308,6 +308,7 @@ int main(int argc, char *argv[])
 	char msg[MAXLINE + 1] = {'\0'} /*, *endLine = NULL*/;
 	char msgCod[PROT_CODE_LEN + 1] = {'\0'};
 	char clientFrom[200] = {'\0'};
+	char *msgBackToClient = NULL;
 	uint16_t portFrom = 0;
 	SG_registroDB_t msgCleaned = {0};
 	size_t srSz = 0;
@@ -441,12 +442,12 @@ int main(int argc, char *argv[])
 
 						if(parsingLogin(msgP, &userSession) == NOK){
 							/* Bad formmated protocol */
-							char *loginErrorMsgToClient = "ERRO|login protocol is bad formatted!";
+							msgBackToClient = "ERRO|login protocol is bad formatted!";
 
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 							logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
-							sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient);
+							sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient);
 
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
@@ -457,11 +458,11 @@ int main(int argc, char *argv[])
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
-							char *loginErrorMsgToClient = "ERRO|User/funcion/password didnt find into database!";
+							msgBackToClient = "ERRO|User/funcion/password didnt find into database!";
 
 							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -474,8 +475,6 @@ int main(int argc, char *argv[])
 							}
 
 						}else{
-							char *loginErrorMsgToClient = NULL;
-
 							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
@@ -484,12 +483,12 @@ int main(int argc, char *argv[])
 
 							if(SG_db_inserting(&msgCleaned) == NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
-								loginErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED LOGIN INTO DATABASE (server insert error)!";
+								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGIN INTO DATABASE (server insert error)!";
 							}else{
-								loginErrorMsgToClient = "OK|User registred login into database!";
+								msgBackToClient = "OK|User registred login into database!";
 							}
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, loginErrorMsgToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -507,12 +506,12 @@ int main(int argc, char *argv[])
 
 						if(parsingLogout(msgP, &userSession) == NOK){
 							/* Bad formmated protocol */
-							char *logoutErrorMsgToClient = "ERRO|logout protocol is bad formatted!";
+							msgBackToClient = "ERRO|logout protocol is bad formatted!";
 
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
 							logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
-							sendClientResponse(connfd, PROT_COD_LOGOUT, logoutErrorMsgToClient);
+							sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient);
 
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
@@ -522,20 +521,18 @@ int main(int argc, char *argv[])
 							return(-9);
 
 						}else{
-							char *logoutErrorMsgToClient = NULL;
-
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 							SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
 							if(SG_db_inserting(&msgCleaned) == NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user logout database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
-								logoutErrorMsgToClient = "OK|BUT USER WAS NOT REGISTERED LOGOUT INTO DATABASE (server insert error)!";
+								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGOUT INTO DATABASE (server insert error)!";
 							}else{
-								logoutErrorMsgToClient = "OK|User registered logout into database!";
+								msgBackToClient = "OK|User registered logout into database!";
 							}
 
-							if(sendClientResponse(connfd, PROT_COD_LOGOUT, logoutErrorMsgToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent logout success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -554,20 +551,59 @@ int main(int argc, char *argv[])
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
 						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == NOK){
-							logWrite(&log, LOGOPALERT, "PARSING INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP); /* TODO: melhorar mensagem */
+							msgBackToClient = "ERRO|Protocol INSERT REGSITER unable to parse!";
+
+							logWrite(&log, LOGOPALERT, "ERRO: PARSING INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP);
+
+							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+								logWrite(&log, LOGOPALERT, "Message error parsing sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
+
+								dbClose();
+								shutdown(connfd, SHUT_RDWR);
+								close(connfd);
+								logClose(&log);
+
+								return(-11);
+							}
+
 							continue;
 						}else{
 							if(SG_db_inserting(&msgCleaned) == NOK){
-								logWrite(&log, LOGDBALERT, "INSERT ERROR [%s:%d]: [%s]!\n", clientFrom, portFrom, msg); /* TODO: melhorar mensagem */
+								msgBackToClient = "ERRO|Unable to insert register into database!";
+
+								logWrite(&log, LOGDBALERT, "ERRO: INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msg);
+
+								if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+									logWrite(&log, LOGOPALERT, "Message error insert sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
+
+									dbClose();
+									shutdown(connfd, SHUT_RDWR);
+									close(connfd);
+									logClose(&log);
+
+									return(-11);
+								}
 							}
 						}
+
+						msgBackToClient = "OK|Register inserted!";
+
+						if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+							logWrite(&log, LOGOPALERT, "Error sent fail process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
+
+							dbClose();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+							logClose(&log);
+
+							return(-11);
+						}
+
 						break;
 
-					/*
 					case PROT_COD_SERCMD:
-						log_write("Codigo [%s] ainda nao implementado!\n", msgCod);
+						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
-					*/
 
 					case PROT_COD_CLICMD:
 						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
