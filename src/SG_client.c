@@ -113,7 +113,7 @@ int validatingLogoutServerResponse(char *servResp)
 	return(ret);
 }
 
-/* int validatingInsertRegisterServerResponse(char *msg)
+/* int validatingInsertRegisterServerResponse(char *servResp)
  *
  * 
  *
@@ -123,10 +123,47 @@ int validatingLogoutServerResponse(char *servResp)
  *  NOK - 
  *  OK - 
  */
-int validatingInsertRegisterServerResponse(char *msg)
+int validatingInsertRegisterServerResponse(char *servResp)
 {
+	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
+	char *p = NULL;
+	int ret = 0;
 
-	return(OK);
+	p = servResp;
+
+	/* Getting the PROTO_CODE */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted INSERT REGISTER protocol from server (cannt get PROTO_COD)!\n");
+		return(NOK);
+	}
+
+	if(atoi(buf) != PROT_COD_INSREG){
+		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_INSREG [%d] expected!\n", buf, PROT_COD_INSREG);
+		return(NOK);
+	}
+
+	/* Getting the OK or ERRO indicator */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	if(*p == '\0'){
+		logWrite(log, LOGOPALERT, "Bad formatted INSERT REGISTER protocol from server (cannt get OK/ERRO indicator)!\n");
+		return(NOK);
+	}
+
+	ret = OK;
+	if(strncmp(buf, "ERRO", 4) == 0){
+		logWrite(log, LOGOPALERT, "Server didn't insert the register!\n");
+		ret = NOK;
+	}
+
+	/* Getting the server message */
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+
+	logWrite(log, LOGDEV, "Server insert register message: [%s].\n", buf);
+
+	return(ret);
 }
 
 /* int validatingLoginServerResponse(char *servResp)
