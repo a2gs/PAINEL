@@ -20,7 +20,6 @@
 
 /* *** INCLUDES ************************************************************************ */
 #include <stdio.h>
-#include <stdint.h> /* TODO: quando sendLogin() usar sendToNet() e recvFromNet(), este include pode ser removido */
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -335,8 +334,10 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
-		}else
+		}else{
+			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");
+		}
 	}
 
 	return(OK);
@@ -474,8 +475,10 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}  
-		}else
+		}else{
+			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");
+		}
 	}
 
 	return(OK);
@@ -546,8 +549,10 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}  
-		}else
+		}else{
+			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");
+		}
 	}
 
 	return(OK);

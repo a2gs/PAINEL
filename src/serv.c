@@ -418,6 +418,7 @@ int main(int argc, char *argv[])
 				memset(msg,    '\0', sizeof(msg)   );
 				memset(msgCod, '\0', sizeof(msgCod));
 				srSz = 0; recvError = 0;
+				msgBackToClient = NULL;
 
 				/* Reading the message */
 				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError) == NOK){
