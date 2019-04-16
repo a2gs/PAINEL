@@ -103,6 +103,12 @@ int validatingLogoutServerResponse(char *servResp)
 	return(ret);
 }
 
+int validatingInsertRegisterServerResponse(char *msg)
+{
+
+	return(OK);
+}
+
 int validatingLoginServerResponse(char *servResp)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
@@ -334,6 +340,19 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
+
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
+				return(NOK);
+			}
+
+			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
+
+			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
+				return(NOK);
+			}
+
 		}else{
 			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");
@@ -474,7 +493,20 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
-			}  
+			}
+
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
+				return(NOK);
+			}
+
+			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
+
+			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
+				return(NOK);
+			}
+
 		}else{
 			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");
@@ -548,7 +580,20 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
-			}  
+			}
+
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
+				return(NOK);
+			}
+
+			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
+
+			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
+				return(NOK);
+			}
+
 		}else{
 			logWrite(log, LOGOPALERT, "Regsitro DESCARTADO!\n");
 			printf("REGISTRO NAO ENVIADO!\n");

@@ -268,6 +268,10 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGOUT, (char *)data);
 			break;
 
+		case PROT_COD_INSREG:
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_INSREG, (char *)data);
+			break;
+
 		default:
 			return(NOK);
 	}
@@ -556,7 +560,7 @@ int main(int argc, char *argv[])
 
 							logWrite(&log, LOGOPALERT, "ERRO: PARSING INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
 								logWrite(&log, LOGOPALERT, "Message error parsing sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 								dbClose();
@@ -574,7 +578,7 @@ int main(int argc, char *argv[])
 
 								logWrite(&log, LOGDBALERT, "ERRO: INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msg);
 
-								if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+								if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
 									logWrite(&log, LOGOPALERT, "Message error insert sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 									dbClose();
@@ -589,7 +593,7 @@ int main(int argc, char *argv[])
 
 						msgBackToClient = "OK|Register inserted!";
 
-						if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+						if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
 							logWrite(&log, LOGOPALERT, "Error sent fail process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 							dbClose();
