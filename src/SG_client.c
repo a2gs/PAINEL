@@ -62,15 +62,20 @@ void getLogSystem(log_t *logClient)
 
 /* int validatingLogoutServerResponse(char *servResp)
  *
- * 
+ * Most server response are the same:
+ * <PROTO CODE>|<OK|ERRO>|<MSG>
+ * this function validate this type of response.
  *
  * INPUT:
+ *  servResp - Server response
+ *  PROTO_CODE - Protocol code that you want to validate
  *  
  * OUTPUT:
- *  NOK - 
- *  OK - 
+ *  msgP - Pointer to server message (inside servResp)
+ *  NOK - Protocol problem (logged): Protocol ERRO flag
+ *  OK - Protocol ok...............: Protocol OK flag
  */
-int validatingDefaultServerResponse(char *servResp, int PROTO_CODE)
+int validatingDefaultServerResponse(char *servResp, int PROTO_CODE, char **msgP)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
 	char *p = NULL;
@@ -106,7 +111,9 @@ int validatingDefaultServerResponse(char *servResp, int PROTO_CODE)
 	}
 
 	/* Getting the server message */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
+	*msgP = p;
+
+	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ); /* We know, there isnt '|' at the end, buf copies msg to buf */
 
 	logWrite(log, LOGDEV, "Server logout message: [%s].\n", buf);
 
@@ -115,47 +122,56 @@ int validatingDefaultServerResponse(char *servResp, int PROTO_CODE)
 
 /* int validatingLogoutServerResponse(char *servResp)
  *
- * 
+ * Validates the Logout server response.
  *
  * INPUT:
+ *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - 
- *  OK - 
+ *  NOK - Erro response
+ *  OK - Response ok
  */
 int validatingLogoutServerResponse(char *servResp)
 {
-	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGOUT));
+	char *msg = NULL;
+
+	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGOUT, &msg));
 }
 
 /* int validatingInsertRegisterServerResponse(char *servResp)
  *
- * 
+ * Validates the Insert Register server response.
  *
  * INPUT:
+ *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - 
- *  OK - 
+ *  NOK - Erro response
+ *  OK - Response ok
  */
 int validatingInsertRegisterServerResponse(char *servResp)
 {
-	return(validatingDefaultServerResponse(servResp, PROT_COD_INSREG));
+	char *msg = NULL;
+
+	return(validatingDefaultServerResponse(servResp, PROT_COD_INSREG, &msg));
 }
 
 /* int validatingLoginServerResponse(char *servResp)
  *
- * 
+ * Validates the Login server response.
  *
  * INPUT:
+ *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - 
- *  OK - 
+ *  NOK - Erro response
+ *  OK - Response ok
  */
 int validatingLoginServerResponse(char *servResp)
 {
-	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGIN));
+	char *msg = NULL;
+
+	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGIN, &msg));
 }
 
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
