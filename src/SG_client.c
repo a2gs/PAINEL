@@ -70,7 +70,7 @@ void getLogSystem(log_t *logClient)
  *  NOK - 
  *  OK - 
  */
-int validatingLogoutServerResponse(char *servResp)
+int validatingDefaultServerResponse(char *servResp, int PROTO_CODE)
 {
 	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
 	char *p = NULL;
@@ -86,8 +86,8 @@ int validatingLogoutServerResponse(char *servResp)
 		return(NOK);
 	}
 
-	if(atoi(buf) != PROT_COD_LOGOUT){
-		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_LOGOUT [%d] expected!\n", buf, PROT_COD_LOGIN);
+	if(atoi(buf) != PROTO_CODE){
+		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROTOCOL CODE [%d] expected!\n", buf, PROTO_CODE);
 		return(NOK);
 	}
 
@@ -113,6 +113,21 @@ int validatingLogoutServerResponse(char *servResp)
 	return(ret);
 }
 
+/* int validatingLogoutServerResponse(char *servResp)
+ *
+ * 
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ *  NOK - 
+ *  OK - 
+ */
+int validatingLogoutServerResponse(char *servResp)
+{
+	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGOUT));
+}
+
 /* int validatingInsertRegisterServerResponse(char *servResp)
  *
  * 
@@ -125,45 +140,7 @@ int validatingLogoutServerResponse(char *servResp)
  */
 int validatingInsertRegisterServerResponse(char *servResp)
 {
-	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
-	char *p = NULL;
-	int ret = 0;
-
-	p = servResp;
-
-	/* Getting the PROTO_CODE */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	if(*p == '\0'){
-		logWrite(log, LOGOPALERT, "Bad formatted INSERT REGISTER protocol from server (cannt get PROTO_COD)!\n");
-		return(NOK);
-	}
-
-	if(atoi(buf) != PROT_COD_INSREG){
-		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_INSREG [%d] expected!\n", buf, PROT_COD_INSREG);
-		return(NOK);
-	}
-
-	/* Getting the OK or ERRO indicator */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	if(*p == '\0'){
-		logWrite(log, LOGOPALERT, "Bad formatted INSERT REGISTER protocol from server (cannt get OK/ERRO indicator)!\n");
-		return(NOK);
-	}
-
-	ret = OK;
-	if(strncmp(buf, "ERRO", 4) == 0){
-		logWrite(log, LOGOPALERT, "Server didn't insert the register!\n");
-		ret = NOK;
-	}
-
-	/* Getting the server message */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	logWrite(log, LOGDEV, "Server insert register message: [%s].\n", buf);
-
-	return(ret);
+	return(validatingDefaultServerResponse(servResp, PROT_COD_INSREG));
 }
 
 /* int validatingLoginServerResponse(char *servResp)
@@ -178,45 +155,7 @@ int validatingInsertRegisterServerResponse(char *servResp)
  */
 int validatingLoginServerResponse(char *servResp)
 {
-	char buf[BUF_VALIDATING_LOGIN_SZ + 1] = {'\0'}; /* Just foe OK or ERRO and PROTO_COD */
-	char *p = NULL;
-	int ret = 0;
-
-	p = servResp;
-
-	/* Getting the PROTO_CODE */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	if(*p == '\0'){
-		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get PROTO_COD)!\n");
-		return(NOK);
-	}
-
-	if(atoi(buf) != PROT_COD_LOGIN){
-		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROT_COD_LOGIN [%d] expected!\n", buf, PROT_COD_LOGIN);
-		return(NOK);
-	}
-
-	/* Getting the OK or ERRO indicator */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	if(*p == '\0'){
-		logWrite(log, LOGOPALERT, "Bad formatted LOGIN protocol from server (cannt get OK/ERRO indicator)!\n");
-		return(NOK);
-	}
-
-	ret = OK;
-	if(strncmp(buf, "ERRO", 4) == 0){
-		logWrite(log, LOGOPALERT, "Server didn't validate the user/level/pass!\n");
-		ret = NOK;
-	}
-
-	/* Getting the server message */
-	cutter(&p, '|', buf, BUF_VALIDATING_LOGIN_SZ);
-
-	logWrite(log, LOGDEV, "Server login message: [%s].\n", buf);
-
-	return(ret);
+	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGIN));
 }
 
 int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
