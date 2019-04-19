@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-9);
+							return(-12);
 
 						}else{
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
@@ -546,7 +546,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-11);
+								return(-13);
 							}
 						}
 
@@ -568,7 +568,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-11);
+								return(-14);
 							}
 
 							continue;
@@ -586,7 +586,7 @@ int main(int argc, char *argv[])
 									close(connfd);
 									logClose(&log);
 
-									return(-11);
+									return(-16);
 								}
 							}
 						}
@@ -601,7 +601,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-11);
+							return(-17);
 						}
 
 						break;

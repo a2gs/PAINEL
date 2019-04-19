@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
 			dbClose();
 			logClose(&log);
 
-			return(-5);
+			return(-4);
 		}
 
 		/* Defining report layout by user level (fucao) */
@@ -349,7 +349,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
         
-			return(-6);
+			return(-5);
 		}
 		logWrite(&log, LOGDEV, "Data returned: [%s][%s][%s]\n", pageInfo.title, pageInfo.columnsHeaders, pageInfo.columnsTable);
 
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 			logClose(&log);
-			return(-7);
+			return(-6);
 		}
 
 		if(html_header(&htmls, pageInfo.title, segRefresh) == NOK){
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 			logClose(&log);
-			return(-8);
+			return(-7);
 		}
 
 		if(html_startTable(&htmls, pageInfo.columnsHeaders) == NOK){
@@ -387,7 +387,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
 			logClose(&log);
-			return(-9);
+			return(-8);
 		}
 
 		/* Selecting data by user level (funcao). ALL = all database */
@@ -406,7 +406,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
         
-			return(-10);
+			return(-9);
 		}
 
 		if(select_NOROW == SQL_NO_ROW){
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
 
-			return(-11);
+			return(-10);
 		}
 
 		html_fflush(&htmls);

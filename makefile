@@ -92,7 +92,7 @@ select_html: logtag
 
 select_Excel:
 	@echo "=== select_Excel ============"
-	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 userId: sha256
 	@echo "=== userId ================="
