@@ -52,7 +52,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 client serv select_html select_Excel servList create_db userId cppcheck
+all: clean logtag sha256 client ncclient serv select_html select_Excel servList create_db userId cppcheck
 	@echo "=== ctags ==================="
 	ctags -R *
 	@echo "=== cscope =================="
@@ -84,7 +84,7 @@ client: sha256 logtag
 
 ncclient: sha256 logtag
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 serv: logtag
 	@echo "=== serv ===================="
