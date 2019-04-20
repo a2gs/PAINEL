@@ -29,6 +29,7 @@
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+static int cursor = 0;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -52,17 +53,48 @@
  */
 int main(int argc, char *argv[])
 {
-	initscr();
+	/* WINDOW *mainWindow = NULL; */
+
+	/* mainWindow = */ initscr();
 	keypad(stdscr, TRUE);
 	cbreak();
 	noecho();
 
-	refresh();
+	if(has_colors() == FALSE){
+		endwin();
+		printf("Terminal nao suporta cores (has_colors() = FALSE).\n");
+		return(-1);
+	}
+
+	if(can_change_color() == FALSE){
+		endwin();
+		printf("Terminal nao suporta mudar as cores (can_change_colors() = FALSE).\n");
+		return(-1);
+	}
+
+	if(start_color() != OK){
+		endwin();
+		printf("Erro em iniciar cores (start_colors() = FALSE).\n");
+		return(-1);
+	}
+
+	cursor = curs_set(0);
+
+
+
+
 
 	clear();
 	mvaddstr(10, 10, "Underconstruction");
 	refresh();
+	getch();
 
+
+
+
+
+
+	curs_set(cursor);
 	endwin();
 
 	return(0);
