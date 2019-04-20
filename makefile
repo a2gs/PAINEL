@@ -60,7 +60,7 @@ all: clean logtag sha256 client ncclient serv select_html select_Excel servList 
 
 cppcheck:
 	@echo "=== cppcheck ================"
-	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -I./libs/log/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ -i ./ncurses/ --suppress=missingIncludeSystem ./src/
+	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -I./libs/log/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ --suppress=missingIncludeSystem ./src/
 
 logtag:
 	@echo "=== lib LOG ================="
@@ -83,8 +83,8 @@ client: sha256 logtag
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 ncclient: sha256 logtag
-	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+	@echo "=== ncclient =================="
+	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) $(CFLAGS)
 
 serv: logtag
 	@echo "=== serv ===================="

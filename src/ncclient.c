@@ -19,6 +19,10 @@
 
 
 /* *** INCLUDES ************************************************************************ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ncurses.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -48,6 +52,18 @@
  */
 int main(int argc, char *argv[])
 {
+	initscr();
+	keypad(stdscr, TRUE);
+	cbreak();
+	noecho();
+
+	refresh();
+
+	clear();
+	mvaddstr(10, 10, "Underconstruction");
+	refresh();
+
+	endwin();
 
 	return(0);
 }
