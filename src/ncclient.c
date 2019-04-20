@@ -30,6 +30,7 @@
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 static int cursor = 0;
+static WINDOW *mainWindow = NULL;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -53,29 +54,36 @@ static int cursor = 0;
  */
 int main(int argc, char *argv[])
 {
-	/* WINDOW *mainWindow = NULL; */
-
-	/* mainWindow = */ initscr();
+	mainWindow = initscr();
 	keypad(stdscr, TRUE);
 	cbreak();
 	noecho();
 
+	if(mainWindow == NULL){
+		printf("Erro initializating ncurses!\n");
+		return(-1);
+	}
+
 	if(has_colors() == FALSE){
 		endwin();
 		printf("Terminal nao suporta cores (has_colors() = FALSE).\n");
-		return(-1);
+		return(-2);
 	}
 
 	if(can_change_color() == FALSE){
 		endwin();
 		printf("Terminal nao suporta mudar as cores (can_change_colors() = FALSE).\n");
-		return(-1);
+		return(-3);
 	}
 
 	if(start_color() != OK){
 		endwin();
 		printf("Erro em iniciar cores (start_colors() = FALSE).\n");
-		return(-1);
+		return(-4);
+	}
+
+	if(argc != 5){
+		/* Call screen to fill <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'> */
 	}
 
 	cursor = curs_set(0);
