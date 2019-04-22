@@ -3,7 +3,7 @@
  *
  * PAINEL
  *
- * Public Domain
+ * MIT License
  *
  */
 
