@@ -3,7 +3,7 @@
 #
 # PAINEL
 #
-# Public Domain
+# Apache License 2.0
 #
 
 # runAll.sh
