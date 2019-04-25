@@ -25,6 +25,8 @@
 #include <signal.h>
 #include <ncurses.h>
 
+#include <util.h>
+
 #include "wizard_by_return.h"
 
 
@@ -59,17 +61,6 @@ a2gs_ToolBox_WizardReturnFunc_t screen4(void *data);
 
 /* -------------------------------------------------------------------------------------------------------- */
 
-/* int main(int argc, char *argv[])
- *
- * ncurses client starts.
- *
- * INPUT:
- *  argv[1] - Server IP address
- *  argv[2] - Server port
- * OUTPUT (to SO):
- *  0 - Ok
- *  !0 - Error (see log)
- */
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
 {
 	size_t msgSz = 0;
@@ -250,6 +241,21 @@ a2gs_ToolBox_WizardReturnFunc_t screen1(void *data)
 	return(screen2);
 }
 
+int pingServer(char ip, int port)
+{
+	return(OK);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
+{
+	return(NULL);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
+{
+	return(NULL);
+}
+
 /* int main(int argc, char *argv[])
  *
  * INPUT:
@@ -258,6 +264,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen1(void *data)
 int main(int argc, char *argv[])
 {
 	int cursor = 0;
+	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
+
+	if(argc != 3){
+		initFunc = screen_config;
+	}else{
+		if(pingServer == OK)
+			initFunc = screen_menu;
+		else
+			initFunc = screen_config;
+	}
 
 	if(initscr() == NULL){;
 		printf("Erro initializating ncurses!\n");
@@ -299,7 +315,7 @@ int main(int argc, char *argv[])
 
 	cursor = curs_set(0);
 
-	a2gs_ToolBox_WizardReturn(screen1, NULL);
+	a2gs_ToolBox_WizardReturn(initFunc, NULL);
 
 	curs_set(cursor);
 
