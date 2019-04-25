@@ -35,8 +35,8 @@
 
 #define MAXLINE      (10000)
 
-#define OK           (1)
-#define NOK          (-1)
+#define PAINEL_OK           (1)
+#define PAINEL_NOK          (-1)
 
 #define PAINEL_HOME_ENV          ("PAINEL_HOME") /* PAINEL home enviroument variable */
 #define SUBPATH_RUNNING_DATA     ("running")
@@ -85,8 +85,8 @@ typedef struct _htmlFiles_t{
  *  msgSz - 
  * OUTPUT:
  *  sendError - send(2) errno
- *  OK - 
- *  NOK - 
+ *  PAINEL_OK - 
+ *  PAINEL_NOK - 
  */
 int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError);
 
@@ -101,8 +101,8 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError);
  * OUTPUT:
  *  recvSz - 
  *  recvError - recv(2) errno
- *  OK - 
- *  NOK - 
+ *  PAINEL_OK - 
+ *  PAINEL_NOK - 
  */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError);
 
@@ -124,7 +124,7 @@ char * getPAINELEnvHomeVar(void);
  * INPUT:
  *  log - Pointer to log system
  * OUTPUT:
- *  pid_t - Daemon PID number, 1 to father or NOK if fork() error.
+ *  pid_t - Daemon PID number, 1 to father or PAINEL_NOK if fork() error.
  */
 int daemonizeWithoutLock(log_t *log);
 
@@ -136,8 +136,8 @@ int daemonizeWithoutLock(log_t *log);
  *  from - char to be replaced
  *  to - char to replace
  * OUTPUT:
- *  OK - ONE char had been replaced.
- *  NOK - None char found.
+ *  PAINEL_OK - ONE char had been replaced.
+ *  PAINEL_NOK - None char found.
  */
 int changeCharByChar(char *buffer, int to, int from);
 
@@ -180,8 +180,8 @@ char * time_DDMMYYhhmmss(void);
  *  htmlRefresh - Path to HTML refresh file
  * OUTPUT:
  *  htmls - HTMLs handles
- *  OK - Ok
- *  NOK - Error (erro or open a file or locking the files)
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error (erro or open a file or locking the files)
  */
 int html_fopen(htmlFiles_t *htmls, char *htmlStatic, char *htmlRefresh);
 
@@ -194,8 +194,8 @@ int html_fopen(htmlFiles_t *htmls, char *htmlStatic, char *htmlRefresh);
  *  files - 0 = Write into both files | 1 = Write into static file | 2 = Write to refresh file
  *  msg - String to be written
  * OUTPUT:
- *  OK - OK
- *  NOK - Write error
+ *  PAINEL_OK - OK
+ *  PAINEL_NOK - Write error
  */
 int html_writeDual(htmlFiles_t *htmls, int files, char *msg);
 
@@ -219,7 +219,7 @@ int html_testHtmlLock(FILE *file);
  * INPUT:
  *  htmls - HTML files
  * OUTPUT:
- *  OK - Ok
+ *  PAINEL_OK - Ok
  */
 int html_fflush(htmlFiles_t *htmls);
 
@@ -230,8 +230,8 @@ int html_fflush(htmlFiles_t *htmls);
  * INPUT:
  *  htmls - HTML files
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error unlocking the files
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error unlocking the files
  */
 int html_fclose(htmlFiles_t *htmls);
 

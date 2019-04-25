@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 	}
 
 	p = daemonizeWithoutLock(&log);
-	if(p == (pid_t)NOK){
+	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Cannt daemonize server list!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 

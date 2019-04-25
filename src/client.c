@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 
 	for(;;){
 
-		if(SG_fazerLogin(id, passhash, level, &usrType) == NOK){
+		if(SG_fazerLogin(id, passhash, level, &usrType) == PAINEL_NOK){
 			logWrite(&log, LOGOPMSG, "Exit client interface.\n");
 			break; /* exit */
 		}
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 
 		logWrite(&log, LOGOPMSG, "[%s] conectado no [%s:%s] at [%s].\n", id, argv[1], argv[2], time_DDMMYYhhmmss());
 
-		if(SG_sendLogin(sockfd, id, passhash, level) == NOK){
+		if(SG_sendLogin(sockfd, id, passhash, level) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "The user was not recognized on the server: [%s][%s][%s]!\n", id, passhash, level);
 			printf("Usuario, funcao ou senha invalidos!\n");
 			continue;
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 
 		SG_clientScreen(sockfd, id, level, usrType);
 
-		if(SG_sendLogoutExit(sockfd, id, level) == NOK){
+		if(SG_sendLogoutExit(sockfd, id, level) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "ERRO logout from server.\n");
 		}
 	}

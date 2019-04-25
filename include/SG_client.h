@@ -100,8 +100,8 @@ void getLogSystem(log_t *logClient);
  *  drt - User ID
  *  funcao - User Level (office responsibility)
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error sending (send(2))
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error sending (send(2))
  */
 int SG_sendLogoutExit(int socket, char *drt, char *funcao);
 
@@ -115,8 +115,8 @@ int SG_sendLogoutExit(int socket, char *drt, char *funcao);
  *  passhash - Hashed password
  *  funcao - User Level (office responsibility)
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error sending (send(2))
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error sending (send(2))
  */
 int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao);
 
@@ -128,8 +128,8 @@ int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao);
  *  socket - Socket to server
  *  drt - User ID
  * OUTPUT:
- *  OK - Data collected
- *  NOK - Data did not collect
+ *  PAINEL_OK - Data collected
+ *  PAINEL_NOK - Data did not collect
  */
 int SG_interfaceSupervisorMaquina(char *drt, int socket);
 
@@ -141,8 +141,8 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket);
  *  socket - Socket to server
  *  drt - User ID
  * OUTPUT:
- *  OK - Data collected
- *  NOK - Data did not collect
+ *  PAINEL_OK - Data collected
+ *  PAINEL_NOK - Data did not collect
  */
 int SG_interfaceOperadorMaquina(char *drt, int socket);
 
@@ -154,8 +154,8 @@ int SG_interfaceOperadorMaquina(char *drt, int socket);
  *  socket - Socket to server
  *  drt - User ID
  * OUTPUT:
- *  OK - Data collected
- *  NOK - Data did not collect
+ *  PAINEL_OK - Data collected
+ *  PAINEL_NOK - Data did not collect
  */
 int SG_interfaceFornoEletrico(char *drt, int socket);
 
@@ -166,8 +166,8 @@ int SG_interfaceFornoEletrico(char *drt, int socket);
  * INPUT:
  *  none
  * OUTPUT:
- *  OK - File created
- *  NOK - Erro creation
+ *  PAINEL_OK - File created
+ *  PAINEL_NOK - Erro creation
  */
 int geraArqDRTs(void);
 
@@ -182,8 +182,8 @@ int geraArqDRTs(void);
  *  passhash - Password hashed
  *  funcao - User Level (office responsibility) loaded from file
  *  userType - User level type
- *  OK - Ok
- *  NOK - Login error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Login error
  */
 int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType);
 
@@ -197,8 +197,8 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
  *  funcao - User Level (office responsibility) loaded from file
  *  userType - User level type
  * OUTPUT:
- *  OK - Ok
- *  NOK - Screen error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Screen error
  */
 int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType);
 

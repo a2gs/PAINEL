@@ -72,8 +72,8 @@ void getLogSystem(log_t *logClient)
  *  
  * OUTPUT:
  *  msgP - Pointer to server message (inside servResp)
- *  NOK - Protocol problem (logged): Protocol ERRO flag
- *  OK - Protocol ok...............: Protocol OK flag
+ *  PAINEL_NOK - Protocol problem (logged): Protocol ERRO flag
+ *  PAINEL_OK - Protocol ok...............: Protocol OK flag
  */
 int validatingDefaultServerResponse(char *servResp, int PROTO_CODE, char **msgP)
 {
@@ -88,12 +88,12 @@ int validatingDefaultServerResponse(char *servResp, int PROTO_CODE, char **msgP)
 
 	if(*p == '\0'){
 		logWrite(log, LOGOPALERT, "Bad formatted LOGOUT protocol from server (cannt get PROTO_COD)!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	if(atoi(buf) != PROTO_CODE){
 		logWrite(log, LOGOPALERT, "Protocol\'s code returned [%s] is not the same PROTOCOL CODE [%d] expected!\n", buf, PROTO_CODE);
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* Getting the OK or ERRO indicator */
@@ -101,13 +101,13 @@ int validatingDefaultServerResponse(char *servResp, int PROTO_CODE, char **msgP)
 
 	if(*p == '\0'){
 		logWrite(log, LOGOPALERT, "Bad formatted LOGOUT protocol from server (cannt get OK/ERRO indicator)!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	ret = OK;
+	ret = PAINEL_OK;
 	if(strncmp(buf, "ERRO", 4) == 0){
 		logWrite(log, LOGOPALERT, "Server didn't register user logout!\n");
-		ret = NOK;
+		ret = PAINEL_NOK;
 	}
 
 	/* Getting the server message */
@@ -128,8 +128,8 @@ int validatingDefaultServerResponse(char *servResp, int PROTO_CODE, char **msgP)
  *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - Erro response
- *  OK - Response ok
+ *  PAINEL_NOK - Erro response
+ *  PAINEL_OK - Response ok
  */
 int validatingLogoutServerResponse(char *servResp)
 {
@@ -146,8 +146,8 @@ int validatingLogoutServerResponse(char *servResp)
  *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - Erro response
- *  OK - Response ok
+ *  PAINEL_NOK - Erro response
+ *  PAINEL_OK - Response ok
  */
 int validatingInsertRegisterServerResponse(char *servResp)
 {
@@ -164,8 +164,8 @@ int validatingInsertRegisterServerResponse(char *servResp)
  *  servResp - Server response
  *  
  * OUTPUT:
- *  NOK - Erro response
- *  OK - Response ok
+ *  PAINEL_NOK - Erro response
+ *  PAINEL_OK - Response ok
  */
 int validatingLoginServerResponse(char *servResp)
 {
@@ -187,10 +187,10 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 
 	logWrite(log, LOGDEV, "Sending to server: [%s] [%lu]B.\n", lineToSend, srSz);
 
-	if(sendToNet(sockfd, lineToSend, srSz, &recvError) == NOK){
+	if(sendToNet(sockfd, lineToSend, srSz, &recvError) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() SG_sendLogin [%s].\n", strerror(recvError));
 		printf("ERRO no envio do registro [%s]!\n", strerror(recvError));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	memset(lineToSend, '\0', MAXLINE + 1);
@@ -202,19 +202,19 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 		1|ERRO|User/funcion/password didnt find into database!
 	*/
 
-	if(recvFromNet(sockfd, lineToSend, MAXLINE, &srSz, &recvError) == NOK){
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &srSz, &recvError) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(recvError), drt);
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, srSz);
 
-	if(validatingLoginServerResponse(lineToSend) == NOK){
+	if(validatingLoginServerResponse(lineToSend) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: validating login server response.\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
@@ -228,33 +228,33 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 	msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
 	logWrite(log, LOGDEV, "Enviando logout [%s] [%lu].\n", lineToSend, msgSz);
 
-	if(sendToNet(sockfd, lineToSend, msgSz, &srError) == NOK){
+	if(sendToNet(sockfd, lineToSend, msgSz, &srError) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
 		printf("ERRO no envio de exit motivo [%s]!\n", strerror(srError));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	logWrite(log, LOGDEV, "Aguardando logout...\n");
 	memset(lineToSend, '\0', MAXLINE);
-	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	logWrite(log, LOGDEV, "Validando logout.\n");
-	if(validatingLogoutServerResponse(lineToSend) == NOK){
+	if(validatingLogoutServerResponse(lineToSend) == PAINEL_NOK){
 		logWrite(log, LOGDEV, "ERRO: server return erro at logout.\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_interfaceFornoEletrico(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
-	tipoPreenchimento_t retCampo = OK;
+	tipoPreenchimento_t retCampo = PAINEL_OK;
 	fornoElet_t fornElet = {
 		.perguntas = {"Porcentagem de FeSi (xxx,yy): ",
 		              "Porcentagem de S (xxx,yy): ",
@@ -277,7 +277,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[0], fornElet.percFeSi, FORNELET_PERC_FESI_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -286,7 +286,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[1], fornElet.percS, FORNELET_PERC_S_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -295,7 +295,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[2], fornElet.percMg, FORNELET_PERC_MG_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -304,7 +304,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[3], fornElet.panela, FORNELET_PAMELA_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -313,7 +313,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[4], fornElet.temp, FORNELET_TEMP_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -322,7 +322,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 		retCampo = preencherCampo(fornElet.perguntas[5], fornElet.fornEletr, FORNELET_NUMFORELE_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -345,21 +345,21 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
 
-			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+			if(validatingInsertRegisterServerResponse(lineToSend) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 		}else{
@@ -368,14 +368,14 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 		}
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_interfaceOperadorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
-	tipoPreenchimento_t retCampo = OK;
+	tipoPreenchimento_t retCampo = PAINEL_OK;
 	operMaquina_t operMaquina = {
 		.perguntas = {"Porcentagem de FeSi (xxx,yy): ",
 		              "Porcentagem de Inoculante (xxx,yy): ",
@@ -404,7 +404,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[0], operMaquina.percFeSi, OPEMAQ_PERC_FESI_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -413,7 +413,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[1], operMaquina.percInoculante, OPEMAQ_PERC_INOC_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -422,7 +422,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[2], operMaquina.aspecto, OPEMAQ_ASPEC_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -431,7 +431,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[3], operMaquina.panela, OPEMAQ_PANELA_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -440,7 +440,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[4], operMaquina.ws, OPEMAQ_WS_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -449,7 +449,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[5], operMaquina.temp, OPEMAQ_DIAMNOM_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -458,7 +458,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[6], operMaquina.classe, OPEMAQ_CLASSE_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -467,7 +467,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[7], operMaquina.temp, OPEMAQ_TEMP_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -476,7 +476,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(operMaquina.perguntas[8], operMaquina.numMaquina, OPEMAQ_NUMMAQ_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC){
 			printf("REGISTRO CANCELADO!\n");
@@ -499,21 +499,21 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
 
-			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+			if(validatingInsertRegisterServerResponse(lineToSend) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 		}else{
@@ -522,14 +522,14 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 		}
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_interfaceSupervisorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
-	tipoPreenchimento_t retCampo = OK;
+	tipoPreenchimento_t retCampo = PAINEL_OK;
 	supMaquina_t supMaquina = {
 		.perguntas = {"Aspecto (200 texto): ",
 		              "Refugo (200 texto): ",
@@ -548,25 +548,25 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 
 		retCampo = preencherCampo(supMaquina.perguntas[0], supMaquina.aspecto, SUPMAQ_ASPEC_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC) continue;
 
 		retCampo = preencherCampo(supMaquina.perguntas[1], supMaquina.refugo, SUPMAG_REFUGO_LEN);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC) continue;
 
 		retCampo = preencherCampo(supMaquina.perguntas[2], supMaquina.cadencia, SUPMAQ_CADENCIA);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC) continue;
 
 		retCampo = preencherCampo(supMaquina.perguntas[3], supMaquina.oee, SUPMAQ_OEE);
 		if(retCampo == EXITPC){
-			return(NOK);
+			return(PAINEL_NOK);
 			break;
 		}else if(retCampo == CORRIGIRPC) continue;
 
@@ -586,21 +586,21 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError) == NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 			logWrite(log, LOGDEV, "Receiving from server: [%s] [%lu]B.\n", lineToSend, msgSz);
 
-			if(validatingInsertRegisterServerResponse(lineToSend) == NOK){
+			if(validatingInsertRegisterServerResponse(lineToSend) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: validating insert register server response.\n");
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 
 		}else{
@@ -609,7 +609,7 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket)
 		}
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int geraArqDRTs(void)
@@ -618,7 +618,7 @@ int geraArqDRTs(void)
 
 	if((f = fopen("./EXEMPLO_DRTs.text", "w")) == NULL){
 		fprintf(stderr, "Unable to open/create SAQMPLE_DRTs.text! [%s]\n", strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	fprintf(f, "11111-%s\n", STR_FORNOELETRICO);
@@ -629,7 +629,7 @@ int geraArqDRTs(void)
 	fflush(f);
 	fclose(f);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
@@ -641,8 +641,8 @@ int geraArqDRTs(void)
  * OUTPUT:
  *  funcao - User Level (office responsability) to a given User ID (DRT)
  *  usrType - User level type (tipoUsuario_t)
- *  NOK - User Id not located into file.
- *  OK - User identified
+ *  PAINEL_NOK - User Id not located into file.
+ *  PAINEL_OK - User identified
  */
 int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 {
@@ -656,7 +656,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 
 	if((fDRT = fopen(drtFullFilePath, "r")) == NULL){
 		logWrite(log, LOGOPALERT, "Unable to open/read [%s]! [%s].\n", drtFullFilePath, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	while(!feof(fDRT)){
@@ -689,7 +689,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 				*usrType = UNDEFINED_USER;
 				logWrite(log, LOGOPALERT, "DRT [%s] cadastrada mas funcao nao definida!\n", drt);
 				fclose(fDRT);
-				return(NOK);
+				return(PAINEL_NOK);
 			}
 		}
 	}
@@ -697,11 +697,11 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 	if(feof(fDRT)){
 		logWrite(log, LOGOPALERT, "DRT [%s] nao cadastrada neste sistema!\n", drt);
 		fclose(fDRT);
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	fclose(fDRT);
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
@@ -723,10 +723,10 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	}while(drt[0] == '\0');
 
 	if(strncmp(drt, LOGOUT_CMD, sizeof(LOGOUT_CMD)-1) == 0){
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == NOK)
+	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == PAINEL_NOK)
 		logWrite(log, LOGOPALERT, "Tentativa de acesso com DRT [%s] nao reconhecida ou com funcao cadastrada invalida as [%s].\n", drt, time_DDMMYYhhmmss());
 
 	/* PASS */
@@ -739,7 +739,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	calc_sha_256(hash, pass, strlen(pass));
 	hash_to_string(passhash, hash);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
@@ -747,23 +747,23 @@ int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
 	switch(userType){
 
 		case FORNO_ELETRICO:
-			if(SG_interfaceFornoEletrico(drt, sockfd) == NOK)
-				return(NOK);
+			if(SG_interfaceFornoEletrico(drt, sockfd) == PAINEL_NOK)
+				return(PAINEL_NOK);
 			break;
 
 		case OPERADOR_MAQUINA:
-			if(SG_interfaceOperadorMaquina(drt, sockfd) == NOK)
-				return(NOK);
+			if(SG_interfaceOperadorMaquina(drt, sockfd) == PAINEL_NOK)
+				return(PAINEL_NOK);
 			break;
 
 		case SUPERVISOR_MAQUINA:
-			if(SG_interfaceSupervisorMaquina(drt, sockfd) == NOK)
-				return(NOK);
+			if(SG_interfaceSupervisorMaquina(drt, sockfd) == PAINEL_NOK)
+				return(PAINEL_NOK);
 			break;
 
 		default:
 			break;
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }

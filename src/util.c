@@ -68,19 +68,19 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: rece
 
 		if(srRetAux == -1){
 			*sendError = errno;
-			return(NOK);
+			return(PAINEL_NOK);
 		}
 
 		srRet += srRetAux;
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /*
-retornando (NOK && recvError == 0): recv erro: Connection close unexpected!
-retornando (NOK && recvError != 0): recv erro. recvError mesmo valor de errno
-retornando (OK): 
+retornando (PAINEL_NOK && recvError == 0): recv erro: Connection close unexpected!
+retornando (PAINEL_NOK && recvError != 0): recv erro. recvError mesmo valor de errno
+retornando (PAINEL_OK): 
 */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError)
 {
@@ -112,12 +112,12 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 
 		if(srRetAux == 0){
 			*recvError = 0;
-			return(NOK);
+			return(PAINEL_NOK);
 		}
 
 		if(srRetAux == -1){
 			*recvError = errno;
-			return(NOK);
+			return(PAINEL_NOK);
 		}
 
 		srRet += srRetAux;
@@ -131,7 +131,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	if(srSz > 0)
 		recv(sockfd, netBuff, MAXLINE, 0);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 char * getPAINELEnvHomeVar(void)
@@ -145,11 +145,11 @@ inline int changeCharByChar(char *buffer, int from, int to)
 
 	p = strchr(buffer, from);
 
-	if(p == NULL) return(NOK);
+	if(p == NULL) return(PAINEL_NOK);
 
 	*p = to;
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 inline size_t cutter(char **buffer, int c, char *out, size_t outSz)
@@ -193,40 +193,40 @@ int html_fopen(htmlFiles_t *htmls, char *htmlStatic, char *htmlRefresh)
 	htmls->htmlStatic = fopen(htmlStatic, "w");
 	if(htmls->htmlStatic == NULL){
 		fprintf(stderr, "Erro criando HTML STATIC [%s]. Motivo [%s]\n", htmlStatic, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	htmls->fdStatic = fileno(htmls->htmlStatic);
 	if(htmls->fdStatic == -1){
 		fprintf(stderr, "Erro em pegar descritor de HTML STATIC [%s]. Motivo: [%s]\n", htmlStatic, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* Opening refresh */
 	htmls->htmlRefresh = fopen(htmlRefresh, "w");
 	if(htmls->htmlRefresh == NULL){
 		fprintf(stderr, "Erro criando HTML REFRESH [%s]. Motivo: [%s]\n", htmlRefresh, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	htmls->fdRefresh = fileno(htmls->htmlRefresh);
 	if(htmls->fdRefresh == -1){
 		fprintf(stderr, "Erro em pegar descritor de HTML REFRESH [%s]. Motivo: [%s]\n", htmlRefresh, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* Locking */
 	if(lockf(htmls->fdStatic, F_LOCK, 0) < 0){
 		fprintf(stderr, "Nao foi possivel fazer lock no arquivo HTML STATIC [%s]. Motivo: [%s]\n", htmlStatic, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	if(lockf(htmls->fdRefresh, F_LOCK, 0) < 0){
 		fprintf(stderr, "Nao foi possivel fazer lock no arquivo HTML REFRESH [%s]. Motivo: [%s]\n", htmlRefresh, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int html_writeDual(htmlFiles_t *htmls, int files, char *msg)
@@ -238,14 +238,14 @@ int html_writeDual(htmlFiles_t *htmls, int files, char *msg)
 	else if(files == 1) fprintf(htmls->htmlStatic,  "%s", msg);
 	else if(files == 2) fprintf(htmls->htmlRefresh, "%s", msg);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int html_fflush(htmlFiles_t *htmls)
 {
 	fflush(htmls->htmlStatic );
 	fflush(htmls->htmlRefresh);
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int html_fclose(htmlFiles_t *htmls)
@@ -253,12 +253,12 @@ int html_fclose(htmlFiles_t *htmls)
 	/* Unlocking */
 	if(lockf(htmls->fdStatic, F_ULOCK, 0) < 0){
 		fprintf(stderr, "Nao foi possivel fazer o unlock do arquivo HTML STATIC: [%s]\n", strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	if(lockf(htmls->fdRefresh, F_ULOCK, 0) < 0){
 		fprintf(stderr, "Nao foi possivel fazer o unlock do arquivo HTML STATIC: [%s]\n", strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* Closing */
@@ -267,7 +267,7 @@ int html_fclose(htmlFiles_t *htmls)
 
 	memset(htmls, 0, sizeof(htmlFiles_t));
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int html_testHtmlLock(FILE *file)
@@ -327,7 +327,7 @@ pid_t daemonizeWithoutLock(log_t *log)
 
 	father = getppid();
 	if(father == 1)
-		return(NOK);
+		return(PAINEL_NOK);
 
 	i = fork();
 
@@ -335,7 +335,7 @@ pid_t daemonizeWithoutLock(log_t *log)
 
 	if(i == -1){
 		fprintf(stderr, "Erro fork chield process! [%s]\n", strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	if(i > 0)

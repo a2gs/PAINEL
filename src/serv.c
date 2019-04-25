@@ -123,13 +123,13 @@ pid_t daemonize(void)
 
 	father = getppid();
 	if(father == 1)
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 
 	i = fork();
 
 	if(i == -1){
 		logWrite(&log, LOGMUSTLOGIT, "Erro fork chield process! [%s].\n", strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	if(i > 0)
@@ -144,24 +144,24 @@ pid_t daemonize(void)
 	snprintf(runnigPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s/", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_SRV);
 	if(chdir(runnigPath) == -1){
 		logWrite(&log, LOGMUSTLOGIT, "Unable changes to running dir [%s]: [%s].\n", runnigPath, strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	snprintf(runnigLockFdPath, MAX_PATH_RUNNING_LOCKFD, "%s/%s", runnigPath, LOCK_FILE);
 	lockFd = open(runnigLockFdPath, O_RDWR|O_CREAT|O_EXCL, 0640);
 	if(lockFd == -1){
 		logWrite(&log, LOGMUSTLOGIT, "There is another instance already running. Check [%s] file: [%s].\n", runnigLockFdPath, strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	if(lockf(lockFd, F_TLOCK, 0) < 0){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt test 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	if(lockf(lockFd, F_LOCK, 0) < 0){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt lock 'only one instance' file [%s]: [%s].\n", runnigLockFdPath, strerror(errno));
-		return((pid_t)NOK);
+		return((pid_t)PAINEL_NOK);
 	}
 
 	/* Primeira instancia */
@@ -186,8 +186,8 @@ pid_t daemonize(void)
  *
  * INPUT:
  * OUTPUT:
- *  OK - Valid login
- *  NOK - Not valid login
+ *  PAINEL_OK - Valid login
+ *  PAINEL_NOK - Not valid login
  */
 int parsingLogout(char *msg, userIdent_t *userSession)
 {
@@ -206,7 +206,7 @@ int parsingLogout(char *msg, userIdent_t *userSession)
 	/* FUNCAO */
 	cutter(&p, '|', userSession->level, VALOR_FUNCAO_LEN);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int parsingLogin(char *msg, userIdent_t *userSession)
@@ -215,8 +215,8 @@ int parsingLogout(char *msg, userIdent_t *userSession)
  *
  * INPUT:
  * OUTPUT:
- *  OK - Valid login
- *  NOK - Not valid login
+ *  PAINEL_OK - Valid login
+ *  PAINEL_NOK - Not valid login
  */
 int parsingLogin(char *msg, userIdent_t *userSession)
 {
@@ -238,7 +238,7 @@ int parsingLogin(char *msg, userIdent_t *userSession)
 	/* PASSHASH */
 	cutter(&p, '|', userSession->passhash, PASS_SHA256_LEN);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 
@@ -251,8 +251,8 @@ int parsingLogin(char *msg, userIdent_t *userSession)
  *  ProtCode - 
  *  data - NULL TERMINATED!!
  * OUTPUT:
- *  OK - Sent ok
- *  NOK - Didnt send
+ *  PAINEL_OK - Sent ok
+ *  PAINEL_NOK - Didnt send
  */
 int sendClientResponse(int connfd, int ProtCode, void *data)
 {
@@ -273,7 +273,7 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 			break;
 
 		default:
-			return(NOK);
+			return(PAINEL_NOK);
 	}
 
 	msgNetOrderSz = htonl(msgHostOderSz);
@@ -283,10 +283,10 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 
 	if(send(connfd, msg, msgHostOderSz, 0) == -1){
 		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* -------------------------------------------------------------------------------------------------------- */
@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 	getLogSystem(&log); /* Loading log to business rules */
 
 	p = daemonize();
-	if(p == (pid_t)NOK){
+	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -354,11 +354,11 @@ int main(int argc, char *argv[])
 	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	/* colocar aqui:
-	 * if(abrir arquivo servlock) == OK
+	 * if(abrir arquivo servlock) == PAINEL_OK
 	 * 	avisa que o servers ja esta no ar (ler do arquivo o PID e mostrar) e parar o programa
 	 */
 
-	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
 		return(-4);
 	}
 
-	if(dbCreateAllTables() == NOK){
+	if(dbCreateAllTables() == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em criar tabelas/indices em banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
 				msgBackToClient = NULL;
 
 				/* Reading the message */
-				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError) == NOK){
+				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError) == PAINEL_NOK){
 					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
 					break;
 				}
@@ -445,7 +445,7 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_LOGIN:
 
-						if(parsingLogin(msgP, &userSession) == NOK){
+						if(parsingLogin(msgP, &userSession) == PAINEL_NOK){
 							/* Bad formmated protocol */
 							msgBackToClient = "ERRO|login protocol is bad formatted!";
 
@@ -462,12 +462,12 @@ int main(int argc, char *argv[])
 							return(-9);
 						}
 
-						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == NOK){
+						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == PAINEL_NOK){
 							msgBackToClient = "ERRO|User/funcion/password didnt find into database!";
 
 							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -486,14 +486,14 @@ int main(int argc, char *argv[])
 
 							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
-							if(SG_db_inserting(&msgCleaned) == NOK){
+							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGIN INTO DATABASE (server insert error)!";
 							}else{
 								msgBackToClient = "OK|User registred login into database!";
 							}
 
-							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -509,7 +509,7 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_LOGOUT:
 
-						if(parsingLogout(msgP, &userSession) == NOK){
+						if(parsingLogout(msgP, &userSession) == PAINEL_NOK){
 							/* Bad formmated protocol */
 							msgBackToClient = "ERRO|logout protocol is bad formatted!";
 
@@ -530,14 +530,14 @@ int main(int argc, char *argv[])
 
 							SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
-							if(SG_db_inserting(&msgCleaned) == NOK){
+							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user logout database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGOUT INTO DATABASE (server insert error)!";
 							}else{
 								msgBackToClient = "OK|User registered logout into database!";
 							}
 
-							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent logout success message! Disconnecting.\n");
 								logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -555,12 +555,12 @@ int main(int argc, char *argv[])
 					case PROT_COD_INSREG:
 						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
 
-						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == NOK){
+						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == PAINEL_NOK){
 							msgBackToClient = "ERRO|Protocol INSERT REGSITER unable to parse!";
 
 							logWrite(&log, LOGOPALERT, "ERRO: PARSING INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP);
 
-							if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
+							if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Message error parsing sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 								dbClose();
@@ -573,12 +573,12 @@ int main(int argc, char *argv[])
 
 							continue;
 						}else{
-							if(SG_db_inserting(&msgCleaned) == NOK){
+							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
 								msgBackToClient = "ERRO|Unable to insert register into database!";
 
 								logWrite(&log, LOGDBALERT, "ERRO: INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msg);
 
-								if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
+								if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == PAINEL_NOK){
 									logWrite(&log, LOGOPALERT, "Message error insert sent back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 									dbClose();
@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 
 						msgBackToClient = "OK|Register inserted!";
 
-						if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == NOK){
+						if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "Error sent fail process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 							dbClose();

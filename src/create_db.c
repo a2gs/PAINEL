@@ -48,8 +48,8 @@
  * INPUT:
  *  <None>
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error
  */
 int main(int argc, char *argv[])
 {
@@ -74,13 +74,13 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
 		logWrite(&log, LOGREDALERT, "Erro em abrir/criar banco de dados!\n");
 		logClose(&log);
 		return(-3);
 	}
 
-	if(dbCreateAllTables() == NOK){
+	if(dbCreateAllTables() == PAINEL_NOK){
 		logWrite(&log, LOGREDALERT, "ERRO criando banco de dados (tabelas) SQLite!\n");
 		logClose(&log);
 		return(-4);

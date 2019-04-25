@@ -241,9 +241,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen1(void *data)
 	return(screen2);
 }
 
-int pingServer(char ip, int port)
+int pingServer(char *ip, int port)
 {
-	return(OK);
+	return(PAINEL_OK);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 	if(argc != 3){
 		initFunc = screen_config;
 	}else{
-		if(pingServer == OK)
+		if(pingServer(argv[1], atoi(argv[2])) == PAINEL_OK)
 			initFunc = screen_menu;
 		else
 			initFunc = screen_config;

@@ -86,8 +86,8 @@ void getLogSystem(log_t *logServ);
  *  port - Client PORT
  * OUTPUT:
  *  data - Message's data breakdown
- *  OK - Ok
- *  NOK - Parsing error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Parsing error
  */
 int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data);
 
@@ -103,8 +103,8 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
  *  port - Client PORT
  * OUTPUT:
  *  data - Message's data breakdown
- *  OK - Ok
- *  NOK - Parsing error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Parsing error
  */
 int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
 
@@ -120,8 +120,8 @@ int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, 
  *  port - Client PORT
  * OUTPUT:
  *  data - Message's data breakdown
- *  OK - Ok
- *  NOK - Parsing error
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Parsing error
  */
 int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
 
@@ -134,8 +134,8 @@ int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, i
  *  passhash - Hashed password
  *  func - User Level (office responsibility)
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error (user does not exist)
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error (user does not exist)
  */
 int SG_checkLogin(char *user, char *passhash, char *func);
 
@@ -146,8 +146,8 @@ int SG_checkLogin(char *user, char *passhash, char *func);
  * INPUT:
  *  none
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error opening or creating database
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error opening or creating database
  */
 /*
 int SG_db_open_or_create(void);
@@ -160,8 +160,8 @@ int SG_db_open_or_create(void);
  * INPUT:
  *  data - Data to be inserted
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error inserting
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error inserting
  */
 int SG_db_inserting(SG_registroDB_t *data);
 

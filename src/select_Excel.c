@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL) == NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL) == PAINEL_NOK){
 		printf("Erro em abrir banco de dados!\n");
 		printf("Terminating application!\n");
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
 	snprintf(sql, SQL_COMMAND_SZ, "SELECT * FROM %s", DB_MSGS_TABLE);
 
-	if(dbSelect(sql, excel_constructTable, NULL) == NOK){
+	if(dbSelect(sql, excel_constructTable, NULL) == PAINEL_NOK){
 		printf("Error at select database to define reports [%s]!\n", sql);
 		printf("Terminating application!\n");
 

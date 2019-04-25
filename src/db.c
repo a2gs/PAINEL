@@ -48,7 +48,7 @@ int sqLite3LogError(int rc)
 	char *msg = NULL;
 	int ret = 0;
 
-	ret = OK;
+	ret = PAINEL_OK;
 
 	if(rc == SQLITE_ERROR){
 		msg = "The SQLITE_ERROR result code is a generic error code that is used when no other more specific error code is available.\n";
@@ -242,7 +242,7 @@ int sqLite3LogError(int rc)
 		msg = "The SQLITE_IOERR_CONVPATH error code is an extended error code for SQLITE_IOERR used only by Cygwin VFS and indicating that the cygwin_conv_path() system call failed. See also: SQLITE_CANTOPEN_CONVPATH\n";
 	}else{
 		msg = "Unknown error.\n";
-		ret = NOK;
+		ret = PAINEL_NOK;
 	}
 
 	logWrite(log, LOGDBALERT, msg);
@@ -257,7 +257,7 @@ int dbSelect(char *sqlCmd, int (*callback)(void *,int ,char **,char **), void *a
 
 	if(db == NULL){
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for select!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	logWrite(log, LOGDEV, "dbSelect SQL cmd = [%s]\n", sqlCmd);
@@ -271,10 +271,10 @@ int dbSelect(char *sqlCmd, int (*callback)(void *,int ,char **,char **), void *a
 		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int dbInsert(char *sqlCmd)
@@ -284,7 +284,7 @@ int dbInsert(char *sqlCmd)
 
 	if(db == NULL){
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for insert!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_exec(db, sqlCmd, 0, 0, &err_msg);
@@ -294,10 +294,10 @@ int dbInsert(char *sqlCmd)
 		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL insert error [%s]: [%s].\n", sqlCmd, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int dbOpen(char *userDBPath, int flags, log_t *userLog)
@@ -318,7 +318,7 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_open_v2(DBPath, &db, flags, NULL);
@@ -327,10 +327,10 @@ int dbOpen(char *userDBPath, int flags, log_t *userLog)
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Cannot open database [%s]: [%s].\n", DBPath, sqlite3_errmsg(db));
 		sqlite3_close(db);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int dbCreateAllTables(void)
@@ -340,7 +340,7 @@ int dbCreateAllTables(void)
 
 	if(db == NULL){
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for create tables!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 	/* ------------------------------------------------------------------------------------- */
 
@@ -405,7 +405,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create MSGS error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNCAO_INDX ON %s (FUNCAO)", DB_MSGS_TABLE);
@@ -417,7 +417,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create index FUNCAO_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS DATAHORA_INDX ON %s (DATAHORA)", DB_MSGS_TABLE);
@@ -428,7 +428,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create index DATAHORA_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* ------------------------------------------------------------------------------------- */
@@ -454,7 +454,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS ID_INDX ON %s (ID)", DB_USERS_TABLE);
@@ -466,7 +466,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create index ID_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* ------------------------------------------------------------------------------------- */
@@ -494,7 +494,7 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create RELATS error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNC_INDX ON %s (FUNCAO)", DB_REPORTS_TABLE);
@@ -506,12 +506,12 @@ int dbCreateAllTables(void)
 		fprintf(stderr, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* ------------------------------------------------------------------------------------- */
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int dbClose(void)
@@ -520,17 +520,17 @@ int dbClose(void)
 
 	if(db == NULL){
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for close!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_close_v2(db);
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
 		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL close error!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	memset(DBPath, 0, sizeof(DBPath));
 
-	return(OK);
+	return(PAINEL_OK);
 }

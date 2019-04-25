@@ -64,8 +64,8 @@ int listUsersAndFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
  * INPUT:
  *  DBPath - Database full path
  * OUTPUT:
- *  OK - Printed (stdout)
- *  NOK - Error (probability db (stderr)) 
+ *  PAINEL_OK - Printed (stdout)
+ *  PAINEL_NOK - Error (probability db (stderr)) 
  */
 int listUsersAndYoursFunctions(char *DBPath)
 {
@@ -90,7 +90,7 @@ int listUsersAndYoursFunctions(char *DBPath)
 		}
 
 		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
@@ -109,7 +109,7 @@ int listUsersAndYoursFunctions(char *DBPath)
 		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	memset(sql, '\0', sizeof(sql));
@@ -134,14 +134,14 @@ int listUsersAndYoursFunctions(char *DBPath)
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	printf("\n");
 
 	sqlite3_close(db);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
@@ -166,8 +166,8 @@ int listFuncs(void *htmlsVoid, int argc, char **argv, char **azColName)
  * INPUT:
  *  DBPath - Database full path
  * OUTPUT:
- *  OK - Printed (stdout)
- *  NOK - Error (probability db (stderr)) 
+ *  PAINEL_OK - Printed (stdout)
+ *  PAINEL_NOK - Error (probability db (stderr)) 
  */
 int listUsersFunctions(char *DBPath)
 {
@@ -192,7 +192,7 @@ int listUsersFunctions(char *DBPath)
 		}
 
 		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
@@ -211,7 +211,7 @@ int listUsersFunctions(char *DBPath)
 		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	memset(sql, '\0', sizeof(sql));
@@ -236,14 +236,14 @@ int listUsersFunctions(char *DBPath)
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	printf("\n");
 
 	sqlite3_close(db);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int dbAddUser(char *user, char *func, char *pass, char *DBPath)
@@ -256,8 +256,8 @@ int listUsersFunctions(char *DBPath)
  *  pass - Textplain password
  *  DBPath - Database full path
  * OUTPUT:
- *  OK - Added
- *  NOK - Error (probability db (stderr)) 
+ *  PAINEL_OK - Added
+ *  PAINEL_NOK - Error (probability db (stderr)) 
  */
 int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 {
@@ -281,7 +281,7 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 		}
 
 		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
@@ -300,7 +300,7 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	calc_sha_256(hash, pass, strlen(pass));
@@ -328,12 +328,12 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	sqlite3_close(db);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int dbRemoveUser(char *user, char *func, char *pass, char *DBPath)
@@ -344,8 +344,8 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
  *  user - User ID (DRT)
  *  DBPath - Database full path
  * OUTPUT:
- *  OK - Removed
- *  NOK - Error (probability db (stderr)) 
+ *  PAINEL_OK - Removed
+ *  PAINEL_NOK - Error (probability db (stderr)) 
  */
 int dbRemoveUser(char *user, char *DBPath)
 {
@@ -367,7 +367,7 @@ int dbRemoveUser(char *user, char *DBPath)
 		}
 
 		fprintf(stderr, "Cannot enable shared cache database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	rc = sqlite3_open_v2(DBPath, &db, SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL);
@@ -386,7 +386,7 @@ int dbRemoveUser(char *user, char *DBPath)
 		fprintf(stderr, "Cannot open database [%s]: [%s]\n", DBPath, sqlite3_errmsg(db));
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	memset(sql, '\0', sizeof(sql));
@@ -411,12 +411,12 @@ int dbRemoveUser(char *user, char *DBPath)
 		sqlite3_free(err_msg);
 		sqlite3_close(db);
         
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	sqlite3_close(db);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int main(int argc, char *argv[])
@@ -462,7 +462,7 @@ int main(int argc, char *argv[])
 			if(c != NULL) *c = '\0';
 			*/
 
-			if(dbAddUser(user, func, pass, DBPath) == NOK){
+			if(dbAddUser(user, func, pass, DBPath) == PAINEL_NOK){
 				fprintf(stderr, "Erro inserindo formulario de usuario!\n");
 				return(-3);
 			}
@@ -480,7 +480,7 @@ int main(int argc, char *argv[])
 			if(c != NULL) *c = '\0';
 			*/
 
-			if(dbRemoveUser(user, DBPath) == NOK){
+			if(dbRemoveUser(user, DBPath) == PAINEL_NOK){
 				fprintf(stderr, "Erro removendo formulario de usuario!\n");
 				return(-3);
 			}
@@ -502,7 +502,7 @@ int main(int argc, char *argv[])
 		strncpy(func, argv[3], VALOR_FUNCAO_LEN);
 		strncpy(pass, argv[4], PASS_LEN);
 
-		if(dbAddUser(user, func, pass, DBPath) == NOK){
+		if(dbAddUser(user, func, pass, DBPath) == PAINEL_NOK){
 			fprintf(stderr, "Erro inserindo usuario!\n");
 			return(-2);
 		}
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
 		/* remove user */
 		strncpy(user, argv[2], DRT_LEN);
 
-		if(dbRemoveUser(user, DBPath) == NOK){
+		if(dbRemoveUser(user, DBPath) == PAINEL_NOK){
 			fprintf(stderr, "Erro removendo usuario!\n");
 			return(-2);
 		}

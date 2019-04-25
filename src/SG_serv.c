@@ -63,15 +63,15 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
-	if(dbSelect(sql, SG_checkLogin_callback, NULL) == NOK){
+	if(dbSelect(sql, SG_checkLogin_callback, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user from table.\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	if(SG_checkLogin_NOROW == SQL_NO_ROW)
-		return(NOK);
+		return(PAINEL_NOK);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
@@ -91,7 +91,7 @@ int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, 
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
@@ -111,7 +111,7 @@ int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, i
 	/* CLIENT IP/PORT */
 	snprintf(data->ipport, VALOR_IPPORT_LEN, "%s:%d", ip, port);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int protocolChecking(char *msg)
@@ -123,9 +123,9 @@ int protocolChecking(char *msg)
 		if(*p == '|') n++;
 
 	if(n != 21)
-		return(NOK);
+		return(PAINEL_NOK);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 inline int protocolChecking(char *msg);
@@ -136,90 +136,90 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 
 	p = msg;
 
-	if(protocolChecking(p) == NOK){
+	if(protocolChecking(p) == PAINEL_NOK){
 		logWrite(log, LOGDEV, "There arent the correct number (21) of delimitators!\n");
-		return(NOK);
+		return(PAINEL_NOK);
 	}
 
 	/* DRT */
 	cutter(&p, '|', data->drt, DRT_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* DATAHORA */
 	cutter(&p, '|', data->data, DATA_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* LOGINOUT */
 	cutter(&p, '|', data->loginout, 1);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* FUNCAO */
 	cutter(&p, '|', data->funcao, VALOR_FUNCAO_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PANELA */
 	cutter(&p, '|', data->panela, FORNELET_PAMELA_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* WS */
 	cutter(&p, '|', data->ws, OPEMAQ_WS_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* FORNELETR */
 	cutter(&p, '|', data->fornEletr, FORNELET_NUMFORELE_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* NUMMAQUINA */
 	cutter(&p, '|', data->numMaquina, OPEMAQ_NUMMAQ_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* DIAMETRO */
 	cutter(&p, '|', data->diamNom, OPEMAQ_DIAMNOM_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* CLASSE */
 	cutter(&p, '|', data->classe, OPEMAQ_CLASSE_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* TEMP */
 	cutter(&p, '|', data->temp, OPEMAQ_TEMP_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCFESI */
 	cutter(&p, '|', data->percFeSi, OPEMAQ_PERC_FESI_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCMG */
 	cutter(&p, '|', data->percMg, FORNELET_PERC_MG_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCC */
 	cutter(&p, '|', data->percC, FORNELET_PERC_C_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCS */
 	cutter(&p, '|', data->percS, FORNELET_PERC_S_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCP */
 	cutter(&p, '|', data->percP, FORNELET_PERC_P_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* PERCINOCLNT */
 	cutter(&p, '|', data->percInoculante, OPEMAQ_PERC_INOC_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* ENELETTON */
 	cutter(&p, '|', data->enerEletTon, OPEMAQ_ENEELETON_LEN);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* CADENCIA */
 	cutter(&p, '|', data->cadencia, SUPMAQ_CADENCIA);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* OEE */
 	cutter(&p, '|', data->oee, SUPMAQ_OEE);
-	if(*p == '\0') return(NOK);
+	if(*p == '\0') return(PAINEL_NOK);
 
 	/* ASPECTUBO */
 	cutter(&p, '|', data->aspecto, SUPMAQ_ASPEC_LEN);
@@ -278,7 +278,7 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 	         data->refugo,
 	         data->ipport);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 int SG_db_inserting(SG_registroDB_t *data)
@@ -296,10 +296,10 @@ int SG_db_inserting(SG_registroDB_t *data)
 
 	logWrite(log, LOGDEV, "Tentando INSERT: [%s]\n", sqlCmd);
 
-	if(dbInsert(sqlCmd) == NOK){
+	if(dbInsert(sqlCmd) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Erro inserindo registro! [%s]\n", sqlCmd);
-		return(OK);
+		return(PAINEL_OK);
 	}
 
-	return(OK);
+	return(PAINEL_OK);
 }

@@ -66,7 +66,7 @@ static char select_NOROW = SQL_NO_ROW;
  *  title - HTML title tag
  *  refreshSeg - Seconds for refresh rate (HTML meta tag)
  * OUTPUT:
- *  OK - Ok
+ *  PAINEL_OK - Ok
  */
 int html_header(htmlFiles_t *htmls, char *title, unsigned int refreshSeg)
 {
@@ -113,7 +113,7 @@ int html_header(htmlFiles_t *htmls, char *title, unsigned int refreshSeg)
 
 	html_fflush(htmls);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
@@ -124,7 +124,7 @@ int html_header(htmlFiles_t *htmls, char *title, unsigned int refreshSeg)
  *  htmls - HTMLs files (static and refresh)
  *  columnsHeaders - the column name
  * OUTPUT:
- *  OK - Ok
+ *  PAINEL_OK - Ok
  */
 int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 {
@@ -147,7 +147,7 @@ int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
 
 	html_fflush(htmls);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int html_endTable(htmlFiles_t *htmls)
@@ -157,7 +157,7 @@ int html_startTable(htmlFiles_t *htmls, char *columnsHeaders)
  * INPUT:
  *  htmls - HTMLs files (static and refresh)
  * OUTPUT:
- *  OK - Ok
+ *  PAINEL_OK - Ok
  */
 int html_endTable(htmlFiles_t *htmls)
 {
@@ -167,7 +167,7 @@ int html_endTable(htmlFiles_t *htmls)
 
 	html_fflush(htmls);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int hmtl_relat_infos(void *htmlsVoid, int argc, char **argv, char **azColName)
@@ -180,7 +180,7 @@ int html_endTable(htmlFiles_t *htmls)
  *  azColName - columns name
  * OUTPUT:
  *  htmlsVoid - Database breakdown data
- *  OK - Ok
+ *  PAINEL_OK - Ok
  */
 int hmtl_relat_infos(void *htmlsVoid, int argc, char **argv, char **azColName)
 {
@@ -244,7 +244,7 @@ int hmtl_constructEmptyTable(htmlFiles_t *htmls)
 	snprintf(htmlText, MAXLINE, "<center style=\"color:rgb(255, 0, 0); border:2px solid rgb(255, 0, 0); background-color:rgb(0, 0, 0);\"><b>THERE ARE NO DATA SAVED FOR THIS FUNCTION!</b></center><br>\n");
 	html_writeDual(htmls, 0, htmlText);
 
-	return(OK);
+	return(PAINEL_OK);
 }
 
 /* int main(int argc, char *argv[])
@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
 	}
 
 	p = daemonizeWithoutLock(&log);
-	if(p == (pid_t)NOK){
+	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Cannt daemonize select html!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -325,7 +325,7 @@ int main(int argc, char *argv[])
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
 
-		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == NOK){
+		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 
 		select_NOROW = SQL_NO_ROW;
 
-		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == NOK){
+		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Error at select database to define reports [%s]!\n", sql);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
 		/* Creating HTML files */
 
 		memset(&htmls, 0, sizeof(htmlFiles_t));
-		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == NOK){
+		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -374,7 +374,7 @@ int main(int argc, char *argv[])
 			return(-6);
 		}
 
-		if(html_header(&htmls, pageInfo.title, segRefresh) == NOK){
+		if(html_header(&htmls, pageInfo.title, segRefresh) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever header para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 			return(-7);
 		}
 
-		if(html_startTable(&htmls, pageInfo.columnsHeaders) == NOK){
+		if(html_startTable(&htmls, pageInfo.columnsHeaders) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever tabela para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
 
 		select_NOROW = SQL_NO_ROW;
 
-		if(dbSelect(sql, hmtl_constructTable, &htmls) == NOK){
+		if(dbSelect(sql, hmtl_constructTable, &htmls) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Error at select database to construct tables [%s]!\n", sql);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 
@@ -415,7 +415,7 @@ int main(int argc, char *argv[])
 			hmtl_constructEmptyTable(&htmls);
 		}
     
-		if(html_endTable(&htmls) == NOK){
+		if(html_endTable(&htmls) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
 			logWrite(&log, LOGREDALERT, "Terminating application!\n");
 

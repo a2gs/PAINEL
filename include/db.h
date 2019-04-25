@@ -55,8 +55,8 @@
  * INPUT:
  *  none
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error opening or creating database
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error opening or creating database
  */
 int dbCreateAllTables(void);
 
@@ -69,8 +69,8 @@ int dbCreateAllTables(void);
  *  flags - 
  *  log - 
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error opening or creating database
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error opening or creating database
  */
 int dbOpen(char *userDBPath, int flags, log_t *log);
 
@@ -103,8 +103,8 @@ int dbInsert(char *sqlCmd);
  * INPUT:
  *  none
  * OUTPUT:
- *  OK - Ok
- *  NOK - Error closing
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error closing
  */
 int dbClose(void);
 
