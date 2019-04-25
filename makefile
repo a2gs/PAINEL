@@ -102,7 +102,7 @@ client: sha256 logtag
 ncclient: sha256 logtag wizard_by_return
 	@echo
 	@echo "=== ncclient =================="
-	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) -l$(LIB_WIZPATPATH) $(CFLAGS)
+	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) -l$(LIB_WIZPATPATH) $(CFLAGS) -Wno-incompatible-pointer-types
 
 serv: logtag
 	@echo
