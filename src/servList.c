@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Cannt daemonize server list!\n");
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-3);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenfd == -1){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-4);
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-5);
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 
 	if(listen(listenfd, 250) != 0){
 		logWrite(&log, LOGOPALERT, "Erro listen: [%s]\n", strerror(errno));
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-6);
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
 			logWrite(&log, LOGOPALERT, "Erro accept: [%s]\n", strerror(errno));
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			return(-7);
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 		for(i = 0; i <= 10; i++){
 			if(i == 10){
 				logWrite(&log, LOGOPALERT, "Nao foi liberado o LOCK para o arquivo [%s] em 10 tentativas!\n", fileName);
-				logWrite(&log, LOGREDALERT, "Terminating application!\n");
+				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
 				return(-9);
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 				break;
 			}else{
 				logWrite(&log, LOGOPALERT, "Erro em testar LOCK no aquivo html [%s]!\n", fileName);
-				logWrite(&log, LOGREDALERT, "Terminating application!\n");
+				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
 				return(-10);
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 		close(connfd);
 	}
 
-	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n");
+	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
 
 	logClose(&log);
 	return(0);

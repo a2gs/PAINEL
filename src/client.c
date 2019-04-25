@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, SIG_IGN);
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
-		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
+		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 		return(-2);
 	}
 
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 
 	errGetAddrInfoCode = getaddrinfo(argv[1], argv[2], &hints, &res);
 	if(errGetAddrInfoCode != 0){
-		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
+		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n\n", gai_strerror(errGetAddrInfoCode));
 		logClose(&log);
 		return(-3);
 	}
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 	}
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address.\n");
+		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address. Terminating application with ERRO.\n\n");
 		logClose(&log);
 		return(-4);
 	}
@@ -214,6 +214,8 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGOPALERT, "ERRO logout from server.\n");
 		}
 	}
+
+	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
 
 	shutdown(sockfd, SHUT_RDWR);
 	close(sockfd);

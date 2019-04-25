@@ -306,7 +306,7 @@ int main(int argc, char *argv[])
 	p = daemonizeWithoutLock(&log);
 	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Cannt daemonize select html!\n");
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-3);
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 
 		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			dbClose();
 			logClose(&log);
@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 
 		if(dbSelect(sql, hmtl_relat_infos, &pageInfo) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Error at select database to define reports [%s]!\n", sql);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			dbClose();
@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 		memset(&htmls, 0, sizeof(htmlFiles_t));
 		if(html_fopen(&htmls, fHtmlStatic, fHtmlRefresh) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em abrir/criar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			return(-6);
@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
 
 		if(html_header(&htmls, pageInfo.title, segRefresh) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever header para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			return(-7);
@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
 
 		if(html_startTable(&htmls, pageInfo.columnsHeaders) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever tabela para arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			return(-8);
@@ -401,7 +401,7 @@ int main(int argc, char *argv[])
 
 		if(dbSelect(sql, hmtl_constructTable, &htmls) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Error at select database to construct tables [%s]!\n", sql);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			dbClose();
@@ -417,7 +417,7 @@ int main(int argc, char *argv[])
     
 		if(html_endTable(&htmls) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Falha em escrever finalizar arquivos htmls [%s] e [%s].\n", fHtmlStatic, fHtmlRefresh);
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
 			dbClose();
@@ -433,7 +433,7 @@ int main(int argc, char *argv[])
 		sleep(segReaload);
 	}
 
-	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n");
+	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
     
 	dbClose();
 	logClose(&log);

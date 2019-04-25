@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 	p = daemonize();
 	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server!\n");
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-3);
@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
 	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
 		return(-4);
@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 
 	if(dbCreateAllTables() == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em criar tabelas/indices em banco de dados!\n");
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		dbClose();
 		logClose(&log);
@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s].\n", strerror(errno));
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		dbClose();
 		logClose(&log);
@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
 
 	if(listen(listenfd, 250) != 0){
 		logWrite(&log, LOGOPALERT, "Erro listen: [%s].\n", strerror(errno));
-		logWrite(&log, LOGREDALERT, "Terminating application!\n");
+		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		dbClose();
 		logClose(&log);
@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
 		connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &len);
 		if(connfd == -1){
 			logWrite(&log, LOGOPALERT, "Erro accept: [%s].\n", strerror(errno));
-			logWrite(&log, LOGREDALERT, "Terminating application!\n");
+			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			dbClose();
 			logClose(&log);
@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
 							msgBackToClient = "ERRO|login protocol is bad formatted!";
 
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
-							logWrite(&log, LOGREDALERT, "Terminating application!\n");
+							logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 							sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient);
 
@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login error message! Disconnecting.\n");
-								logWrite(&log, LOGREDALERT, "Terminating application!\n");
+								logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 								dbClose();
 								shutdown(connfd, SHUT_RDWR);
@@ -495,7 +495,7 @@ int main(int argc, char *argv[])
 
 							if(sendClientResponse(connfd, PROT_COD_LOGIN, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent login success message! Disconnecting.\n");
-								logWrite(&log, LOGREDALERT, "Terminating application!\n");
+								logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 								dbClose();
 								shutdown(connfd, SHUT_RDWR);
@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
 							msgBackToClient = "ERRO|logout protocol is bad formatted!";
 
 							logWrite(&log, LOGOPALERT, "Login protocol bad formatted [%s]! Disconnecting.\n", msg);
-							logWrite(&log, LOGREDALERT, "Terminating application!\n");
+							logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 							sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient);
 
@@ -539,7 +539,7 @@ int main(int argc, char *argv[])
 
 							if(sendClientResponse(connfd, PROT_COD_LOGOUT, msgBackToClient) == PAINEL_NOK){
 								logWrite(&log, LOGOPALERT, "Problem sent logout success message! Disconnecting.\n");
-								logWrite(&log, LOGREDALERT, "Terminating application!\n");
+								logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 								dbClose();
 								shutdown(connfd, SHUT_RDWR);
@@ -626,7 +626,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGOPALERT, "Erro fork: [%s].\n", strerror(errno));
 	}
 
-	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n");
+	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
 
 	dbClose();
 	logClose(&log);
