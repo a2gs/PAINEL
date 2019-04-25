@@ -44,10 +44,12 @@
 
 #define ESC_KEY                              (27)
 
+/*
 a2gs_ToolBox_WizardReturnFunc_t screen1(void *data);
 a2gs_ToolBox_WizardReturnFunc_t screen2(void *data);
 a2gs_ToolBox_WizardReturnFunc_t screen3(void *data);
 a2gs_ToolBox_WizardReturnFunc_t screen4(void *data);
+*/
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -101,6 +103,7 @@ void signalHandle(int sig)
 	}
 }
 
+#if 0
 a2gs_ToolBox_WizardReturnFunc_t screen4(void *data)
 {
 	WINDOW *thisScreen = NULL;
@@ -240,6 +243,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen1(void *data)
 
 	return(screen2);
 }
+#endif
 
 int pingServer(char *ip, int port)
 {
@@ -248,11 +252,71 @@ int pingServer(char *ip, int port)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "Client Configuration");
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
 	return(NULL);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 {
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "MENU");
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
 	return(NULL);
 }
 
