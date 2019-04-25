@@ -99,10 +99,10 @@ client: sha256 logtag
 	@echo "=== client =================="
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
-ncclient: sha256 logtag
+ncclient: sha256 logtag wizard_by_return
 	@echo
 	@echo "=== ncclient =================="
-	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) -l$(LIB_WIZPATPATH) $(CFLAGS)
 
 serv: logtag
 	@echo
