@@ -28,9 +28,11 @@ CFLAGS = $(CFLAGS_OPTIMIZATION) $(CFLAGS_VERSION) $(CFLAGS_WARNINGS) $(CFLAGS_DE
 # Specific libraries (project libraries ./libs/):
 LIB_SHA256 = sha-256
 LIB_LOG = log
+LIB_WIZPATPATH = wizard_by_return
 
 SHA256PATH = $(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
+WIZPATPATH = $(LOCAL_LIBS)/$(LIB_WIZPATPATH)
 
 # Libs to ALL modules:
 LIBS = -lsqlite3 -l$(LIB_LOG) # Common libs, libs to all modules or system libs
@@ -52,17 +54,30 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 client ncclient serv select_html select_Excel servList create_db userId cppcheck
+all: clean logtag sha256 wizard_by_return client ncclient serv select_html select_Excel servList create_db userId cppcheck
+	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
+	@echo
 	@echo "=== cscope =================="
 	cscope -b -R
 
 cppcheck:
+	@echo
 	@echo "=== cppcheck ================"
 	$(CPPCHECK) $(CPPCHECK_OPTS) -I ./include -I ./libs/sha-256/ -I./libs/log/ -i ./database/ -i ./database_dataBackup/ -i ./html/ -i ./log/ --suppress=missingIncludeSystem ./src/
 
+wizard_by_return:
+	@echo
+	@echo "=== lib WIZARDBYRETURN ================="
+	$(CC) -c -o$(LIBS_BIN_PATH)/wizard_by_return.o $(WIZPATPATH)/wizard_by_return.c -I$(WIZPATPATH) $(CFLAGS) -Wno-int-conversion
+	$(AR) rc $(LIBS_BIN_PATH)/libwizard_by_return.a $(LIBS_BIN_PATH)/wizard_by_return.o
+	$(RANLIB) $(LIBS_BIN_PATH)/libwizard_by_return.a
+	$(CP) $(WIZPATPATH)/wizard_by_return.h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/wizard_by_return.o
+
 logtag:
+	@echo
 	@echo "=== lib LOG ================="
 	$(CC) -c -o$(LIBS_BIN_PATH)/log.o $(LOGPATH)/log.c -I$(LOGPATH) $(CFLAGS)
 	$(AR) rc $(LIBS_BIN_PATH)/liblog.a $(LIBS_BIN_PATH)/log.o
@@ -71,6 +86,7 @@ logtag:
 	-$(RM) $(LIBS_BIN_PATH)/log.o
 
 sha256:
+	@echo
 	@echo "=== lib SHA256 =============="
 	$(CC) -c -o$(LIBS_BIN_PATH)/sha-256.o $(SHA256PATH)/sha-256.c -I$(SHA256PATH) $(CFLAGS)
 	$(AR) rc $(LIBS_BIN_PATH)/libsha-256.a $(LIBS_BIN_PATH)/sha-256.o
@@ -79,53 +95,66 @@ sha256:
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
 
 client: sha256 logtag
+	@echo
 	@echo "=== client =================="
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
 ncclient: sha256 logtag
+	@echo
 	@echo "=== ncclient =================="
 	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) $(CFLAGS)
 
 serv: logtag
+	@echo
 	@echo "=== serv ===================="
 	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_html: logtag
+	@echo
 	@echo "=== select_html ============="
 	$(CC) -o $(BINPATH)/select_html $(SOURCEPATH)/select_html.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_Excel:
+	@echo
 	@echo "=== select_Excel ============"
 	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 userId: sha256
+	@echo
 	@echo "=== userId ================="
 	$(CC) -o $(BINPATH)/userId $(SOURCEPATH)/userId.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
 
 servList: logtag
+	@echo
 	@echo "=== servList ================"
 	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(CFLAGS)
 
 create_db: logtag
+	@echo
 	@echo "=== create_db ==============="
 	$(CC) -o $(BINPATH)/create_db $(SOURCEPATH)/create_db.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 clean: clean_html clean_log clean_bin #clean_data
+	@echo
 	@echo "=== clean ==================="
 	-$(RM) nohup.out tags cscope.out
 
 clean_bin:
+	@echo
 	@echo "=== clean_bin ==============="
 	-$(RM) $(BINPATH)/* $(LIBS_BIN_PATH)/*
 
 clean_log:
+	@echo
 	@echo "=== clean_log ==============="
 	-$(RM) ./log/*.log
 
 clean_html:
+	@echo
 	@echo "=== clean_html =============="
 	-$(RM) html/*.html
 
 clean_data:
+	@echo
 	@echo "=== clean_data =============="
 	-$(RM) ./database/*.db ./database/*.xls ./database/*.xlsx
