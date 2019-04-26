@@ -32,13 +32,11 @@
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define STATUS_BAR_1                         "Connected [%s] User [%s]"
-/* #define STATUS_BAR_2                         "[TAB] Next field | [ESC] Exit" */
 
 #define STATUS_BAR_1_LINE_N                  (LINES - 1)
 #define STATUS_BAR_1_COL_N(__fmt_bar1_srt__) ((COLS - strlen(__fmt_bar1_srt__))/2)
 
 #define STATUS_BAR_2_LINE_N                  (LINES - 2)
-/* #define STATUS_BAR_2_COL_N                   ((COLS - sizeof(STATUS_BAR_2))/2) */
 
 #define FMT_STATUS_BAR_1_SZ                  (100)
 
@@ -81,7 +79,6 @@ void drawDefaultStatusBar(void)
 
 	snprintf(fmt_STATUS_BAR_1, FMT_STATUS_BAR_1_SZ, STATUS_BAR_1, "localhost:666", "Unknow");
 	mvwprintw(stdscr, STATUS_BAR_1_LINE_N, STATUS_BAR_1_COL_N(fmt_STATUS_BAR_1), fmt_STATUS_BAR_1);
-	/* mvwprintw(stdscr, STATUS_BAR_2_LINE_N, STATUS_BAR_2_COL_N, STATUS_BAR_2); */
 
 	refresh();
 }
@@ -127,10 +124,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	*/
 
 	formatTitle(screenTitle, 120-2, "Client Configuration");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
 	wattron(thisScreen, A_REVERSE);
 	mvwprintw(thisScreen, 1, 1, screenTitle);
 	wattroff(thisScreen, A_REVERSE);
-
 
 	/* ... */
 
