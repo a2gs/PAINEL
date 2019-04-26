@@ -140,6 +140,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 {
 	WINDOW *thisScreen = NULL;
 	char screenTitle[200] = {0};
+	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
 	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
 	clear();
@@ -168,7 +169,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(nextScreen);
 }
 
 /* int main(int argc, char *argv[])
