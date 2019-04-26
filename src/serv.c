@@ -241,6 +241,12 @@ int parsingLogin(char *msg, userIdent_t *userSession)
 	return(PAINEL_OK);
 }
 
+int parsingPing(char *msg)
+{
+	/* At the moment, I dont see any information to be sent from client to server (or vice-versa) into 'msg' field. Just receive PROT_COD_PING and response */
+	return(PAINEL_OK);
+}
+
 
 /* int sendClientResponse(int connfd, int ProtCode, void *data, size_t szData)
  *
@@ -260,6 +266,10 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	switch(ProtCode){
+		case PROT_COD_PING:
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_PING, (char *)data);
+			break;
+
 		case PROT_COD_LOGIN:
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
 			break;
@@ -443,6 +453,29 @@ int main(int argc, char *argv[])
 
 				switch(atoi(msgCod)){
 
+					case PROT_COD_PING:
+						msgBackToClient = "PONG";
+
+						if(parsingPing(msgP) == PAINEL_NOK){
+							/* At the moment, I dont see any information to be sent from client to server (or vice-versa) into 'msg' field. Just receive PROT_COD_PING and response */
+						}
+
+						logWrite(&log, LOGOPMSG, "Ping from [%s:%d] at [%s]. Sending PONG.\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+
+						if(sendClientResponse(connfd, PROT_COD_PING, msgBackToClient) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "Problem sent ping error message! Disconnecting.\n");
+							logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
+
+							dbClose();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+							logClose(&log);
+
+							return(-9);
+						}
+
+						break;
+
 					case PROT_COD_LOGIN:
 
 						if(parsingLogin(msgP, &userSession) == PAINEL_NOK){
@@ -459,7 +492,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-9);
+							return(-10);
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == PAINEL_NOK){
@@ -476,7 +509,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-10);
+								return(-11);
 							}
 
 						}else{
@@ -502,7 +535,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-11);
+								return(-12);
 							}
 						}
 						break;
@@ -523,7 +556,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-12);
+							return(-13);
 
 						}else{
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
@@ -546,7 +579,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-13);
+								return(-14);
 							}
 						}
 
@@ -568,7 +601,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-14);
+								return(-15);
 							}
 
 							continue;
