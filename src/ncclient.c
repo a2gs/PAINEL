@@ -32,13 +32,13 @@
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define STATUS_BAR_1                         "Connected [%s] User [%s]"
-#define STATUS_BAR_2                         "[TAB] Next field | [ESC] Exit"
+/* #define STATUS_BAR_2                         "[TAB] Next field | [ESC] Exit" */
 
 #define STATUS_BAR_1_LINE_N                  (LINES - 1)
 #define STATUS_BAR_1_COL_N(__fmt_bar1_srt__) ((COLS - strlen(__fmt_bar1_srt__))/2)
 
 #define STATUS_BAR_2_LINE_N                  (LINES - 2)
-#define STATUS_BAR_2_COL_N                   ((COLS - sizeof(STATUS_BAR_2))/2)
+/* #define STATUS_BAR_2_COL_N                   ((COLS - sizeof(STATUS_BAR_2))/2) */
 
 #define FMT_STATUS_BAR_1_SZ                  (100)
 
@@ -81,7 +81,14 @@ void drawDefaultStatusBar(void)
 
 	snprintf(fmt_STATUS_BAR_1, FMT_STATUS_BAR_1_SZ, STATUS_BAR_1, "localhost:666", "Unknow");
 	mvwprintw(stdscr, STATUS_BAR_1_LINE_N, STATUS_BAR_1_COL_N(fmt_STATUS_BAR_1), fmt_STATUS_BAR_1);
-	mvwprintw(stdscr, STATUS_BAR_2_LINE_N, STATUS_BAR_2_COL_N, STATUS_BAR_2);
+	/* mvwprintw(stdscr, STATUS_BAR_2_LINE_N, STATUS_BAR_2_COL_N, STATUS_BAR_2); */
+
+	refresh();
+}
+
+void drawKeyBar(char *keyBar)
+{
+	mvwprintw(stdscr, STATUS_BAR_2_LINE_N, ((COLS - strlen(keyBar))/2), keyBar);
 
 	refresh();
 }
@@ -109,6 +116,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 	clear();
 	drawDefaultStatusBar();
+	/* drawKeyBar(""); */
 
 	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
 	box(thisScreen, 0, 0);
@@ -138,13 +146,18 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 {
+#define SCREEN_MENU_TOTAL_OPTS (7)
 	WINDOW *thisScreen = NULL;
+	unsigned int opt = 0;
+	unsigned int i = 0;
 	char screenTitle[200] = {0};
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
+	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "0) EXIT"};
 	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
 	clear();
 	drawDefaultStatusBar();
+	drawKeyBar("Use keys [UP] or [DOWN] and [ENTER] to select the option");
 
 	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
 	box(thisScreen, 0, 0);
@@ -154,13 +167,26 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 	thisScreen_maxy = getmaxy(thisScreen);
 	*/
 
+	/* Windows title */
 	formatTitle(screenTitle, 120-2, "MENU");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
 	wattron(thisScreen, A_REVERSE);
 	mvwprintw(thisScreen, 1, 1, screenTitle);
 	wattroff(thisScreen, A_REVERSE);
 
 
 	/* ... */
+	while(1){
+
+		for(i = 0; i < SCREEN_MENU_TOTAL_OPTS; i++){
+			mvwprintw(thisScreen, 4+i, 2, menus[i]);
+		}
+
+		break;
+
+	}
 
 
 	wrefresh(thisScreen);
