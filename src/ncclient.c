@@ -143,12 +143,164 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	return(NULL);
 }
 
+a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
+{
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+	/* drawKeyBar(""); */
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "User Login (DRT)");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
+	return(NULL);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
+{
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+	/* drawKeyBar(""); */
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "List DRTs");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
+	return(NULL);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
+{
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+	/* drawKeyBar(""); */
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "Add DRT");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
+	return(NULL);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
+{
+	WINDOW *thisScreen = NULL;
+	char screenTitle[200] = {0};
+	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
+
+	clear();
+	drawDefaultStatusBar();
+	/* drawKeyBar(""); */
+
+	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
+	box(thisScreen, 0, 0);
+
+	/*
+	thisScreen_maxx = getmaxx(thisScreen);
+	thisScreen_maxy = getmaxy(thisScreen);
+	*/
+
+	formatTitle(screenTitle, 120-2, "Delete DRT");
+	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
+	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
+	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
+	wattron(thisScreen, A_REVERSE);
+	mvwprintw(thisScreen, 1, 1, screenTitle);
+	wattroff(thisScreen, A_REVERSE);
+
+	/* ... */
+
+
+	wrefresh(thisScreen);
+
+	getch();
+
+	delwin(thisScreen);
+
+	return(NULL);
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 {
 #define SCREEN_MENU_TOTAL_OPTS (7)
 	WINDOW *thisScreen = NULL;
-	unsigned int opt = 0;
 	unsigned int i = 0;
+	int opt = 0;
 	char screenTitle[200] = {0};
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
 	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "0) EXIT"};
@@ -187,10 +339,40 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 	}
 
+	mvwprintw(thisScreen, 13, 2, "Press option number (menu not enable yet)");
 
 	wrefresh(thisScreen);
 
-	getch();
+	do{
+		opt = getch();
+
+		switch(opt){
+
+			case '1':
+				nextScreen = screen_login;
+				break;
+
+			case '2':
+				nextScreen = screen_listDRT;
+				break;
+
+			case '3':
+				nextScreen = screen_addDRT;
+				break;
+
+			case '4':
+				nextScreen = screen_delDRT;
+				break;
+
+			case '0':
+				nextScreen = NULL;
+				break;
+
+			default:
+				opt = ERR;
+				break;
+		}
+	}while(opt == ERR);
 
 	delwin(thisScreen);
 
