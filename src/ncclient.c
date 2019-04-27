@@ -297,13 +297,13 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 {
-#define SCREEN_MENU_TOTAL_OPTS (7)
+#define SCREEN_MENU_TOTAL_OPTS (9)
 	WINDOW *thisScreen = NULL;
 	unsigned int i = 0;
 	int opt = 0;
 	char screenTitle[200] = {0};
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
-	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "0) EXIT"};
+	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "5) Client config", "", "0) EXIT"};
 	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
 	clear();
@@ -339,7 +339,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 	}
 
-	mvwprintw(thisScreen, 13, 2, "Press option number (menu not enable yet)");
+	mvwprintw(thisScreen, 18, 2, "Press option number (menu not enable yet)");
 
 	wrefresh(thisScreen);
 
@@ -362,6 +362,10 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 			case '4':
 				nextScreen = screen_delDRT;
+				break;
+
+			case '5':
+				nextScreen = screen_config;
 				break;
 
 			case '0':
