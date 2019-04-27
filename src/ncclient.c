@@ -339,7 +339,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 	}
 
-	mvwprintw(thisScreen, 18, 2, "Press option number (menu not enable yet)");
+	mvwprintw(thisScreen, 18, 2, "Press option number (menu not enabled yet)");
 
 	wrefresh(thisScreen);
 
