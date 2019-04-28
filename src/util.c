@@ -366,10 +366,13 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 int pingServer(char *ip, char *port)
 {
 	int sockfd = 0;
+	int msgSz = 0, sendError = 0;
 	void *pAddr = NULL;
-	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	int errGetAddrInfoCode = 0, errConnect = 0;
+	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	struct addrinfo hints, *res = NULL, *rp = NULL;
+
+	memset(netBuff, '\0', MAXLINE + 1);
 
 	memset (&hints, 0, sizeof (hints));
 	hints.ai_family = AF_UNSPEC;
@@ -412,9 +415,9 @@ int pingServer(char *ip, char *port)
 
 	freeaddrinfo(res);
 
+	msgSz = snprintf(netBuff, MAXLINE, "%d|PING", PROT_COD_PING);
 
-
-	/* sockfd */
+	sendToNet(sockfd, netBuff, (size_t) msgSz, &sendError);
 
 
 	shutdown(sockfd, SHUT_RDWR);
