@@ -418,15 +418,21 @@ int pingServer(char *ip, char *port)
 	msgSRSz = 0; srError = 0;
 	msgSRSz = snprintf(netBuff, MAXLINE, "%d|PING", PROT_COD_PING);
 	memset(netBuff, '\0', MAXLINE + 1);
+
 	if(sendToNet(sockfd, netBuff, msgSRSz, &srError) == PAINEL_NOK){
 		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
 		return(PAINEL_NOK);
 	}
 
 	msgSRSz = 0; srError = 0;
 	memset(netBuff, '\0', MAXLINE + 1);
+
 	if(recvFromNet(sockfd, netBuff, MAXLINE, &msgSRSz, &srError) == PAINEL_NOK){
 		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
 		return(PAINEL_NOK);
 	}
 
