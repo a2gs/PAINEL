@@ -391,7 +391,7 @@ int main(int argc, char *argv[])
 	if(argc != 3){
 		initFunc = screen_config;
 	}else{
-		if(pingServer(argv[1], atoi(argv[2])) == PAINEL_OK)
+		if(pingServer(argv[1], argv[2]) == PAINEL_OK)
 			initFunc = screen_menu;
 		else
 			initFunc = screen_config;

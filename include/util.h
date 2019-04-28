@@ -47,6 +47,8 @@
 
 #define LOG_PATH                 ("log")
 
+#define STRADDR_SZ               (50)
+
 /* Codigo de mensagens: no maximo 10 chars (variavel msgCod no serv.c), 2 ja seriam o bastante */ 
 #define PROT_CODE_LEN         (10)
 #define PROT_COD_PING         (0)		/* Client -> Server / Server -> Client */
@@ -76,7 +78,7 @@ typedef struct _htmlFiles_t{
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 
-/* int pingServer(char *ip, int port)
+/* int pingServer(char *ip, char *port)
  *
  *
  *
@@ -85,7 +87,7 @@ typedef struct _htmlFiles_t{
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int pingServer(char *ip, int port);
+int pingServer(char *ip, char *port);
 
 /* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError)
  *

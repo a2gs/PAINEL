@@ -40,7 +40,6 @@
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define USER_INPUT_LEN		(400)
 #define LOG_CLIENT_FILE    ("client.log")
-#define STRADDR_SZ			(50)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
