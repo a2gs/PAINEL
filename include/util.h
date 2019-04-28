@@ -76,6 +76,17 @@ typedef struct _htmlFiles_t{
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 
+/* int pingServer(char *ip, int port)
+ *
+ *
+ *
+ * INPUT:
+ * OUTPUT:
+ *  PAINEL_OK - 
+ *  PAINEL_NOK - 
+ */
+int pingServer(char *ip, int port);
+
 /* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError)
  *
  * PAINEL Oficial network send. It adds 4 bytes (binary) in front of msg.

@@ -100,11 +100,6 @@ void signalHandle(int sig)
 	}
 }
 
-int pingServer(char *ip, int port)
-{
-	return(PAINEL_OK);
-}
-
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
 	WINDOW *thisScreen = NULL;

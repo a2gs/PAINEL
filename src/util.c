@@ -50,6 +50,11 @@ static char netBuff[MAXLINE + 1] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int pingServer(char *ip, int port)
+{
+	return(PAINEL_OK);
+}
+
 int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: receber size_t * indicando o quanto foi enviado */
 {
 	ssize_t srRet = 0, srRetAux = 0;
