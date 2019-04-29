@@ -54,7 +54,7 @@ static log_t *log = NULL;
 
 
 /* *** FUNCTIONS *********************************************************************** */
-void getLogSystem(log_t *logClient)
+void getLogSystem_SGClient(log_t *logClient)
 {
 	log = logClient;
 	return;

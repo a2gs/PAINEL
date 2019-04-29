@@ -350,7 +350,7 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	getLogSystem(&log); /* Loading log to business rules */
+	getLogSystem_SGServer(&log); /* Loading log to business rules */
 
 	p = daemonize();
 	if(p == (pid_t)PAINEL_NOK){

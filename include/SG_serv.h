@@ -65,7 +65,7 @@ typedef struct _SG_registroDB_t{
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
-/* void getLogSystem(log_t *logClient)
+/* void getLogSystem_SGServer(log_t *logClient)
  *
  * Save the instance to log system for user interface;
  *
@@ -74,7 +74,7 @@ typedef struct _SG_registroDB_t{
  * OUTPUT:
  *  none
  */
-void getLogSystem(log_t *logServ);
+void getLogSystem_SGServer(log_t *logServ);
 
 /* int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
  *

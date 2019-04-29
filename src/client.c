@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	getLogSystem(&log); /* Loading log to user interface */
+	getLogSystem_SGClient(&log); /* Loading log to user interface */
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp Client [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 

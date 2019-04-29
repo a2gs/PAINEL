@@ -80,7 +80,7 @@ typedef struct _supMaquina_t{
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
-/* void getLogSystem(log_t *logClient)
+/* void getLogSystem_SGClient(log_t *logClient)
  *
  * Save the instance to log system for user interface;
  *
@@ -89,7 +89,7 @@ typedef struct _supMaquina_t{
  * OUTPUT:
  *  none
  */
-void getLogSystem(log_t *logClient);
+void getLogSystem_SGClient(log_t *logClient);
 
 /* int SG_sendLogoutExit(int socket, char *drt, char *funcao)
  *
