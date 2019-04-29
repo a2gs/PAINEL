@@ -368,11 +368,11 @@ int pingServer(char *ip, char *port)
 	int sockfd = 0;
 	int srError = 0;
 	size_t msgSRSz = 0;
-	char *c = NULL;
 	void *pAddr = NULL;
 	int errGetAddrInfoCode = 0, errConnect = 0;
 	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	struct addrinfo hints, *res = NULL, *rp = NULL;
+	char pingPongMsg[PINGPONG_MSG_SZ + 1] = {'\0'};
 
 	memset (&hints, 0, sizeof (hints));
 	hints.ai_family = AF_UNSPEC;
@@ -381,7 +381,7 @@ int pingServer(char *ip, char *port)
 
 	errGetAddrInfoCode = getaddrinfo(ip, port, &hints, &res);
 	if(errGetAddrInfoCode != 0){
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: getaddrinfo() [%s]. Terminating application with ERRO.\n\n", gai_strerror(errGetAddrInfoCode));
+		logWrite(logUtil, LOGOPALERT, "ERRO PING: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
 		return(PAINEL_NOK);
 	}
 
@@ -409,17 +409,19 @@ int pingServer(char *ip, char *port)
 	}
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable connect to any address. Terminating application with ERRO.\n\n");
+		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable connect to any address.\n");
 		return(PAINEL_NOK);
 	}
 
 	freeaddrinfo(res);
 
 	msgSRSz = 0; srError = 0;
-	msgSRSz = snprintf(netBuff, MAXLINE, "%d|PING", PROT_COD_PING);
-	memset(netBuff, '\0', MAXLINE + 1);
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+	msgSRSz = snprintf(pingPongMsg, PINGPONG_MSG_SZ, "%d|PING", PROT_COD_PING);
 
-	if(sendToNet(sockfd, netBuff, msgSRSz, &srError) == PAINEL_NOK){
+	logWrite(logUtil, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
+
+	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError) == PAINEL_NOK){
 		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
@@ -427,20 +429,16 @@ int pingServer(char *ip, char *port)
 	}
 
 	msgSRSz = 0; srError = 0;
-	memset(netBuff, '\0', MAXLINE + 1);
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
 
-	if(recvFromNet(sockfd, netBuff, MAXLINE, &msgSRSz, &srError) == PAINEL_NOK){
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError) == PAINEL_NOK){
 		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
 		return(PAINEL_NOK);
 	}
 
-	c = strchr(netBuff, '|');
-	if(c == NULL) c = netBuff;
-	else c++;
-
-	logWrite(logUtil, LOGOPMSG, "Ping response from server: [%s].\n", c);
+	logWrite(logUtil, LOGOPMSG, "Ping response from server: [%s].\n", pingPongMsg);
 
 	shutdown(sockfd, SHUT_RDWR);
 	close(sockfd);

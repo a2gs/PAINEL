@@ -60,6 +60,8 @@
 
 #define DATA_LEN              (sizeof("DD/MM/YY hh:mm:ss"))
 
+#define PINGPONG_MSG_SZ       (150)
+
 #define HTML_FILE_LOCKED      (1)
 #define HTML_FILE_UNLOCKED    (0)
 #define HTML_FILE_LOCKERR     (-1)

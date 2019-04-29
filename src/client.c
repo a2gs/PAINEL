@@ -39,7 +39,6 @@
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define USER_INPUT_LEN		(400)
-#define LOG_CLIENT_FILE    ("client.log")
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */

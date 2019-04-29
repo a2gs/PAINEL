@@ -54,7 +54,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 wizard_by_return client ncclient serv select_html select_Excel servList create_db userId cppcheck
+all: clean logtag sha256 wizard_by_return client ncclient serv select_html select_Excel servList create_db userId pingServ cppcheck
 	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
@@ -93,6 +93,11 @@ sha256:
 	$(RANLIB) $(LIBS_BIN_PATH)/libsha-256.a
 	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
+
+pingServ: logtag
+	@echo
+	@echo "=== pingServ =================="
+	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 client: sha256 logtag
 	@echo

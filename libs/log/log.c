@@ -92,10 +92,16 @@ int logWrite(log_t *log, unsigned int msgLevel, char *msg, ...)
 	time_t logTimeTimet;
 	struct timeval tv;
 	char fmtMsg[LOG_FMTMSG_SZ + 1] =  {'\0'};
+	log_t safeLog;
 
 	errno = 0;
 
-	if(log == NULL)   return(LOG_NOK);
+	if(log == NULL){
+		safeLog.level = LOGMUSTLOGIT | LOGREDALERT | LOGDBALERT | LOGDBMSG | LOGOPALERT | LOGOPMSG | LOGMSG | LOGDEV;
+		safeLog.fd = fileno(stderr);
+		log = &safeLog;
+	}
+
 	if(log->fd == -1) return(LOG_NOK);
 
 	time(&logTimeTimet);
