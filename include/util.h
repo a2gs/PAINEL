@@ -80,6 +80,17 @@ typedef struct _htmlFiles_t{
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 
+/* void getLogSystem_Util(log_t *logClient)
+ *
+ * Save the instance to log system for util functions.
+ *
+ * INPUT:
+ *  logClient - Log opened by client engine.
+ * OUTPUT:
+ *  none
+ */
+void getLogSystem_Util(log_t *log);
+
 /* int pingServer(char *ip, char *port)
  *
  *

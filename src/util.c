@@ -45,6 +45,7 @@
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 static char netBuff[MAXLINE + 1] = {0};
+static log_t *logUtil = NULL;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -54,6 +55,12 @@ static char netBuff[MAXLINE + 1] = {0};
 char * getPAINELEnvHomeVar(void)
 {
 	return(getenv(PAINEL_HOME_ENV));
+}
+
+void getLogSystem_Util(log_t *log)
+{
+	logUtil = log;
+	return;
 }
 
 inline int changeCharByChar(char *buffer, int from, int to)
@@ -213,8 +220,6 @@ int html_testHtmlLock(FILE *file)
  * OUTPUT:
  *  none
  */
-static log_t *logUtil = NULL;
-
 void signal_handlerWithoutLock(int sig)
 {
 	logWrite(logUtil, LOGMUSTLOGIT, "Got signal [%d] at [%s]!\n", sig, time_DDMMYYhhmmss());
