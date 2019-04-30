@@ -32,6 +32,7 @@
 #include <netdb.h>
 
 #include "util.h"
+#include "log.h"
 #include "client.h"
 
 #include "SG_client.h"

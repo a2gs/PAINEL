@@ -300,11 +300,17 @@ int dbInsert(char *sqlCmd)
 	return(PAINEL_OK);
 }
 
-int dbOpen(char *userDBPath, int flags, log_t *userLog)
+void getLogSystem_DB(log_t *userLog)
+{
+	log = userLog;
+	return;
+}
+
+int dbOpen(char *userDBPath, int flags/*, log_t *userLog*/)
 {
 	int rc = 0;
 
-	log = userLog;
+	log = NULL;
 	db = NULL;
 
 	if(userDBPath == NULL)

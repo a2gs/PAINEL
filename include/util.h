@@ -149,11 +149,10 @@ char * getPAINELEnvHomeVar(void);
  * Daemonizes the process without create a 'process lock file' (guaranteeing only one instance).
  *
  * INPUT:
- *  log - Pointer to log system
  * OUTPUT:
  *  pid_t - Daemon PID number, 1 to father or PAINEL_NOK if fork() error.
  */
-int daemonizeWithoutLock(log_t *log);
+int daemonizeWithoutLock(void);
 
 /* inline int changeCharByChar(char *buffer, int to, int from)
  *

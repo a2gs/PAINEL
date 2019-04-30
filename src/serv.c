@@ -352,6 +352,7 @@ int main(int argc, char *argv[])
 
 	getLogSystem_SGServer(&log); /* Loading log to business rules */
 	getLogSystem_Util(&log); /* Loading log to util functions */
+	getLogSystem_DB(&log); /* Loading log to DB functions */
 
 	p = daemonize();
 	if(p == (pid_t)PAINEL_NOK){
@@ -369,7 +370,7 @@ int main(int argc, char *argv[])
 	 * 	avisa que o servers ja esta no ar (ler do arquivo o PID e mostrar) e parar o programa
 	 */
 
-	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE/*, &log*/) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 

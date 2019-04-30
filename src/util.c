@@ -241,11 +241,11 @@ void signal_handlerWithoutLock(int sig)
 	return;
 }
 
-pid_t daemonizeWithoutLock(log_t *log)
+pid_t daemonizeWithoutLock(void)
 {
 	pid_t i = 0, father = 0;
 
-	logUtil = NULL;
+	/* logUtil = NULL; */
 
 	father = getppid();
 	if(father == 1)
@@ -270,7 +270,7 @@ pid_t daemonizeWithoutLock(log_t *log)
 
 	chdir("./");
 
-	logUtil = log;
+	/* logUtil = log; */
 
 	/* Configurando sinais */
 	signal(SIGCHLD, SIG_IGN);

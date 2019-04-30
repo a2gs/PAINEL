@@ -98,6 +98,9 @@ int main(int argc, char *argv[])
 	snprintf(fExcel, SZ_EXCELFILENAME, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, EXCEL_FILE);
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
+	getLogSystem_Util(NULL); /* Loading log to util functions */
+	getLogSystem_DB(NULL); /* Loading log to DB functions */
+
 	if(argc != 1){
 		printf("Usage error:\n\t%s\nThe excel dump database will be created at [%s].\nThe database used: [%s].\n", argv[0], fExcel, DBPath);
 		return(-1);
@@ -109,7 +112,7 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, NULL) == PAINEL_NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE/*, NULL*/) == PAINEL_NOK){
 		printf("Erro em abrir banco de dados!\n");
 		printf("Terminating application!\n");
 

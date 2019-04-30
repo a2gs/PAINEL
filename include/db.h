@@ -48,6 +48,9 @@
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
+
+void getLogSystem_DB(log_t *userLog);
+
 /* int dbCreateAllTables(void);
  *
  * Create database and its objects: tables, index, etc.
@@ -60,19 +63,18 @@
  */
 int dbCreateAllTables(void);
 
-/* int dbOpen(char *userDBPath, int flags, log_t *log);
+/* int dbOpen(char *userDBPath, int flags);
  *
  * Open database.
  *
  * INPUT:
  *  userDBPath - NULL = default system DB ($PAINEL_HOME/database/database.db)
  *  flags - 
- *  log - 
  * OUTPUT:
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error opening or creating database
  */
-int dbOpen(char *userDBPath, int flags, log_t *log);
+int dbOpen(char *userDBPath, int flags/*, log_t *log*/);
 
 /* <header function description included by another sources> void function(void)
  *

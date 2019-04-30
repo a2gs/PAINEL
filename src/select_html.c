@@ -303,7 +303,10 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	p = daemonizeWithoutLock(&log);
+	getLogSystem_Util(&log); /* Loading log to util functions */
+	getLogSystem_DB(&log); /* Loading log to DB functions */
+
+	p = daemonizeWithoutLock(/*&log*/);
 	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Cannt daemonize select html!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
@@ -325,7 +328,7 @@ int main(int argc, char *argv[])
 	for(;;){
 		memset(&pageInfo, 0, sizeof(pageInfos_t));
 
-		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE, &log) == PAINEL_NOK){
+		if(dbOpen(NULL, SQLITE_OPEN_READONLY|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE/*, &log*/) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
