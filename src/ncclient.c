@@ -21,12 +21,17 @@
 /* *** INCLUDES ************************************************************************ */
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
 #include <string.h>
 #include <signal.h>
 #include <ncurses.h>
+#include <sys/types.h>
+
 
 #include <util.h>
 
+#include <log.h>
 #include "wizard_by_return.h"
 
 
@@ -41,6 +46,8 @@
 #define FMT_STATUS_BAR_1_SZ                  (100)
 
 #define ESC_KEY                              (27)
+
+static log_t log;
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -388,19 +395,43 @@ int main(int argc, char *argv[])
 	int cursor = 0;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
-	if(argc != 3){
-		initFunc = screen_config;
+	if(argc != 5){
+		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
+		fprintf(stderr, "\tREDALERT = Red alert\n");
+		fprintf(stderr, "\tDBALERT = Database alert\n");
+		fprintf(stderr, "\tDBMSG = Database message\n");
+		fprintf(stderr, "\tOPALERT = Operation alert\n");
+		fprintf(stderr, "\tOPMSG = Operation message\n");
+		fprintf(stderr, "\tMSG = Just a message\n");
+		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+		return(-1);
+	}
+
+	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
+		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
+		return(-2);
+	}
+
+	getLogSystem_Util(&log);
+
+	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
+
+	if(pingServer(argv[1], argv[2]) == PAINEL_OK){
+		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", argv[1], argv[2]);
+		initFunc = screen_menu;
 	}else{
-		if(pingServer(argv[1], argv[2]) == PAINEL_OK)
-			initFunc = screen_menu;
-		else
-			initFunc = screen_config;
+		logWrite(&log, LOGOPALERT, "Unable to ping server [%s:%s]. Going to config screen.\n", argv[1], argv[2]);
+		initFunc = screen_config;
 	}
 
 	if(initscr() == NULL){;
 		printf("Erro initializating ncurses!\n");
-		return(-1);
+		logClose(&log);
+		return(-3);
 	}
+
 	keypad(stdscr, TRUE);
 	cbreak();
 	noecho();
@@ -412,25 +443,29 @@ int main(int argc, char *argv[])
 	if((LINES < 24) || (COLS < 80)){
 		endwin();
 		printf("O terminal precisa ter no minimo 80x24");
-		return(-2);
+		logClose(&log);
+		return(-4);
 	}
 
 	if(has_colors() == FALSE){
 		endwin();
 		printf("Terminal nao suporta cores (has_colors() = FALSE).\n");
-		return(-2);
+		logClose(&log);
+		return(-5);
 	}
 
 	if(can_change_color() == FALSE){
 		endwin();
 		printf("Terminal nao suporta mudar as cores (can_change_colors() = FALSE).\n");
-		return(-3);
+		logClose(&log);
+		return(-6);
 	}
 
 	if(start_color() != OK){
 		endwin();
 		printf("Erro em iniciar cores (start_colors() = FALSE).\n");
-		return(-4);
+		logClose(&log);
+		return(-7);
 	}
 
 	set_escdelay(0);
@@ -443,6 +478,8 @@ int main(int argc, char *argv[])
 
 	endwin();
 	delwin(stdscr);
+
+	logClose(&log);
 
 	return(0);
 }
