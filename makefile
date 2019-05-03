@@ -28,10 +28,12 @@ CFLAGS = $(CFLAGS_OPTIMIZATION) $(CFLAGS_VERSION) $(CFLAGS_WARNINGS) $(CFLAGS_DE
 # Specific libraries (project libraries ./libs/):
 LIB_SHA256 = sha-256
 LIB_LOG = log
+LIB_LLIST = linkedlist
 LIB_WIZPATPATH = wizard_by_return
 
 SHA256PATH = $(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
+LLISTPATH = $(LOCAL_LIBS)/$(LIB_LLIST)
 WIZPATPATH = $(LOCAL_LIBS)/$(LIB_WIZPATPATH)
 
 # Libs to ALL modules:
@@ -54,7 +56,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 wizard_by_return client ncclient serv select_html select_Excel servList create_db userId pingServ cppcheck
+all: clean logtag sha256 llist wizard_by_return client ncclient serv select_html select_Excel servList create_db userId pingServ cppcheck
 	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
@@ -75,6 +77,15 @@ wizard_by_return:
 	$(RANLIB) $(LIBS_BIN_PATH)/libwizard_by_return.a
 	$(CP) $(WIZPATPATH)/wizard_by_return.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/wizard_by_return.o
+
+llist:
+	@echo
+	@echo "=== lib LINKEDLIST ================="
+	$(CC) -c -o$(LIBS_BIN_PATH)/linkedlist.o $(LLISTPATH)/linkedlist.c -I$(LLISTPATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/liblinkedlist.a $(LIBS_BIN_PATH)/linkedlist.o
+	$(RANLIB) $(LIBS_BIN_PATH)/liblinkedlist.a
+	$(CP) $(LLISTPATH)/linkedlist.h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/linkedlist.o
 
 logtag:
 	@echo
@@ -104,7 +115,7 @@ client: sha256 logtag
 	@echo "=== client =================="
 	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
 
-ncclient: sha256 logtag wizard_by_return
+ncclient: sha256 logtag wizard_by_return llist
 	@echo
 	@echo "=== ncclient =================="
 	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -l$(LIB_SHA256) -l$(LIB_WIZPATPATH) $(CFLAGS) -Wno-incompatible-pointer-types
