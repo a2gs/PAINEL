@@ -33,7 +33,7 @@
 #include <SG.h>
 
 #include <log.h>
-#include "wizard_by_return.h"
+#include <wizard_by_return.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
