@@ -1,7 +1,39 @@
+/* Andre Augusto Giannotti Scota (a2gs)
+ * andre.scota@gmail.com
+ *
+ * PAINEL
+ *
+ * Apache License 2.0
+ *
+ */
+
+
+/* linkedlist.c
+ * A simple linkedlist assembled just for PAINEL.
+ *
+ *  Who     | When       | What
+ *  --------+------------+----------------------------
+ *   a2gs   | 05/03/2019 | Creation
+ *          |            |
+ */
+
+
+/* *** INCLUDES ************************************************************************ */
 #include <stdlib.h>
 
 #include "linkedlist.h"
 
+
+/* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
+
+
+/* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+
+
+/* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+
+
+/* *** FUNCTIONS *********************************************************************** */
 int ll_create(ll_node_t **head)
 {
 	*head = NULL;
