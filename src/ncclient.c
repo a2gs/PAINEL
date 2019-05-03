@@ -30,13 +30,14 @@
 
 
 #include <util.h>
+#include <SG.h>
 
 #include <log.h>
 #include "wizard_by_return.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define STATUS_BAR_1                         "Connected [%s] User [%s]"
+#define STATUS_BAR_1                         "Connected [%s:%s] User [%s]"
 
 #define STATUS_BAR_1_LINE_N                  (LINES - 1)
 #define STATUS_BAR_1_COL_N(__fmt_bar1_srt__) ((COLS - strlen(__fmt_bar1_srt__))/2)
@@ -47,7 +48,14 @@
 
 #define ESC_KEY                              (27)
 
+#define SERVERADDRESS_SZ                     (100)
+#define SERVERPORT_SZ                        (7)
+#define USERLOGGED_SZ                        (DRT_LEN)
+
 static log_t log;
+static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
+static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
+static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -84,7 +92,7 @@ void drawDefaultStatusBar(void)
 {
 	char fmt_STATUS_BAR_1[FMT_STATUS_BAR_1_SZ +1] = {0};
 
-	snprintf(fmt_STATUS_BAR_1, FMT_STATUS_BAR_1_SZ, STATUS_BAR_1, "localhost:666", "Unknow");
+	snprintf(fmt_STATUS_BAR_1, FMT_STATUS_BAR_1_SZ, STATUS_BAR_1, serverAddress, serverPort, userLogged);
 	mvwprintw(stdscr, STATUS_BAR_1_LINE_N, STATUS_BAR_1_COL_N(fmt_STATUS_BAR_1), fmt_STATUS_BAR_1);
 
 	refresh();
@@ -107,36 +115,40 @@ void signalHandle(int sig)
 	}
 }
 
-a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
+int screen_drawDefaultTheme(WINDOW *screen, int totLines, int totCols, char *title)
 {
-	WINDOW *thisScreen = NULL;
 	char screenTitle[200] = {0};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
 	clear();
 	drawDefaultStatusBar();
-	/* drawKeyBar(""); */
 
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
+	screen = newwin(totLines, totCols, (LINES/2)-(totLines/2), (COLS/2)-(totCols/2));
+	box(screen, 0, 0);
 
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
+	formatTitle(screenTitle, totCols-2, title);
+	mvwaddch(screen, 2, 0, ACS_LTEE);
+	mvwaddch(screen, 2, totCols-1, ACS_RTEE);
+	mvwhline(screen , 2, 1, ACS_HLINE, totCols-2);
+	wattron(screen, A_REVERSE);
+	mvwprintw(screen, 1, 1, screenTitle);
+	wattroff(screen, A_REVERSE);
 
-	formatTitle(screenTitle, 120-2, "Client Configuration");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
+	wrefresh(screen);
+
+	return(PAINEL_OK);
+}
+
+a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
+{
+	WINDOW *thisScreen = NULL;
+
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Client Configuration") == PAINEL_NOK){
+		return(NULL);
+	}
+
 
 	/* ... */
 
-
-	wrefresh(thisScreen);
 
 	getch();
 
@@ -148,33 +160,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
 	WINDOW *thisScreen = NULL;
-	char screenTitle[200] = {0};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
-	clear();
-	drawDefaultStatusBar();
-	/* drawKeyBar(""); */
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "User Login (DRT)") == PAINEL_NOK){
+		return(NULL);
+	}
 
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
-
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
-
-	formatTitle(screenTitle, 120-2, "User Login (DRT)");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
 
 	/* ... */
 
-
-	wrefresh(thisScreen);
 
 	getch();
 
@@ -186,33 +179,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 {
 	WINDOW *thisScreen = NULL;
-	char screenTitle[200] = {0};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
-	clear();
-	drawDefaultStatusBar();
-	/* drawKeyBar(""); */
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK){
+		return(NULL);
+	}
 
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
-
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
-
-	formatTitle(screenTitle, 120-2, "List DRTs");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
 
 	/* ... */
 
-
-	wrefresh(thisScreen);
 
 	getch();
 
@@ -224,33 +198,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 {
 	WINDOW *thisScreen = NULL;
-	char screenTitle[200] = {0};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
-	clear();
-	drawDefaultStatusBar();
-	/* drawKeyBar(""); */
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Add DRT") == PAINEL_NOK){
+		return(NULL);
+	}
 
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
-
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
-
-	formatTitle(screenTitle, 120-2, "Add DRT");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
 
 	/* ... */
 
-
-	wrefresh(thisScreen);
 
 	getch();
 
@@ -262,33 +217,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 {
 	WINDOW *thisScreen = NULL;
-	char screenTitle[200] = {0};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
-	clear();
-	drawDefaultStatusBar();
-	/* drawKeyBar(""); */
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Delete DRT") == PAINEL_NOK){
+		return(NULL);
+	}
 
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
-
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
-
-	formatTitle(screenTitle, 120-2, "Delete DRT");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
 
 	/* ... */
 
-
-	wrefresh(thisScreen);
 
 	getch();
 
@@ -414,12 +350,18 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
+	strncpy(serverAddress, "no_server", SERVERADDRESS_SZ);
+	strncpy(serverPort, "0000", SERVERPORT_SZ);
+	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
+
 	getLogSystem_Util(&log);
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
 
 	if(pingServer(argv[1], argv[2]) == PAINEL_OK){
 		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", argv[1], argv[2]);
+		strncpy(serverAddress, argv[1], SERVERADDRESS_SZ);
+		strncpy(serverPort, argv[2], SERVERPORT_SZ);
 		initFunc = screen_menu;
 	}else{
 		logWrite(&log, LOGOPALERT, "Unable to ping server [%s:%s]. Going to config screen.\n", argv[1], argv[2]);
