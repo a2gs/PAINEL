@@ -17,13 +17,15 @@
 
 #!/bin/bash
 
+DATE=`date +%Y%m%d_%H%M%S`
+
 # ------------------------------------------------
 if [ -f "$PAINEL_HOME/bin/serv" ]; then
 
 	echo '--- Stating serv --------------------------------------'
 
-	$PAINEL_HOME/bin/serv 9998 $PAINEL_HOME/log/serv9998.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV' 1>>$PAINEL_HOME/log/serv.log 2>&1
-	ALERT_ERROR 'serv 9998'
+	$PAINEL_HOME/bin/serv 9998 $PAINEL_HOME/log/serv9998_$DATE.log 'REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV' 1>>$PAINEL_HOME/log/serv.log 2>&1
+	ALERT_ERROR "serv 9998 $PAINEL_HOME/log/serv9998_$DATE.log"
 	if [ ! -f "$PAINEL_HOME/database/database.db" ]; then
 		echo 'Creating DB...'
 		sleep 4

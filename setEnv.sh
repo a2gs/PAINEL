@@ -20,13 +20,13 @@
 # or
 # source ./setEnv.sh
 
-#!/bin/sh
+#!/bin/bash
+
+DATE=`date +%Y%m%d_%H%M%S`
 
 export PAINEL_HOME=`pwd`
 
 export PATH=$PATH:$PAINEL_HOME/scripts
-
-alias clitest="./client localhost 9998 $PAINEL_HOME/log/client_test.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
 
 ALERT_ERROR()
 {
@@ -43,3 +43,7 @@ ALERT_ERROR()
 export -f ALERT_ERROR
 
 chmod +x ./scripts/*
+
+# Some helper alias
+alias clitest="./client localhost 9998 $PAINEL_HOME/log/client_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
+alias ncclitest="./ncclient localhost 9998 $PAINEL_HOME/log/ncclient_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
