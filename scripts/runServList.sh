@@ -17,7 +17,7 @@
 
 #!/bin/bash
 
-DATE=`date +%Y%m%d_%H%M%S`
+DATE=`date +%Y%m%d`
 
 # ------------------------------------------------
 if [ -f "$PAINEL_HOME/bin/servList" ]; then
