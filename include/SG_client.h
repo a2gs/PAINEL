@@ -24,29 +24,18 @@
 
 /* *** INCLUDES ****************************************************** */
 #include "SG.h"
+#include "userId.h"
 
-#include "log.h"
+#include <log.h>
 
 
 /* *** DEFINES ******************************************************* */
-#define DRT_FILE				("DRTs.text")
-
-#define STR_FORNOELETRICO	("FornoEletrico")
-#define STR_OPERMAQUINA		("OperadorMaquina")
-#define STR_SUPMAQUINA		("SupervisorMaquina")
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
 
 
 /* *** DATA TYPES **************************************************** */
-typedef enum{
-	FORNO_ELETRICO = 1,
-	OPERADOR_MAQUINA,
-	SUPERVISOR_MAQUINA,
-	UNDEFINED_USER
-}tipoUsuario_t;
-
 typedef struct _fornoElet_t{
 	const char *perguntas[TOT_PERGUNTAS_FORNO_ELET];
 	char percFeSi[FORNELET_PERC_FESI_LEN  + 1];

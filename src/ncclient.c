@@ -185,12 +185,15 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	ll_node_t *walker = NULL;
 
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK){
+		ll_destroyList(&head);
 		return(NULL);
 	}
 
 	ll_create(&head);
 
 	if(loadUserIdFileToMemory(&head) == PAINEL_NOK){
+		ll_destroyList(&head);
+		return(NULL);
 	}
 
 
@@ -200,6 +203,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	getch();
 
 	delwin(thisScreen);
+	ll_destroyList(&head);
 
 	return(screen_menu);
 }

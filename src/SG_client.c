@@ -31,16 +31,15 @@
 #include "util.h"
 #include "client.h"
 #include "SG_client.h"
+#include "userId.h"
 
-#include "sha-256.h"
-#include "log.h"
+#include <sha-256.h>
+#include <log.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define PASS_LEN                 (100)
 #define CONFIRMA_ENFIO_LEN       (5)
-#define LINE_DRT_FILE_LEN        (200)
-#define DRT_FULLFILEPATH_SZ      (300)
 #define SUBPATH_RUNNING_DATA_CLI SUBPATH_RUNNING_DATA
 #define BUF_VALIDATING_LOGIN_SZ  (100)
 
@@ -647,10 +646,10 @@ int geraArqDRTs(void)
 int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 {
 	FILE *fDRT = NULL;
-	char line[LINE_DRT_FILE_LEN]={'\0'};
+	char line[LINE_DRT_FILE_LEN + 1]={'\0'};
 	char *c = NULL;
-	char drtReaded[DRT_LEN] = {'\0'};
-	char drtFullFilePath[DRT_FULLFILEPATH_SZ] = {'\0'};
+	char drtReaded[DRT_LEN + 1] = {'\0'};
+	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_CLI, DRT_FILE);
 
@@ -660,9 +659,9 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 	}
 
 	while(!feof(fDRT)){
-		memset(line,      '\0', LINE_DRT_FILE_LEN);
-		memset(drtReaded, '\0', DRT_LEN);
-		memset(funcao,    '\0', VALOR_FUNCAO_LEN);
+		memset(line,      '\0', LINE_DRT_FILE_LEN + 1);
+		memset(drtReaded, '\0', DRT_LEN + 1);
+		memset(funcao,    '\0', VALOR_FUNCAO_LEN + 1);
 
 		if(fgets(line, LINE_DRT_FILE_LEN, fDRT) == NULL) break;
 
@@ -676,7 +675,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 		if(strncmp(drtReaded, drt, DRT_LEN) == 0){
 			strncpy(funcao, c+1, VALOR_FUNCAO_LEN);
 
-			if(strcmp(funcao, STR_FORNOELETRICO) == 0){
+			if(strcmp(funcao, STR_FORNOELETRICO) == 0){ /* TODO: change the code below to userType_t_2_String() (userId.h) */
 				*usrType = FORNO_ELETRICO;
 				break;
 			}else if (strcmp(funcao, STR_OPERMAQUINA) == 0){

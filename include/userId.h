@@ -23,18 +23,34 @@
 
 /* *** INCLUDES ****************************************************** */
 #include "SG.h"
+/*
 #include "SG_client.h"
+*/
 
 #include <linkedlist.h>
 
 
 /* *** DEFINES ******************************************************* */
+#define DRT_FILE				("DRTs.text")
 
+#define STR_FORNOELETRICO	("FornoEletrico")
+#define STR_OPERMAQUINA		("OperadorMaquina")
+#define STR_SUPMAQUINA		("SupervisorMaquina")
+
+#define DRT_FULLFILEPATH_SZ      (300)
+#define LINE_DRT_FILE_LEN        (200)
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
 
 
 /* *** DATA TYPES **************************************************** */
+typedef enum{
+	FORNO_ELETRICO = 1,
+	OPERADOR_MAQUINA,
+	SUPERVISOR_MAQUINA,
+	UNDEFINED_USER
+}tipoUsuario_t;
+
 typedef struct _userId_t{
 	char userId[DRT_LEN + 1];
 	tipoUsuario_t level;
@@ -52,5 +68,6 @@ typedef struct _userId_t{
  *  none
  */
 int loadUserIdFileToMemory(ll_node_t **head);
+char * userType_t_2_String(tipoUsuario_t usrType);
 
 #endif
