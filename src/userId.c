@@ -51,7 +51,6 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 	FILE *fUserIdDRT = NULL;
 	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
 	char *c = NULL;
-	unsigned int i = 0;
 	userId_t *newNode = NULL;
 	char dtr[DRT_LEN + 1] = {'\0'};
 	char funcao[VALOR_FUNCAO_LEN + 1] = {'\0'};
@@ -60,7 +59,7 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 		return(PAINEL_NOK);
 	}
 
-	for(i = 0; !feof(fUserIdDRT); i++){
+	while(!feof(fUserIdDRT)){
 		memset(line, '\0', LINE_DRT_FILE_LEN + 1);
 
 		if(fgets(line, LINE_DRT_FILE_LEN, fUserIdDRT) == NULL)

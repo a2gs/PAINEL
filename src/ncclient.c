@@ -186,11 +186,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	ll_node_t *head = NULL;
 	ll_node_t *walker = NULL;
 	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+	unsigned int i = 0;
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK){
-		ll_destroyList(&head);
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK)
 		return(NULL);
-	}
+
+	drawKeyBar("[LEFT] Back, [RIGHT] Forward and [SPACE] Quit");
 
 	ll_create(&head);
 
@@ -201,9 +202,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 		return(NULL);
 	}
 
-
-	/* ... */
-
+	for(i = 0, walker = head; walker != NULL; walker = walker->next, i++){
+		mvwprintw(thisScreen, 4+i, 2, "%s - %s", ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
+	}
 
 	getch();
 
