@@ -53,6 +53,8 @@
 #define SERVERPORT_SZ                        (7)
 #define USERLOGGED_SZ                        (DRT_LEN)
 
+#define SUBPATH_RUNNING_DATA_NCCLI SUBPATH_RUNNING_DATA
+
 static log_t log;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
@@ -183,6 +185,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	WINDOW *thisScreen = NULL;
 	ll_node_t *head = NULL;
 	ll_node_t *walker = NULL;
+	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK){
 		ll_destroyList(&head);
@@ -191,7 +194,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	ll_create(&head);
 
-	if(loadUserIdFileToMemory(&head) == PAINEL_NOK){
+	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
+
+	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
 		ll_destroyList(&head);
 		return(NULL);
 	}

@@ -646,7 +646,7 @@ int geraArqDRTs(void)
 int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 {
 	FILE *fDRT = NULL;
-	char line[LINE_DRT_FILE_LEN + 1]={'\0'};
+	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
 	char *c = NULL;
 	char drtReaded[DRT_LEN + 1] = {'\0'};
 	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};

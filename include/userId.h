@@ -67,7 +67,8 @@ typedef struct _userId_t{
  * OUTPUT:
  *  none
  */
-int loadUserIdFileToMemory(ll_node_t **head);
+int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath);
 char * userType_t_2_String(tipoUsuario_t usrType);
+tipoUsuario_t string_2_UserType_t(char *userStr);
 
 #endif
