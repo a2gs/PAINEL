@@ -15,6 +15,8 @@
 #          |            |
 #
 
+#!/bin/bash
+
 echo '--- PROCESSOS NO AR -----------------------------------'
 ps -C serv,servList,select_html -o pid,cmd | sed 's/^ *//' | column -t
 

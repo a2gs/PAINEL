@@ -15,6 +15,8 @@
 #          |            |
 #
 
+#!/bin/bash
+
 PROCS_PID_LIST=$(ps -C serv,servList,select_html --no-headers -o pid,cmd | sed 's/^ *//' | cut -f1 -d ' ')
 
 if [ -z "$PROCS_PID_LIST" ]; then
