@@ -40,6 +40,7 @@ int ll_delete(ll_node_t **head, ll_node_t *del)
 
 	if(*head == del){
 		*head = del->next;
+		free(del->data);
 		free(del);
 		return(LL_OK);
 	}
@@ -47,6 +48,7 @@ int ll_delete(ll_node_t **head, ll_node_t *del)
 	for(walker = *head; walker != NULL; walker = walker->next){
 		if(walker->next == del){
 			walker->next = del->next;
+			free(del->data);
 			free(del);
 			break;
 		}
