@@ -115,25 +115,25 @@ void signalHandle(int sig)
 	}
 }
 
-int screen_drawDefaultTheme(WINDOW *screen, int totLines, int totCols, char *title)
+int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *title)
 {
 	char screenTitle[200] = {0};
 
 	clear();
 	drawDefaultStatusBar();
 
-	screen = newwin(totLines, totCols, (LINES/2)-(totLines/2), (COLS/2)-(totCols/2));
-	box(screen, 0, 0);
+	*screen = newwin(totLines, totCols, (LINES/2)-(totLines/2), (COLS/2)-(totCols/2));
+	box(*screen, 0, 0);
 
 	formatTitle(screenTitle, totCols-2, title);
-	mvwaddch(screen, 2, 0, ACS_LTEE);
-	mvwaddch(screen, 2, totCols-1, ACS_RTEE);
-	mvwhline(screen , 2, 1, ACS_HLINE, totCols-2);
-	wattron(screen, A_REVERSE);
-	mvwprintw(screen, 1, 1, screenTitle);
-	wattroff(screen, A_REVERSE);
+	mvwaddch(*screen, 2, 0, ACS_LTEE);
+	mvwaddch(*screen, 2, totCols-1, ACS_RTEE);
+	mvwhline(*screen , 2, 1, ACS_HLINE, totCols-2);
+	wattron(*screen, A_REVERSE);
+	mvwprintw(*screen, 1, 1, screenTitle);
+	wattroff(*screen, A_REVERSE);
 
-	wrefresh(screen);
+	wrefresh(*screen);
 
 	return(PAINEL_OK);
 }
@@ -239,34 +239,19 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 	WINDOW *thisScreen = NULL;
 	unsigned int i = 0;
 	int opt = 0;
-	char screenTitle[200] = {0};
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
 	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "5) Client config", "", "0) EXIT"};
-	/* int thisScreen_maxx = 0, thisScreen_maxy = 0; */
 
-	clear();
-	drawDefaultStatusBar();
+	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "MENU") == PAINEL_NOK){
+		return(NULL);
+	}
+
 	drawKeyBar("Use keys [UP] or [DOWN] and [ENTER] to select the option");
-
-	thisScreen = newwin(20+20, 60+60, (LINES/2)-20, (COLS/2)-60);
-	box(thisScreen, 0, 0);
-
-	/*
-	thisScreen_maxx = getmaxx(thisScreen);
-	thisScreen_maxy = getmaxy(thisScreen);
-	*/
-
-	/* Windows title */
-	formatTitle(screenTitle, 120-2, "MENU");
-	mvwaddch(thisScreen, 2, 0, ACS_LTEE);
-	mvwaddch(thisScreen, 2, 120-1, ACS_RTEE);
-	mvwhline(thisScreen , 2, 1, ACS_HLINE, 120-2);
-	wattron(thisScreen, A_REVERSE);
-	mvwprintw(thisScreen, 1, 1, screenTitle);
-	wattroff(thisScreen, A_REVERSE);
 
 
 	/* ... */
+
+
 	while(1){
 
 		for(i = 0; i < SCREEN_MENU_TOTAL_OPTS; i++){
