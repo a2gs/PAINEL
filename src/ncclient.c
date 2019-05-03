@@ -59,6 +59,7 @@ static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -154,7 +155,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
@@ -173,7 +174,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
@@ -192,7 +193,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
@@ -211,7 +212,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
@@ -230,7 +231,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	delwin(thisScreen);
 
-	return(NULL);
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
@@ -242,15 +243,11 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
 	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "5) Client config", "", "0) EXIT"};
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "MENU") == PAINEL_NOK){
+	if(screen_drawDefaultTheme(&thisScreen, 18, 46, "MENU") == PAINEL_NOK){
 		return(NULL);
 	}
 
 	drawKeyBar("Use keys [UP] or [DOWN] and [ENTER] to select the option");
-
-
-	/* ... */
-
 
 	while(1){
 
@@ -262,7 +259,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 
 	}
 
-	mvwprintw(thisScreen, 18, 2, "Press option number (menu not enabled yet)");
+	mvwprintw(thisScreen, 15, 2, "Press option number (menu not enabled yet)");
 
 	wrefresh(thisScreen);
 
