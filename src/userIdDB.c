@@ -8,8 +8,8 @@
  */
 
 
-/* userId.c
- * Add/remove a user to USERS table
+/* userIdDB.c
+ * Add/remove a user to USERS table.
  *
  *  Who     | When       | What
  *  --------+------------+----------------------------

@@ -56,7 +56,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 llist wizard_by_return client ncclient serv select_html select_Excel servList create_db userId pingServ cppcheck
+all: clean logtag sha256 llist wizard_by_return client ncclient serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
 	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
@@ -135,10 +135,10 @@ select_Excel:
 	@echo "=== select_Excel ============"
 	$(CC) -o $(BINPATH)/select_Excel $(SOURCEPATH)/select_Excel.c $(SOURCEPATH)/util.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
-userId: sha256
+userIdDB: sha256
 	@echo
-	@echo "=== userId ================="
-	$(CC) -o $(BINPATH)/userId $(SOURCEPATH)/userId.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
+	@echo "=== userIdDB ================="
+	$(CC) -o $(BINPATH)/userIdDB $(SOURCEPATH)/userIdDB.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS) -Wno-unused-variable
 
 servList: logtag
 	@echo
