@@ -85,5 +85,4 @@ int ll_delete(ll_node_t **head, ll_node_t *del);
  */
 int ll_destroyList(ll_node_t **head);
 
-
 #endif

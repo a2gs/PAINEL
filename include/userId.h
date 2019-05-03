@@ -22,6 +22,9 @@
 
 
 /* *** INCLUDES ****************************************************** */
+#include "SG.h"
+#include "SG_client.h"
+
 #include <linkedlist.h>
 
 
@@ -32,6 +35,10 @@
 
 
 /* *** DATA TYPES **************************************************** */
+typedef struct _userId_t{
+	char userId[DRT_LEN + 1];
+	tipoUsuario_t level;
+}userId_t;
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */

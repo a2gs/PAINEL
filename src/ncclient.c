@@ -28,12 +28,13 @@
 #include <ncurses.h>
 #include <sys/types.h>
 
-
-#include <util.h>
-#include <SG.h>
+#include "util.h"
+#include "SG.h"
+#include "userId.h"
 
 #include <log.h>
 #include <wizard_by_return.h>
+#include <linkedlist.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -180,9 +181,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 {
 	WINDOW *thisScreen = NULL;
+	ll_node_t *head = NULL;
+	ll_node_t *walker = NULL;
 
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK){
 		return(NULL);
+	}
+
+	ll_create(&head);
+
+	if(loadUserIdFileToMemory(&head) == PAINEL_NOK){
 	}
 
 
