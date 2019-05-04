@@ -193,11 +193,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK)
 		return(NULL);
 
-	getch();
-
 	drawKeyBar("[LEFT] Back, [RIGHT] Forward and [SPACE] Quit");
-
-	getch();
 
 	ll_create(&head);
 
