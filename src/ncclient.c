@@ -188,16 +188,27 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 	unsigned int i = 0;
 
+	logWrite(&log, LOGDEV, "List DRT screen.\n");
+
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK)
 		return(NULL);
 
+	getch();
+
 	drawKeyBar("[LEFT] Back, [RIGHT] Forward and [SPACE] Quit");
+
+	getch();
 
 	ll_create(&head);
 
 	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
 
+	logWrite(&log, LOGDEV, "Opening UserId (DRT) file: [%s].\n", drtFullFilePath);
+
+	getch();
+
 	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT.\n");
 		ll_destroyList(&head);
 		return(NULL);
 	}

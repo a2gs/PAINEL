@@ -48,11 +48,11 @@
  */
 int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 {
-	FILE *fUserIdDRT = NULL;
-	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
 	char *c = NULL;
+	FILE *fUserIdDRT = NULL;
 	userId_t *newNode = NULL;
-	char dtr[DRT_LEN + 1] = {'\0'};
+	char drt[DRT_LEN + 1] = {'\0'};
+	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
 	char funcao[VALOR_FUNCAO_LEN + 1] = {'\0'};
 
 	if((fUserIdDRT = fopen(userIdFullPath, "r")) == NULL){
@@ -80,16 +80,18 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 			return(PAINEL_NOK);
 		}
 
-		memset(newNode, 0, sizeof(userId_t));
+		memset(newNode,  0 , sizeof(userId_t)    );
+		memset(drt,    '\0', DRT_LEN          + 1);
+		memset(funcao, '\0', VALOR_FUNCAO_LEN + 1);
 
 		c = line;
-		cutter(&c, '-', dtr, DRT_LEN);
+		cutter(&c, '-', drt, DRT_LEN);
 		if(*c == '\0') return(PAINEL_NOK);
 
 		cutter(&c, '\0', funcao, VALOR_FUNCAO_LEN);
 		if(*c == '\0') return(PAINEL_NOK);
 
-		strncpy(newNode->userId, dtr, DRT_LEN);
+		strncpy(newNode->userId, drt, DRT_LEN);
 		newNode->level = string_2_UserType_t(funcao);
 
 		if(ll_add(&head, newNode) == LL_NOK){
