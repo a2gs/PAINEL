@@ -199,7 +199,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
 
-	logWrite(&log, LOGDEV, "Opening UserId (DRT) file: [%s].\n", drtFullFilePath);
+	logWrite(&log, LOGDEV, "Opening UserId (DRT) file to list: [%s].\n", drtFullFilePath);
 
 	getch();
 
