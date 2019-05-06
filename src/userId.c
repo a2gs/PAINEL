@@ -39,13 +39,6 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
-/*
- *
- * <Description>
- *
- * INPUT:
- * OUTPUT:
- */
 int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 {
 	char *c = NULL;

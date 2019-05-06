@@ -58,17 +58,39 @@ typedef struct _userId_t{
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
-/* int loadUserIdFileToMemory(ll_node **head)
+/* int loadUserIdFileToMemory(ll_node **head, char *userIdFullPath)
  *
- * 
+ * Open an load to a linkedlist (lib) the UserId DRT_FILE (DRTs.text) file.
  *
  * INPUT:
- *  none
+ *  head - Linkedlist header address
+ *  userIdFullPath - DTR file full path
  * OUTPUT:
- *  none
+ *  PAINEL_OK - 
+ *  PAINEL_NOK - 
  */
 int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath);
+
+/* char * userType_t_2_String(tipoUsuario_t usrType)
+ *
+ * A given tipoUsuario_t, return the human string.
+ *
+ * INPUT:
+ *  usrType - Enum tipoUsuario_t for a user level.
+ * OUTPUT:
+ *  Pointer to a const string.
+ */
 char * userType_t_2_String(tipoUsuario_t usrType);
+
+/* tipoUsuario_t string_2_UserType_t(char *userStr);
+ *
+ *  A given human string level, return the respective tipoUsuario_t.
+ *
+ * INPUT:
+ *  userStr - User level string
+ * OUTPUT:
+ *  tipoUsuario_t for that given string.
+ */
 tipoUsuario_t string_2_UserType_t(char *userStr);
 
 #endif
