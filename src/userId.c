@@ -82,7 +82,6 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 		if(*c == '\0') return(PAINEL_NOK);
 
 		cutter(&c, '\0', funcao, VALOR_FUNCAO_LEN);
-		if(*c == '\0') return(PAINEL_NOK);
 
 		strncpy(newNode->userId, drt, DRT_LEN);
 		newNode->level = string_2_UserType_t(funcao);

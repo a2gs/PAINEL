@@ -182,15 +182,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 {
-	WINDOW *thisScreen = NULL;
+	int i = 0;
+	unsigned int j = 0;
 	ll_node_t *head = NULL;
 	ll_node_t *walker = NULL;
+	WINDOW *thisScreen = NULL, *listScreen = NULL;
 	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
-	unsigned int i = 0;
 
 	logWrite(&log, LOGDEV, "List DRT screen.\n");
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "List DRTs") == PAINEL_NOK)
+	if(screen_drawDefaultTheme(&thisScreen, 40, 60, "List DRTs") == PAINEL_NOK)
 		return(NULL);
 
 	drawKeyBar("[LEFT] Back, [RIGHT] Forward and [SPACE] Quit");
@@ -201,21 +202,36 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	logWrite(&log, LOGDEV, "Opening UserId (DRT) file to list: [%s].\n", drtFullFilePath);
 
-	getch();
-
 	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT.\n");
 		ll_destroyList(&head);
 		return(NULL);
 	}
 
-	for(i = 0, walker = head; walker != NULL; walker = walker->next, i++){
-		mvwprintw(thisScreen, 4+i, 2, "%s - %s", ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
+	listScreen = derwin(thisScreen, 36, 58, 3, 1);
+
+	for(i = 0, j = 1, walker = head; walker != NULL; walker = walker->next, i++, j++){
+
+		mvwprintw(listScreen, i, 1, "%03d) %s - %s", j, ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
+
+		if(i == 32){
+			mvwprintw(listScreen, 2+i, 1, "[ENTER] to next page...");
+			wrefresh(listScreen);
+			getch();
+			wclear(listScreen);
+			i = -1;
+		}
+
 	}
+
+	mvwprintw(listScreen, 1+i, 1, "Pause. [ENTER] return to menu.");
+	wrefresh(listScreen);
 
 	getch();
 
+	delwin(listScreen);
 	delwin(thisScreen);
+
 	ll_destroyList(&head);
 
 	return(screen_menu);
