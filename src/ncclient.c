@@ -26,6 +26,7 @@
 #include <string.h>
 #include <signal.h>
 #include <ncurses.h>
+#include <form.h>
 #include <sys/types.h>
 
 #include "util.h"
@@ -258,18 +259,105 @@ a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 {
+#define SRC_DELDRT_MAX_LINES (40)
+#define SRC_DELDRT_MAX_COLS  (120)
 	WINDOW *thisScreen = NULL;
+	WINDOW *formScreen = NULL;
+	FIELD *dtrToDelete[3] = {NULL, NULL, NULL};
+	FORM *formDelDRT = NULL;
+	char drtToDelete[DRT_LEN + 1] = {0};
+	int ch = 0;
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Delete DRT") == PAINEL_NOK){
+	if(screen_drawDefaultTheme(&thisScreen, SRC_DELDRT_MAX_LINES, SRC_DELDRT_MAX_COLS, "Delete DRT") == PAINEL_NOK){
 		return(NULL);
 	}
 
+	dtrToDelete[0] = new_field(1, 4, 1, 1, 0, 0);
+	dtrToDelete[1] = new_field(1, 10, 1, 6, 0, 0);
+	dtrToDelete[2] = NULL;
 
-	/* ... */
+	set_field_buffer(dtrToDelete[0], 0, "DRT:");
+	set_field_opts(dtrToDelete[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(dtrToDelete[1], A_UNDERLINE);
+	set_field_opts(dtrToDelete[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	formDelDRT = new_form(dtrToDelete);
+	formScreen = derwin(thisScreen, SRC_DELDRT_MAX_LINES - 4, SRC_DELDRT_MAX_COLS - 2, 3, 1);
+
+	set_form_win(formDelDRT, thisScreen);
+	set_form_sub(formDelDRT, formScreen);
+
+	post_form(formDelDRT);
+
+	curs_set(1);
+
+	wrefresh(thisScreen);
+	wrefresh(formScreen);
+
+	while((ch = getch()) != ESC_KEY){
+
+		switch(ch){
+			case KEY_ENTER:
+			case 10: /* ENTER */
+				strncpy(drtToDelete, field_buffer(dtrToDelete[1], 0), DRT_LEN);
+				break;
+
+			case KEY_BACKSPACE:
+			case 127:
+				form_driver(formDelDRT, REQ_DEL_PREV);
+				break;
+
+			case KEY_DC:
+				form_driver(formDelDRT, REQ_DEL_CHAR);
+				break;
+
+			case KEY_LEFT:
+				form_driver(formDelDRT, REQ_PREV_CHAR);
+				break;
+
+			case KEY_RIGHT:
+				form_driver(formDelDRT, REQ_NEXT_CHAR);
+				break;
+
+			default:
+				form_driver(formDelDRT, ch);
+				break;
+		}
+
+		wrefresh(formScreen);
+	}
+
+	curs_set(0);
 
 
+	/* TODO:
+		- Carregar lista de DRTs na memoria
+		- Se(DRT digitada esta na lista){
+			- Mostrar DRT e funcao na tela e perguntar se quer excluir
+			- Se(deseja excluir){
+				- Remove node da lista
+				- Renomeia arquivo de DRT.text para bkp
+				- Reescreve lista de DRTs na memoria para arquivo DRT.text
+			}
+			- Exclui lista
+			- Volta para menu (fin desta dela)
+		}else{
+			- Exclui lista
+			- Mostrar como DRT nao localizada. Pausa. Volta pro menu (fin desta dela)
+		}
+	*/
+
+
+	unpost_form(formDelDRT);
+	free_form(formDelDRT);
+	free_field(dtrToDelete[0]);
+
+	/*
 	getch();
+	*/
 
+	delwin(formScreen);
 	delwin(thisScreen);
 
 	return(screen_menu);
@@ -400,6 +488,7 @@ int main(int argc, char *argv[])
 	keypad(stdscr, TRUE);
 	cbreak();
 	noecho();
+	set_escdelay(0);
 
 	/* https://invisible-island.net/ncurses/ncurses-intro.html */
 	/* signal(SIGWINCH, signalHandle); */
