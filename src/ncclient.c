@@ -183,6 +183,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 {
+#define SRC_LISTDRT_MAX_LINES (40)
+#define SRC_LISTDRT_MAX_COLS  (60)
 	int i = 0;
 	unsigned int j = 0;
 	ll_node_t *head = NULL;
@@ -192,7 +194,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	logWrite(&log, LOGDEV, "List DRT screen.\n");
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 60, "List DRTs") == PAINEL_NOK)
+	if(screen_drawDefaultTheme(&thisScreen, SRC_LISTDRT_MAX_LINES, SRC_LISTDRT_MAX_COLS, "List DRTs") == PAINEL_NOK)
 		return(NULL);
 
 	drawKeyBar("[LEFT] Back, [RIGHT] Forward and [SPACE] Quit");
@@ -209,14 +211,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 		return(NULL);
 	}
 
-	listScreen = derwin(thisScreen, 36, 58, 3, 1);
+	listScreen = derwin(thisScreen, SRC_LISTDRT_MAX_LINES - 4, SRC_LISTDRT_MAX_COLS - 2, 3, 1);
 
 	for(i = 0, j = 1, walker = head; walker != NULL; walker = walker->next, i++, j++){
 
-		mvwprintw(listScreen, i, 1, "%03d) %s - %s", j, ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
+		mvwprintw(listScreen, i+1, 1, "%03d) %s - %s", j, ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
 
-		if(i == 32){
-			mvwprintw(listScreen, 2+i, 1, "[ENTER] to next page...");
+		if(i == 31){
+			mvwprintw(listScreen, i+3, 1, "[ENTER] to next page...");
 			wrefresh(listScreen);
 			getch();
 			wclear(listScreen);
@@ -225,7 +227,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	}
 
-	mvwprintw(listScreen, 1+i, 1, "Pause. [ENTER] return to menu.");
+	mvwprintw(listScreen, 2+i, 1, "Pause. [ENTER] return to menu.");
 	wrefresh(listScreen);
 
 	getch();
