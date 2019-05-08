@@ -2,8 +2,8 @@
 ![Language](https://img.shields.io/badge/C%20Std-11-blue.svg)
 ![Operating System](https://img.shields.io/badge/os-Linux-green.svg)<br>
 ## PAINEL<br>
-*A client/server message hub and HTML report generator.*
-With HTML server build-in.
+*A client/server message hub and HTML report generator.*<br>
+With HTML server build-in.<br>
 Dependences:
 - ncurses
 - SQLite3
