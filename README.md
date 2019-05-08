@@ -1,1 +1,1 @@
-[![Version](https://badge.fury.io/gh/martinmoene%2Fstring-view-lite.svg)]
+PAINEL: A client/server message hub and HTML report generator 
