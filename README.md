@@ -2,10 +2,10 @@
 ![Language](https://img.shields.io/badge/C%20Std-11-blue.svg)
 ![Operating System](https://img.shields.io/badge/os-Linux-green.svg)<br>
 ## PAINEL<br>
-*A client/server message hub and HTML report generator.*<br><br>
-With HTML server build-in.<br>
-Dependences:<br>
-- ncurses<br>
-- SQLite3<br>
-<br>
+*A client/server message hub and HTML report generator.*
+With HTML server build-in.
+Dependences:
+- ncurses
+- SQLite3
+
 ![PAINEL view](https://github.com/a2gs/PAINEL/blob/master/docs/PAINEL_view.png)
