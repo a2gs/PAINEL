@@ -2,7 +2,7 @@
 ![Language](https://img.shields.io/badge/C%20Std-11-blue.svg)
 ![Operating System](https://img.shields.io/badge/os-Linux-green.svg)<br>
 ## PAINEL<br>
-*A client/server message hub and HTML report generator.*<br>
+*A client/server message hub and HTML/Excel report generator.*<br><br>
 With HTML server build-in.<br>
 Dependences:
 - ncurses
