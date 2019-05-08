@@ -4,8 +4,8 @@
 ## PAINEL<br>
 *A client/server message hub and HTML report generator.*<br><br>
 With HTML server build-in.<br>
-Dependences:
-- ncurses
-- SQLite3
-
+Dependences:<br>
+- ncurses<br>
+- SQLite3<br>
+<br>
 ![PAINEL view](https://github.com/a2gs/PAINEL/blob/master/docs/PAINEL_view.png)
