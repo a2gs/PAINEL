@@ -8,4 +8,4 @@ Dependences:
 - ncurses
 - SQLite3
 
-<center>https://github.com/a2gs/PAINEL/blob/master/docs/PAINEL_view.png</center>
+![PAINEL view](https://github.com/a2gs/PAINEL/blob/master/docs/PAINEL_view.png)
