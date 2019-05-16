@@ -269,6 +269,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 	FORM *formDelDRT = NULL;
 	char drtToDelete[DRT_LEN + 1] = {0};
 	int ch = 0;
+	ll_node_t *head = NULL;
+	ll_node_t *walker = NULL;
+	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 	if(screen_drawDefaultTheme(&thisScreen, SRC_DELDRT_MAX_LINES, SRC_DELDRT_MAX_COLS, "Delete DRT") == PAINEL_NOK){
 		return(NULL);
@@ -342,24 +345,41 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		return(screen_menu);
 	}
 
+	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
+	logWrite(&log, LOGDEV, "Opening UserId (DRT) file to delete: [%s].\n", drtFullFilePath);
 
-	/* TODO:
-		- Carregar lista de DRTs na memoria
-		- Se(DRT digitada esta na lista){
-			- Mostrar DRT e funcao na tela e perguntar se quer excluir
-			- Se(deseja excluir){
-				- Remove node da lista
-				- Renomeia arquivo de DRT.text para bkp
-				- Reescreve lista de DRTs na memoria para arquivo DRT.text
-			}
-			- Exclui lista
-			- Volta para menu (fin desta dela)
-		}else{
+	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT.\n");
+		ll_destroyList(&head);
+		return(NULL);
+	}
+
+	for(walker = head; walker != NULL; walker = walker->next){
+		if(strncmp(drtToDelete, ((userId_t *)(walker->data))->userId , DRT_LEN) == 0){
+			break;
+		}
+	}
+
+	/* - Se(DRT digitada esta na lista){ */
+	if(walker != NULL){
+		/*
+		- Mostrar DRT e funcao na tela e perguntar se quer excluir
+		- Se(deseja excluir){
+			- Remove node da lista
+			- Renomeia arquivo de DRT.text para bkp
+			- Reescreve lista de DRTs na memoria para arquivo DRT.text
+		}
+		- Exclui lista
+		- Volta para menu (fin desta dela)
+		*/
+	}else{
+		/*
 			- Exclui lista
 			- Mostrar como DRT nao localizada. Pausa. Volta pro menu (fin desta dela)
-		}
-	*/
+		 */
+	}
 
+	ll_destroyList(&head);
 
 	unpost_form(formDelDRT);
 	free_form(formDelDRT);
