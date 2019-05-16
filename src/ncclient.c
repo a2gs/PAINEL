@@ -361,27 +361,48 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	/* - Se(DRT digitada esta na lista){ */
 	if(walker != NULL){
-		char *userIdNewFullPath = NULL; /* TODO */
-		char *userIdTempNewFullPath = NULL; /* TODO */
+		char userIdNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+		char userIdTempBkpNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 		mvwprintw(formScreen, 3, 1, "Excluir DRT: [%s] funcao: [%s]? (s/N)", ((userId_t *)(walker->data))->userId, ((userId_t *)(walker->data))->level);
 		ch = getch();
+
 		if(ch == 'S' || ch == 's'){
 			/*
 			- Remove node da lista
 			- Renomeia arquivo de DRT.text para bkp
 			- Reescreve lista de DRTs na memoria para arquivo DRT.text
 			*/
+			logWrite(&log, LOGDEV, "Deleting DRT [%s].\n", drtToDelete);
 			ll_delete(&head, walker, 1);
 
+			snprintf(userIdNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_TEMP_NEW", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
+			logWrite(&log, LOGDEV, "Dumping new temp UserId (DRT) file: [%s].\n", userIdNewFullPath);
+
 			if(dumpUserIdMemoryFromFile(&head, userIdNewFullPath) == PAINEL_NOK){
+				logWrite(&log, LOGOPALERT, "Erro dumping new userId list to file! Aborting (DRT [%s] has not deleted)!\n", drtToDelete);
+
+				mvwprintw(formScreen, 5, 1, "Problema em gravar nova DRT [%s] para arquivo: [%s]. Pausa.", drtToDelete, userIdNewFullPath);
+				getch();
+
+				ll_destroyList(&head);
+				unpost_form(formDelDRT);
+				free_form(formDelDRT);
+				free_field(dtrToDelete[0]);
+				delwin(formScreen);
+				delwin(thisScreen);
+
+				return(screen_menu);
+			}
+
+			snprintf(userIdTempBkpNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE, time_DDMMYYhhmmss());
+			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file to: [%s].\n", userIdTempBkpNewFullPath);
+
+			if(rename(userIdTempBkpNewFullPath, userIdTempBkpNewFullPath) == -1){
 				/* TODO */
 			}
 
-			if(rename(drtFullFilePath, userIdTempNewFullPath) == -1){
-				/* TODO */
-			}
-
+			logWrite(&log, LOGDEV, "\n", );
 			if(rename(userIdTempNewFullPath, drtFullFilePath) == -1){
 				/* TODO */
 			}
