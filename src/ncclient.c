@@ -355,28 +355,46 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
-		if(strncmp(drtToDelete, ((userId_t *)(walker->data))->userId , DRT_LEN) == 0){
+		if(strncmp(drtToDelete, ((userId_t *)(walker->data))->userId, DRT_LEN) == 0)
 			break;
-		}
 	}
 
 	/* - Se(DRT digitada esta na lista){ */
 	if(walker != NULL){
-		/*
-		- Mostrar DRT e funcao na tela e perguntar se quer excluir
-		- Se(deseja excluir){
+		char *userIdNewFullPath = NULL; /* TODO */
+		char *userIdTempNewFullPath = NULL; /* TODO */
+
+		mvwprintw(formScreen, 3, 1, "Excluir DRT: [%s] funcao: [%s]? (s/N)", ((userId_t *)(walker->data))->userId, ((userId_t *)(walker->data))->level);
+		ch = getch();
+		if(ch == 'S' || ch == 's'){
+			/*
 			- Remove node da lista
 			- Renomeia arquivo de DRT.text para bkp
 			- Reescreve lista de DRTs na memoria para arquivo DRT.text
-		}
-		- Exclui lista
-		- Volta para menu (fin desta dela)
-		*/
-	}else{
-		/*
+			*/
+			ll_delete(&head, walker, 1);
+
+			if(dumpUserIdMemoryFromFile(&head, userIdNewFullPath) == PAINEL_NOK){
+				/* TODO */
+			}
+
+			if(rename(drtFullFilePath, userIdTempNewFullPath) == -1){
+				/* TODO */
+			}
+
+			if(rename(userIdTempNewFullPath, drtFullFilePath) == -1){
+				/* TODO */
+			}
+
+			/*
 			- Exclui lista
-			- Mostrar como DRT nao localizada. Pausa. Volta pro menu (fin desta dela)
-		 */
+			- Reescrever o arquivo
+			- Volta para menu (fin desta dela)
+			*/
+		}
+	}else{
+		mvwprintw(formScreen, 3, 1, "DRT [%s] nao localizada! Pausa.", ((userId_t *)(walker->data))->userId);
+		getch();
 	}
 
 	ll_destroyList(&head);

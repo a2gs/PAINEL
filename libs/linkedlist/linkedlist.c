@@ -66,7 +66,7 @@ int ll_add(ll_node_t **head, void *data)
 	return(LL_OK);
 }
 
-int ll_delete(ll_node_t **head, ll_node_t *del)
+int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem)
 {
 	ll_node_t *walker = NULL;
 
@@ -80,7 +80,8 @@ int ll_delete(ll_node_t **head, ll_node_t *del)
 	for(walker = *head; walker != NULL; walker = walker->next){
 		if(walker->next == del){
 			walker->next = del->next;
-			free(del->data);
+			if(doesFreeMem != 0)
+				free(del->data);
 			free(del);
 			break;
 		}

@@ -24,56 +24,56 @@ int main(int argc, char *argv[])
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000053") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000054") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000056") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000057") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000050") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000099") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000000") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strcmp(walker->data, "000000001") == 0){
-			ll_delete(&head, walker);
+			ll_delete(&head, walker, 1);
 			break;
 		}
 	}

@@ -71,6 +71,8 @@ typedef struct _userId_t{
  */
 int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath);
 
+int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath);
+
 /* char * userType_t_2_String(tipoUsuario_t usrType)
  *
  * A given tipoUsuario_t, return the human string.
