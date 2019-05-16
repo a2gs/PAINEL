@@ -332,6 +332,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	curs_set(0);
 
+	if(ch == ESC_KEY){
+		unpost_form(formDelDRT);
+		free_form(formDelDRT);
+		free_field(dtrToDelete[0]);
+		delwin(formScreen);
+		delwin(thisScreen);
+
+		return(screen_menu);
+	}
+
 
 	/* TODO:
 		- Carregar lista de DRTs na memoria
