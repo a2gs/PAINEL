@@ -364,6 +364,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 	if(walker != NULL){
 		char userIdNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 		char userIdTempBkpNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+		/*
+
+TODO: Acertar os nomes (variaveis) dos arquivos nas operacoes abaixo
+		 
+drtFullFilePath
+
+userIdNewFullPath
+
+userIdTempBkpNewFullPath 
+		 */
 
 		mvwprintw(formScreen, 3, 1, "Excluir DRT: [%s] funcao: [%s]? (s/N)", ((userId_t *)(walker->data))->userId, ((userId_t *)(walker->data))->level);
 		ch = getch();
@@ -393,7 +403,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			}
 
 			snprintf(userIdTempBkpNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE, time_DDMMYYhhmmss());
-			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file [%s] to [%s].\n", , userIdTempBkpNewFullPath);
+			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file [%s] to [%s].\n", userIdNewFullPath, userIdTempBkpNewFullPath);
 
 			if(rename(userIdTempBkpNewFullPath, userIdTempBkpNewFullPath) == -1){
 				mvwprintw(formScreen, 5, 1, "Pausa.");
@@ -411,9 +421,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 				return(screen_menu);
 			}
 
-			logWrite(&log, LOGDEV, "Renaming new temp file [%s] to default name [%s].\n", userIdTempNewFullPath, drtFullFilePath);
+			logWrite(&log, LOGDEV, "Renaming new temp file [%s] to default name [%s].\n", userIdNewFullPath, drtFullFilePath);
 
-			if(rename(userIdTempNewFullPath, drtFullFilePath) == -1){
+			if(rename(userIdNewFullPath, drtFullFilePath) == -1){
 				mvwprintw(formScreen, 5, 1, "Pausa.");
 				logWrite(&log, LOGOPALERT, "[%s]\n", strerror(errno));
 				getch();
