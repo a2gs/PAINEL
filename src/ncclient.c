@@ -337,13 +337,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	if(ch == ESC_KEY){
 		/* Cleanup... */
-		unpost_form(formDelDRT);
-		free_form(formDelDRT);
-		free_field(dtrToDelete[0]);
-		delwin(formScreen);
-		delwin(thisScreen);
-
-		return(screen_menu);
+		goto CLEANUP_SCREEN_DELDRT;
 	}
 
 	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
@@ -385,14 +379,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 				getch();
 
 				/* Cleanup... */
-				ll_destroyList(&head);
-				unpost_form(formDelDRT);
-				free_form(formDelDRT);
-				free_field(dtrToDelete[0]);
-				delwin(formScreen);
-				delwin(thisScreen);
-
-				return(screen_menu);
+				goto CLEANUP_SCREEN_DELDRT;
 			}
 
 			snprintf(userIdTempBkpNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE, time_DDMMYYhhmmss());
@@ -404,14 +391,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 				getch();
 
 				/* Cleanup... */
-				ll_destroyList(&head);
-				unpost_form(formDelDRT);
-				free_form(formDelDRT);
-				free_field(dtrToDelete[0]);
-				delwin(formScreen);
-				delwin(thisScreen);
-
-				return(screen_menu);
+				goto CLEANUP_SCREEN_DELDRT;
 			}
 
 			logWrite(&log, LOGDEV, "Renaming new temp file [%s] to default name [%s].\n", userIdNewFullPath, drtFullFilePath);
@@ -422,14 +402,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 				getch();
 
 				/* Cleanup... */
-				ll_destroyList(&head);
-				unpost_form(formDelDRT);
-				free_form(formDelDRT);
-				free_field(dtrToDelete[0]);
-				delwin(formScreen);
-				delwin(thisScreen);
-
-				return(screen_menu);
+				goto CLEANUP_SCREEN_DELDRT;
 			}
 		}
 	}else{
@@ -437,7 +410,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		getch();
 	}
 
-	/* Cleanup... */
+	/* Cleanup... I will not create a function with 4 parameters ... Yes, that's is a GOTO, but used with love and correctness */
+CLEANUP_SCREEN_DELDRT:
 	ll_destroyList(&head);
 	unpost_form(formDelDRT);
 	free_form(formDelDRT);
