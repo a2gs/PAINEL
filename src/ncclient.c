@@ -354,7 +354,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			break;
 	}
 
-	/* - Se(DRT digitada esta na lista){ */
+	/* DRT found */
 	if(walker != NULL){
 		char userIdNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 		char userIdTempBkpNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
