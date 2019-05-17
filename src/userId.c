@@ -41,61 +41,18 @@
 /* *** FUNCTIONS *********************************************************************** */
 int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 {
-	char *c = NULL;
 	FILE *fUserIdDRT = NULL;
-	userId_t *newNode = NULL;
-	char drt[DRT_LEN + 1] = {'\0'};
-	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
-	char funcao[VALOR_FUNCAO_LEN + 1] = {'\0'};
+	ll_node_t *walker = NULL;
 
 	if((fUserIdDRT = fopen(userIdFullPath, "w")) == NULL){
 		return(PAINEL_NOK);
 	}
 
-#if 0
-	while(!feof(fUserIdDRT)){
-		memset(line, '\0', LINE_DRT_FILE_LEN + 1);
-
-		if(fgets(line, LINE_DRT_FILE_LEN, fUserIdDRT) == NULL)
-			break;
-
-		if(line[0] == '#') /* Comment */
-			continue;
-
-		c = strchr(line, '-');
-		if(c == NULL)
-			continue; /* linha mal formatada, sem '-' */
-
-		changeCharByChar(line, '\n', '\0');
-
-		newNode = (userId_t *)malloc(sizeof(userId_t));
-		if(newNode == NULL){
-			fclose(fUserIdDRT);
-			return(PAINEL_NOK);
-		}
-
-		memset(newNode,  0 , sizeof(userId_t)    );
-		memset(drt,    '\0', DRT_LEN          + 1);
-		memset(funcao, '\0', VALOR_FUNCAO_LEN + 1);
-
-		c = line;
-		cutter(&c, '-', drt, DRT_LEN);
-		if(*c == '\0') return(PAINEL_NOK);
-
-		cutter(&c, '\0', funcao, VALOR_FUNCAO_LEN);
-
-		strncpy(newNode->userId, drt, DRT_LEN);
-		newNode->level = string_2_UserType_t(funcao);
-
-		if(ll_add(&head, newNode) == LL_NOK){
-			fclose(fUserIdDRT);
-			ll_destroyList(&head);
-			return(PAINEL_NOK);
-		}
+	for(walker = head; walker != NULL; walker = walker->next){
+		fprintf(fUserIdDRT, "%s-%s\n", ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)(walker->data))->level));
 	}
 
 	fclose(fUserIdDRT);
-#endif
 	return(PAINEL_OK);
 }
 
