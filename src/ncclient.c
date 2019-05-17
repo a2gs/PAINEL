@@ -410,7 +410,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		getch();
 	}
 
-	/* Cleanup... I will not create a function with 4 parameters ... Yes, that's is a GOTO, but used with love and correctness */
+	/* Cleanup... I will not create a function with 5 parameters ... Yes, that is a GOTO, but used with love and correctness */
 CLEANUP_SCREEN_DELDRT:
 	ll_destroyList(&head);
 	unpost_form(formDelDRT);
