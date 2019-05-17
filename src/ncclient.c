@@ -369,11 +369,6 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		ch = getch();
 
 		if(ch == 'S' || ch == 's'){
-			/*
-			- Remove node da lista
-			- Renomeia arquivo de DRT.text para bkp
-			- Reescreve lista de DRTs na memoria para arquivo DRT.text
-			*/
 			logWrite(&log, LOGDEV, "Deleting DRT [%s].\n", drtToDelete);
 			ll_delete(&head, walker, 1);
 
@@ -433,12 +428,6 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 				return(screen_menu);
 			}
-
-			/*
-			- Exclui lista
-			- Reescrever o arquivo
-			- Volta para menu (fin desta dela)
-			*/
 		}
 	}else{
 		mvwprintw(formScreen, 3, 1, "DRT [%s] nao localizada! Pausa.", ((userId_t *)(walker->data))->userId);

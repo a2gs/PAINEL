@@ -52,6 +52,7 @@ int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 		return(PAINEL_NOK);
 	}
 
+#if 0
 	while(!feof(fUserIdDRT)){
 		memset(line, '\0', LINE_DRT_FILE_LEN + 1);
 
@@ -94,6 +95,7 @@ int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 	}
 
 	fclose(fUserIdDRT);
+#endif
 	return(PAINEL_OK);
 }
 
