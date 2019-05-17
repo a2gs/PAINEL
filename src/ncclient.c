@@ -336,6 +336,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 	curs_set(0);
 
 	if(ch == ESC_KEY){
+		/* Cleanup... */
 		unpost_form(formDelDRT);
 		free_form(formDelDRT);
 		free_field(dtrToDelete[0]);
@@ -380,11 +381,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			logWrite(&log, LOGDEV, "Dumping new temp UserId (DRT) file: [%s].\n", userIdNewFullPath);
 
 			if(dumpUserIdMemoryFromFile(&head, userIdNewFullPath) == PAINEL_NOK){
-				logWrite(&log, LOGOPALERT, "Erro dumping new userId list to file! Aborting (DRT [%s] has not deleted)!\n", drtToDelete);
+				logWrite(&log, LOGOPALERT, "Erro dumping new userId list to file! Aborting (DRT [%s] didnt delete)!\n", drtToDelete);
 
-				mvwprintw(formScreen, 5, 1, "Problema em gravar nova DRT [%s] para arquivo: [%s]. Pausa.", drtToDelete, userIdNewFullPath);
+				mvwprintw(formScreen, 5, 1, "Problema em gravar nova DRT [%s] para arquivo temp: [%s]. Pausa.", drtToDelete, userIdNewFullPath);
 				getch();
 
+				/* Cleanup... */
 				ll_destroyList(&head);
 				unpost_form(formDelDRT);
 				free_form(formDelDRT);
@@ -396,15 +398,40 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			}
 
 			snprintf(userIdTempBkpNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE, time_DDMMYYhhmmss());
-			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file to: [%s].\n", userIdTempBkpNewFullPath);
+			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file [%s] to [%s].\n", , userIdTempBkpNewFullPath);
 
 			if(rename(userIdTempBkpNewFullPath, userIdTempBkpNewFullPath) == -1){
-				/* TODO */
+				mvwprintw(formScreen, 5, 1, "Pausa.");
+				logWrite(&log, LOGOPALERT, "[%s]\n", strerror(errno));
+				getch();
+
+				/* Cleanup... */
+				ll_destroyList(&head);
+				unpost_form(formDelDRT);
+				free_form(formDelDRT);
+				free_field(dtrToDelete[0]);
+				delwin(formScreen);
+				delwin(thisScreen);
+
+				return(screen_menu);
 			}
 
-			logWrite(&log, LOGDEV, "\n", );
+			logWrite(&log, LOGDEV, "Renaming new temp file [%s] to default name [%s].\n", userIdTempNewFullPath, drtFullFilePath);
+
 			if(rename(userIdTempNewFullPath, drtFullFilePath) == -1){
-				/* TODO */
+				mvwprintw(formScreen, 5, 1, "Pausa.");
+				logWrite(&log, LOGOPALERT, "[%s]\n", strerror(errno));
+				getch();
+
+				/* Cleanup... */
+				ll_destroyList(&head);
+				unpost_form(formDelDRT);
+				free_form(formDelDRT);
+				free_field(dtrToDelete[0]);
+				delwin(formScreen);
+				delwin(thisScreen);
+
+				return(screen_menu);
 			}
 
 			/*
@@ -418,16 +445,11 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		getch();
 	}
 
+	/* Cleanup... */
 	ll_destroyList(&head);
-
 	unpost_form(formDelDRT);
 	free_form(formDelDRT);
 	free_field(dtrToDelete[0]);
-
-	/*
-	getch();
-	*/
-
 	delwin(formScreen);
 	delwin(thisScreen);
 
