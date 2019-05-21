@@ -54,6 +54,7 @@
 #define PROT_COD_PING         (0)		/* Client -> Server / Server -> Client */
 #define PROT_COD_LOGIN        (1)		/* Client -> Server: login request / Server -> Client: login request OK/NOK */
 #define PROT_COD_LOGOUT       (2)		/* Client -> Server: logout request / Server -> Client: logout request OK/NOK */
+#define PROT_COD_IFACE        (10)		/* Client -> Server: ask user interface to build / Server -> Client: interface */
 #define PROT_COD_INSREG       (100)		/* Client -> Server: register insert / Server -> Client: register insert fail */
 #define PROT_COD_SERCMD       (300)
 #define PROT_COD_CLICMD       (400)		/* Client -> Server: client command / Server -> Client: client command fail */
