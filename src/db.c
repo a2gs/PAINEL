@@ -348,6 +348,79 @@ int dbCreateAllTables(void)
 		logWrite(log, LOGDBALERT|LOGREDALERT, "Database handle didnt define for create tables!\n");
 		return(PAINEL_NOK);
 	}
+
+	/* ------------------------------------------------------------------------------------- */
+
+	/* DATABASE SCHEMA USERLEVEL
+	 *
+	 *
+	 */
+
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "FUNCAO TEXT, "                   \
+	                              "PRIMARY KEY(FUNCAO))",
+	                              DB_USERLEVEL_TABLE);
+
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		sqLite3LogError(rc);
+		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(PAINEL_NOK);
+	}
+
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNC_INDX ON %s (FUNCAO)", DB_USERLEVEL_TABLE);
+
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		sqLite3LogError(rc);
+		fprintf(stderr, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(PAINEL_NOK);
+	}
+
+	/* ------------------------------------------------------------------------------------- */
+
+	/* DATABASE SCHEMA USRIFACE (interface client)
+	 *
+	 *
+	 */
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "FUNCAO TEXT, "                   \
+	                              "FIELD TEXT, "                    \
+	                              "TYPE TEXT, "                     \
+	                              "FMT TEXT, "                      \
+	                              "FORDER TEXT, "                   \
+	                              "FOREIGN KEY(FUNCAO) REFERENCES %s (FUNCAO))",
+	         DB_USRIFACE_TABLE,
+	         DB_USERLEVEL_TABLE);
+
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		sqLite3LogError(rc);
+		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(PAINEL_NOK);
+	}
+
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE INDEX IF NOT EXISTS FUNCIF_INDX ON %s (FUNCAO)", DB_USRIFACE_TABLE);
+
+	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if(rc != SQLITE_OK){
+		sqLite3LogError(rc);
+		fprintf(stderr, "SQL create index FUNCIF_INDX error [%s]: [%s].\n", sql, err_msg);
+		sqlite3_free(err_msg);
+
+		return(PAINEL_NOK);
+	}
+
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA MSGS (tamanhos medios esperados. Todos os dados sao textos):
@@ -377,11 +450,12 @@ int dbCreateAllTables(void)
 	   IPPORT      TEXT
 	 */
 
+	/*
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
 	                              "DRT         TEXT NOT NULL, "     \
 	                              "DATAHORA    TEXT NOT NULL, "     \
 	                              "LOGINOUT    TEXT, "              \
-	                              "FUNCAO      TEXT, "              \
+	                              "FUNCAO      TEXT NOT NULL, "     \
 	                              "PANELA      TEXT, "              \
 	                              "WS          TEXT, "              \
 	                              "FORNELETR   TEXT, "              \
@@ -401,10 +475,38 @@ int dbCreateAllTables(void)
 	                              "ASPECTUBO   TEXT, "              \
 	                              "REFUGO      TEXT, "              \
 	                              "IPPORT      TEXT, "              \
-	                              "PRIMARY KEY(DATAHORA, DRT) "     \
+	                              "PRIMARY KEY(DATAHORA, DRT)\ "    \
 	                              "FOREIGN KEY(DRT, FUNCAO) REFERENCES %s (ID, FUNCAO))",
 	         DB_MSGS_TABLE,
 	         DB_USERS_TABLE);
+	*/
+
+	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
+	                              "DRT         TEXT NOT NULL, "     \
+	                              "DATAHORA    TEXT NOT NULL, "     \
+	                              "LOGINOUT    TEXT, "              \
+	                              "FUNCAO      TEXT NOT NULL, "     \
+	                              "PANELA      TEXT, "              \
+	                              "WS          TEXT, "              \
+	                              "FORNELETR   TEXT, "              \
+	                              "NUMMAQUINA  TEXT, "              \
+	                              "DIAMETRO    TEXT, "              \
+	                              "CLASSE      TEXT, "              \
+	                              "TEMP        TEXT, "              \
+	                              "PERCFESI    TEXT, "              \
+	                              "PERCMG      TEXT, "              \
+	                              "PERCC       TEXT, "              \
+	                              "PERCS       TEXT, "              \
+	                              "PERCP       TEXT, "              \
+	                              "PERCINOCLNT TEXT, "              \
+	                              "ENELETTON   TEXT, "              \
+	                              "CADENCIA    TEXT, "              \
+	                              "OEE         TEXT, "              \
+	                              "ASPECTUBO   TEXT, "              \
+	                              "REFUGO      TEXT, "              \
+	                              "IPPORT      TEXT, "              \
+	                              "PRIMARY KEY(DATAHORA, DRT))",
+	         DB_MSGS_TABLE );
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -450,7 +552,7 @@ int dbCreateAllTables(void)
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
 	                              "ID TEXT NOT NULL, "              \
-	                              "FUNCAO TEXT, "                   \
+	                              "FUNCAO TEXT NOT NULL, "          \
 	                              "PASSHASH TEXT, "                 \
 	                              "PRIMARY KEY(ID) "                \
 	                              "FOREIGN KEY(FUNCAO) REFERENCES %s (FUNCAO))", \
