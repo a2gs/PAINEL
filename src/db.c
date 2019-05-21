@@ -352,8 +352,7 @@ int dbCreateAllTables(void)
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA USERLEVEL
-	 *
-	 *
+	 * Registros de todas FUNCOES/UserLevel (office responsability)
 	 */
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
@@ -386,7 +385,7 @@ int dbCreateAllTables(void)
 	/* ------------------------------------------------------------------------------------- */
 
 	/* DATABASE SCHEMA USRIFACE (interface client)
-	 *
+	 * 
 	 *
 	 */
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
@@ -449,37 +448,6 @@ int dbCreateAllTables(void)
 	   REFUGO      200         ALFA         // REFUGO
 	   IPPORT      TEXT
 	 */
-
-	/*
-	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
-	                              "DRT         TEXT NOT NULL, "     \
-	                              "DATAHORA    TEXT NOT NULL, "     \
-	                              "LOGINOUT    TEXT, "              \
-	                              "FUNCAO      TEXT NOT NULL, "     \
-	                              "PANELA      TEXT, "              \
-	                              "WS          TEXT, "              \
-	                              "FORNELETR   TEXT, "              \
-	                              "NUMMAQUINA  TEXT, "              \
-	                              "DIAMETRO    TEXT, "              \
-	                              "CLASSE      TEXT, "              \
-	                              "TEMP        TEXT, "              \
-	                              "PERCFESI    TEXT, "              \
-	                              "PERCMG      TEXT, "              \
-	                              "PERCC       TEXT, "              \
-	                              "PERCS       TEXT, "              \
-	                              "PERCP       TEXT, "              \
-	                              "PERCINOCLNT TEXT, "              \
-	                              "ENELETTON   TEXT, "              \
-	                              "CADENCIA    TEXT, "              \
-	                              "OEE         TEXT, "              \
-	                              "ASPECTUBO   TEXT, "              \
-	                              "REFUGO      TEXT, "              \
-	                              "IPPORT      TEXT, "              \
-	                              "PRIMARY KEY(DATAHORA, DRT)\ "    \
-	                              "FOREIGN KEY(DRT, FUNCAO) REFERENCES %s (ID, FUNCAO))",
-	         DB_MSGS_TABLE,
-	         DB_USERS_TABLE);
-	*/
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
 	                              "DRT         TEXT NOT NULL, "     \
