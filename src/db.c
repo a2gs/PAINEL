@@ -401,8 +401,10 @@ int dbCreateAllTables(void)
 	                              "ASPECTUBO   TEXT, "              \
 	                              "REFUGO      TEXT, "              \
 	                              "IPPORT      TEXT, "              \
-	                              "PRIMARY KEY(DATAHORA, DRT))",
-	         DB_MSGS_TABLE);
+	                              "PRIMARY KEY(DATAHORA, DRT) "     \
+	                              "FOREIGN KEY(DRT, FUNCAO) REFERENCES %s (ID, FUNCAO))",
+	         DB_MSGS_TABLE,
+	         DB_USERS_TABLE);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -450,8 +452,10 @@ int dbCreateAllTables(void)
 	                              "ID TEXT NOT NULL, "              \
 	                              "FUNCAO TEXT, "                   \
 	                              "PASSHASH TEXT, "                 \
-	                              "PRIMARY KEY(ID))",
-	         DB_USERS_TABLE);
+	                              "PRIMARY KEY(ID) "                \
+	                              "FOREIGN KEY(FUNCAO) REFERENCES %s (FUNCAO))", \
+	         DB_USERS_TABLE,
+	         DB_USERLEVEL_TABLE);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -490,8 +494,10 @@ int dbCreateAllTables(void)
 	                              "TITULO   TEXT, "                 \
 	                              "CAMPOS   TEXT, "                 \
 	                              "HEADERS  TEXT, "                 \
-	                              "PRIMARY KEY(FUNCAO))",
-	         DB_REPORTS_TABLE);
+	                              "PRIMARY KEY(FUNCAO) "            \
+	                              "FOREIGN KEY(FUNCAO) REFERENCES %s (FUNCAO))", \
+	         DB_REPORTS_TABLE,
+	         DB_USERLEVEL_TABLE);
 
 	rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
 

@@ -36,6 +36,8 @@
 #define DB_USERS_TABLE     "USERS"
 #define DB_MSGS_TABLE      "MSGS"
 #define DB_REPORTS_TABLE   "RELATS"
+#define DB_USERLEVEL_TABLE "USERLEVEL"
+#define DB_USRIFACE_TABLE  "USRIFACE"
 
 #define SQL_NO_ROW         ('0')
 #define SQL_HAS_ROW        ('1')
