@@ -364,7 +364,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -376,7 +376,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -403,7 +403,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -415,7 +415,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index FUNCIF_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index FUNCIF_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -481,7 +481,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create MSGS error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create MSGS error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -493,7 +493,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index FUNCAO_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index FUNCAO_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -504,7 +504,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index DATAHORA_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index DATAHORA_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -532,7 +532,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create [%s] error [%s]: [%s].\n", DB_USERS_TABLE, sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -544,7 +544,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index ID_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index ID_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -574,7 +574,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create RELATS error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create RELATS error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
@@ -586,7 +586,7 @@ int dbCreateAllTables(void)
 
 	if(rc != SQLITE_OK){
 		sqLite3LogError(rc);
-		fprintf(stderr, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
+		logWrite(log, LOGDBALERT|LOGREDALERT, "SQL create index FUNC_INDX error [%s]: [%s].\n", sql, err_msg);
 		sqlite3_free(err_msg);
 
 		return(PAINEL_NOK);
