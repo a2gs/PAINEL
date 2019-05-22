@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
 	 * 	avisa que o servers ja esta no ar (ler do arquivo o PID e mostrar) e parar o programa
 	 */
 
-	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE/*, &log*/) == PAINEL_NOK){
+	if(dbOpen(NULL, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX|SQLITE_OPEN_SHAREDCACHE) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro em abrir banco de dados!\n");
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 

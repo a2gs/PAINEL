@@ -306,7 +306,7 @@ void getLogSystem_DB(log_t *userLog)
 	return;
 }
 
-int dbOpen(char *userDBPath, int flags/*, log_t *userLog*/)
+int dbOpen(char *userDBPath, int flags)
 {
 	int rc = 0;
 
@@ -391,9 +391,10 @@ int dbCreateAllTables(void)
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
 	                              "FUNCAO TEXT, "                   \
 	                              "FIELD TEXT, "                    \
-	                              "TYPE TEXT, "                     \
-	                              "FMT TEXT, "                      \
-	                              "FORDER TEXT, "                   \
+	                              "FTYPE TEXT, "                    \
+	                              "FFMT TEXT, "                     \
+	                              "FDESC TEXT, "                    \
+	                              "FORDER INTEGER, "                \
 	                              "FOREIGN KEY(FUNCAO) REFERENCES %s (FUNCAO))",
 	         DB_USRIFACE_TABLE,
 	         DB_USERLEVEL_TABLE);
