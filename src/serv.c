@@ -641,6 +641,10 @@ int main(int argc, char *argv[])
 
 						break;
 
+					case PROT_COD_IFACE:
+						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
+						break;
+
 					case PROT_COD_SERCMD:
 						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
