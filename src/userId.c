@@ -39,8 +39,29 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
+int alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO: check careful this function (do more tests and validate strchr() return) */
+{
+	char *init = NULL, *end = NULL;
+	size_t toCopy = 0;
+
+	for(init = strIn; (*init == ' ' || *init == '\t'); init++);
+
+	end = strrchr(init, '\0');
+
+	for(end--; (*end == ' ' || *end == '\t'); end--);
+
+	if((size_t)(end - init) < szSrtOut) toCopy = end - init + 1;
+	else toCopy = szSrtOut;
+
+	memcpy(strOut, init, toCopy);
+	strOut[toCopy] = '\0';
+
+	return(0);
+}
+
 int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 {
+	char userIdTrim[DRT_LEN + 1] = {'\0'};
 	FILE *fUserIdDRT = NULL;
 	ll_node_t *walker = NULL;
 
@@ -49,7 +70,9 @@ int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
-		fprintf(fUserIdDRT, "%s-%s\n", ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)(walker->data))->level));
+		alltrim(((userId_t *)(walker->data))->userId, userIdTrim, DRT_LEN); /* TODO: verificar se usuario realmente ira passar DRT com espacos ou TAB (talvez fazer isso em outro lugar) */
+
+		fprintf(fUserIdDRT, "%s-%s\n", userIdTrim, userType_t_2_String(((userId_t *)(walker->data))->level));
 	}
 
 	fclose(fUserIdDRT);
