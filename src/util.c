@@ -451,7 +451,7 @@ int pingServer(char *ip, char *port)
 	return(PAINEL_OK);
 }
 
-size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO: check careful this function (do more tests and validate strchr() return) */
+size_t alltrim(char *strIn, char *strOut, size_t szSrtOut)
 {
 	char *init = NULL, *end = NULL;
 	size_t toCopy = 0;
