@@ -39,26 +39,6 @@
 
 
 /* *** FUNCTIONS *********************************************************************** */
-int alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO: check careful this function (do more tests and validate strchr() return) */
-{
-	char *init = NULL, *end = NULL;
-	size_t toCopy = 0;
-
-	for(init = strIn; (*init == ' ' || *init == '\t'); init++);
-
-	end = strrchr(init, '\0');
-
-	for(end--; (*end == ' ' || *end == '\t'); end--);
-
-	if((size_t)(end - init) < szSrtOut) toCopy = end - init + 1;
-	else toCopy = szSrtOut;
-
-	memcpy(strOut, init, toCopy);
-	strOut[toCopy] = '\0';
-
-	return(0);
-}
-
 int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 {
 	char userIdTrim[DRT_LEN + 1] = {'\0'};

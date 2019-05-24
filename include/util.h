@@ -262,4 +262,18 @@ int html_fflush(htmlFiles_t *htmls);
  */
 int html_fclose(htmlFiles_t *htmls);
 
+/* int html_fclose(htmlFiles_t *htmls)
+ *
+ * Removes spaces and tabs before and after a string.
+ *
+ * INPUT:
+ *  strIn - String to remove
+ *  szSrtOut - Size of strOut
+ *  
+ * OUTPUT:
+ *  strOut - 
+ *  Size of strOut copied (strlen(strOut)).
+ */
+size_t alltrim(char *strIn, char *strOut, size_t szSrtOut);
+
 #endif
