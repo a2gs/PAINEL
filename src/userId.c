@@ -50,7 +50,7 @@ int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 	}
 
 	for(walker = head; walker != NULL; walker = walker->next){
-		alltrim(((userId_t *)(walker->data))->userId, userIdTrim, DRT_LEN); /* TODO: verificar se usuario realmente ira passar DRT com espacos ou TAB (talvez fazer isso em outro lugar) */
+		alltrim(((userId_t *)(walker->data))->userId, userIdTrim, DRT_LEN);
 
 		fprintf(fUserIdDRT, "%s-%s\n", userIdTrim, userType_t_2_String(((userId_t *)(walker->data))->level));
 	}

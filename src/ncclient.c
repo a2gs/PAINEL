@@ -263,15 +263,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 {
 #define SRC_DELDRT_MAX_LINES (40)
 #define SRC_DELDRT_MAX_COLS  (120)
+	int ch = 0;
+	char drtToDelete[DRT_LEN + 1] = {'\0'};
+	char drtToDeleteInput[DRT_LEN + 1] = {'\0'};
+	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+	ll_node_t *head = NULL;
+	ll_node_t *walker = NULL;
+	FORM *formDelDRT = NULL;
 	WINDOW *thisScreen = NULL;
 	WINDOW *formScreen = NULL;
 	FIELD *dtrToDelete[3] = {NULL, NULL, NULL};
-	FORM *formDelDRT = NULL;
-	char drtToDelete[DRT_LEN + 1] = {0};
-	int ch = 0;
-	ll_node_t *head = NULL;
-	ll_node_t *walker = NULL;
-	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 	if(screen_drawDefaultTheme(&thisScreen, SRC_DELDRT_MAX_LINES, SRC_DELDRT_MAX_COLS, "Delete DRT") == PAINEL_NOK){
 		return(NULL);
@@ -348,6 +349,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 		ll_destroyList(&head);
 		return(NULL);
 	}
+
+	alltrim(drtToDeleteInput, drtToDelete, DRT_LEN);
 
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strncmp(drtToDelete, ((userId_t *)(walker->data))->userId, DRT_LEN) == 0)
