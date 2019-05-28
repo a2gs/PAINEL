@@ -675,7 +675,15 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 		if(strncmp(drtReaded, drt, DRT_LEN) == 0){
 			strncpy(funcao, c+1, VALOR_FUNCAO_LEN);
 
-			if(strcmp(funcao, STR_FORNOELETRICO) == 0){ /* TODO: change the code below to userType_t_2_String() (userId.h) */
+			*usrType = string_2_UserType_t(funcao);
+			if(*usrType == UNDEFINED_USER){
+				logWrite(log, LOGOPALERT, "DRT [%s] cadastrada mas funcao nao definida!\n", drt);
+				fclose(fDRT);
+				return(PAINEL_NOK);
+			}
+
+#if 0
+			if(strcmp(funcao, STR_FORNOELETRICO) == 0){
 				*usrType = FORNO_ELETRICO;
 				break;
 			}else if (strcmp(funcao, STR_OPERMAQUINA) == 0){
@@ -690,6 +698,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 				fclose(fDRT);
 				return(PAINEL_NOK);
 			}
+#endif
 		}
 	}
 
