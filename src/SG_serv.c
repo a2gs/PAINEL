@@ -35,6 +35,11 @@
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+typedef struct _getUserIFace_t{
+	char *buf;
+	size_t bufSz;
+	size_t bufSzUsed;
+}getUserIFace_t;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -304,9 +309,45 @@ int SG_db_inserting(SG_registroDB_t *data)
 	return(PAINEL_OK);
 }
 
-int SG_GetUserIFace_callback(void *NotUsed, int argc, char **argv, char **azColName)
+size_t n_strncpy(char *dest, const char *src, size_t n) /* man strncpy(3) */
 {
+	size_t i;
+
+	for (i = 0; i < n && src[i] != '\0'; i++)
+		dest[i] = src[i];
+
+	dest[i] = '\0';
+
+	return(i);
+}
+
+
+int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
+{
+	int i = 0;
+	getUserIFace_t *data = NULL;
+
 	SG_checkLogin_NOROW = SQL_HAS_ROW;
+	data = dt;
+
+	if(data->bufSzUsed != 0){
+		data->buf[++(data->bufSzUsed)] = '|';
+		data->buf[data->bufSzUsed]     = '\0';
+	}
+
+	for(i = 0; i < argc; i++){
+
+		if(data->bufSzUsed >= data->bufSz)
+			return(0); /* error: small buffer */
+
+		data->bufSzUsed += n_strncpy(data->buf, argv[i], data->bufSz - data->bufSzUsed);
+
+		if(i < argc){
+			data->buf[++(data->bufSzUsed)] = ':';
+			data->buf[data->bufSzUsed]     = '\0';
+		}
+
+	}
 
 	return(0);
 }
@@ -314,8 +355,12 @@ int SG_GetUserIFace_callback(void *NotUsed, int argc, char **argv, char **azColN
 int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
 {
 	char sqlCmd[SZ_SG_SQLCMD + 1] = {'\0'};
+	getUserIFace_t data;
 
 	memset(sqlCmd, '\0', SZ_SG_SQLCMD);
+	data.buf       = msgBackToClient;
+	data.bufSz     = msgBackToClientSz;
+	data.bufSzUsed = 0;
 
 	snprintf(sqlCmd,
 	         SQL_COMMAND_SZ,
@@ -324,7 +369,7 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 
 	SG_checkLogin_NOROW = SQL_NO_ROW;
 
-	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, NULL) == PAINEL_NOK){
+	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, &data) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user from table.\n");
 		return(PAINEL_NOK);
 	}
