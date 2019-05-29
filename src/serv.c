@@ -642,7 +642,19 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_IFACE:
-						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
+#define PROT_COD_IFACE_BUF_RESP   (20000)
+						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
+						if(msgBackToClient == NULL){
+							/* TODO */
+						}
+
+						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
+
+						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
+						}
+
+						free(msgBackToClient);
+
 						break;
 
 					case PROT_COD_SERCMD:

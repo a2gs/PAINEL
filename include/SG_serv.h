@@ -165,4 +165,14 @@ int SG_db_open_or_create(void);
  */
 int SG_db_inserting(SG_registroDB_t *data);
 
+/* int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
+ *
+ *
+ * INPUT:
+ * OUTPUT:
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error selecting
+ */
+int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel);
+
 #endif

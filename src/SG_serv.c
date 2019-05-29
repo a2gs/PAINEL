@@ -303,3 +303,34 @@ int SG_db_inserting(SG_registroDB_t *data)
 
 	return(PAINEL_OK);
 }
+
+int SG_GetUserIFace_callback(void *NotUsed, int argc, char **argv, char **azColName)
+{
+	SG_checkLogin_NOROW = SQL_HAS_ROW;
+
+	return(0);
+}
+
+int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
+{
+	char sqlCmd[SZ_SG_SQLCMD + 1] = {'\0'};
+
+	memset(sqlCmd, '\0', SZ_SG_SQLCMD);
+
+	snprintf(sqlCmd,
+	         SQL_COMMAND_SZ,
+				"SELECT (FIELD, FTYPE, FFMT, FDESC) FROM %s WHERE FUNCAO = '%s' ORDER BY FORDER ASC",
+	         DB_USRIFACE_TABLE, usrLevel);
+
+	SG_checkLogin_NOROW = SQL_NO_ROW;
+
+	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, NULL) == PAINEL_NOK){
+		logWrite(log, LOGOPALERT, "Error selecting user from table.\n");
+		return(PAINEL_NOK);
+	}
+
+	if(SG_checkLogin_NOROW == SQL_NO_ROW)
+		return(PAINEL_NOK);
+
+	return(PAINEL_OK);
+}
