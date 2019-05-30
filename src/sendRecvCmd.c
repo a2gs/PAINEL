@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	getLogSystem_Util(NULL);
+	/* getLogSystem_Util(NULL); */
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 
 	freeaddrinfo(res);
 
-	f = fopen(argv[1], "r");
+	f = fopen(argv[3], "r");
 	if(f == NULL){
 		printf("Unable to open file: [%s]\n", strerror(errno));
 		return(-1);
@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
 		c = strchr(line, '\n');
 		if(c != NULL) *c = '\0';
 
+		fprintf(stderr, "Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
 		if(sendToNet(sockfd, line, strlen(line), &srError) == PAINEL_NOK){
 			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
@@ -140,6 +141,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
+		fprintf(stderr, "Received: [%s] Bytes: [%ld].\n", line, recvSz);
 
 	}
 
