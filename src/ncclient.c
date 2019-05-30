@@ -29,6 +29,17 @@
 #include <form.h>
 #include <sys/types.h>
 
+
+
+#include <netdb.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
+
+
+
+
 #include "util.h"
 #include "SG.h"
 #include "userId.h"
@@ -147,10 +158,136 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
 	WINDOW *thisScreen = NULL;
 
+
+
+
+	int sockfd = 0;
+	int srError = 0;
+	size_t msgSRSz = 0;
+	void *pAddr = NULL;
+	int errGetAddrInfoCode = 0, errConnect = 0;
+	char strAddr[STRADDR_SZ + 1] = {'\0'};
+	struct addrinfo hints, *res = NULL, *rp = NULL;
+	char pingPongMsg[PINGPONG_MSG_SZ + 1] = {'\0'};
+
+
+
+
+
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Client Configuration") == PAINEL_NOK){
 		return(NULL);
 	}
 
+
+
+
+
+	memset (&hints, 0, sizeof (hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags |= AI_CANONNAME;
+
+	errGetAddrInfoCode = getaddrinfo("localhost", "9998", &hints, &res);
+	if(errGetAddrInfoCode != 0){
+		logWrite(&log, LOGOPALERT, "aaaaaaa getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
+		return(NULL);
+	}
+
+	for(rp = res; rp != NULL; rp = rp->ai_next){
+		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sockfd == -1){
+			logWrite(&log, LOGOPALERT, "bbbbbbb: socket() [%s].\n", strerror(errno));
+			continue;
+		}
+
+		if(rp->ai_family == AF_INET)       pAddr = &((struct sockaddr_in *) rp->ai_addr)->sin_addr;
+		else if(rp->ai_family == AF_INET6) pAddr = &((struct sockaddr_in6 *) rp->ai_addr)->sin6_addr;
+		else                               pAddr = NULL;
+
+		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
+		logWrite(&log, LOGOPMSG, "cccccc (connect) to [%s/%s:%s].\n", rp->ai_canonname, strAddr, "9998");
+
+		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
+		if(errConnect == 0)
+			break;
+
+		logWrite(&log, LOGOPALERT, "ddddddd: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, "9998", strerror(errno));
+
+		close(sockfd);
+	}
+
+	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
+		logWrite(&log, LOGOPALERT, "eeeeee: Unable connect to any address.\n");
+		return(NULL);
+	}
+
+	freeaddrinfo(res);
+
+
+
+
+	msgSRSz = 0; srError = 0;
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+	msgSRSz = snprintf(pingPongMsg, PINGPONG_MSG_SZ, "%d|PING", PROT_COD_PING);
+
+	logWrite(&log, LOGOPMSG, "enviando login: [%s].\n", pingPongMsg);
+
+	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "ffffffffff Unable to SEND ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
+		return(NULL);
+	}
+
+	msgSRSz = 0; srError = 0;
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "gggggggggg Unable to RECV ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
+		return(NULL);
+	}
+
+	logWrite(&log, LOGOPMSG, "resposta login: [%s].\n", pingPongMsg);
+
+
+
+
+
+	msgSRSz = 0; srError = 0;
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+	msgSRSz = snprintf(pingPongMsg, PINGPONG_MSG_SZ, "%d|PING", PROT_COD_PING);
+
+	logWrite(&log, LOGOPMSG, "enviando IFACE: [%s].\n", pingPongMsg);
+
+	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "lllllllll Unable to SEND ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
+		return(NULL);
+	}
+
+	msgSRSz = 0; srError = 0;
+	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "iiiiiiiiii Unable to RECV ping: [%s].\n", strerror(srError));
+		shutdown(sockfd, SHUT_RDWR);
+		close(sockfd);
+		return(NULL);
+	}
+
+	logWrite(&log, LOGOPMSG, "resposta IFACE: [%s].\n", pingPongMsg);
+
+
+
+
+
+
+
+	shutdown(sockfd, SHUT_RDWR);
+	close(sockfd);
 
 	/* ... */
 

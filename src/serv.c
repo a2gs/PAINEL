@@ -643,6 +643,10 @@ int main(int argc, char *argv[])
 
 					case PROT_COD_IFACE:
 #define PROT_COD_IFACE_BUF_RESP   (20000)
+						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
+							/* TODO */
+						}
+
 						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
 							/* TODO */
