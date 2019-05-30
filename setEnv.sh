@@ -47,3 +47,5 @@ chmod +x ./scripts/*
 # Some helper alias
 alias clitest="./client localhost 9998 $PAINEL_HOME/log/client_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
 alias ncclitest="./ncclient localhost 9998 $PAINEL_HOME/log/ncclient_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
+
+alias cmdTest="./sendRecvCmd localhost 9998 ../running/sendRecvCmds.text"

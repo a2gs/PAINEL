@@ -292,7 +292,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: rece
 
 	memset(netBuff, '\0', MAXLINE + 1);
 
-	msgHostOderSz = srSz = msgSz; /* TODO: muita variavel ... acho q da pra suprir algumas */
+	msgHostOderSz = srSz = msgSz;
 
 	msgNetOrderSz = htonl(msgHostOderSz);
 	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */

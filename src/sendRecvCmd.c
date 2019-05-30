@@ -60,15 +60,19 @@ int main(int argc, char *argv[])
 	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	void *pAddr = NULL;
 	FILE *f = NULL;
-	char buff[MAXLINE] = {'\0'};
+	char line[MAXLINE] = {'\0'};
 	char *c = NULL;
 	struct addrinfo hints, *res = NULL, *rp = NULL;
+	int srError = 0;
+	size_t recvSz = 0;
 
 	if(argc != 4){
 		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FILE_CMDs>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
+
+	getLogSystem_Util(NULL);
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
@@ -83,7 +87,7 @@ int main(int argc, char *argv[])
 
 	errGetAddrInfoCode = getaddrinfo(argv[1], argv[2], &hints, &res);
 	if(errGetAddrInfoCode != 0){
-		fprintf(stderr, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n\n", gai_strerror(errGetAddrInfoCode));
+		fprintf(stderr, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n", gai_strerror(errGetAddrInfoCode));
 		return(-3);
 	}
 
@@ -111,7 +115,7 @@ int main(int argc, char *argv[])
 	}
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		fprintf(stderr, "ERRO: Unable connect to any address. Terminating application with ERRO.\n\n");
+		fprintf(stderr, "ERRO: Unable connect to any address. Terminating application with ERRO.\n");
 		return(-4);
 	}
 
@@ -123,17 +127,25 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	for(; fgets(buff, MAXLINE, f) != NULL; ){
-		c = strchr(buff, '\n');
+	for(; fgets(line, MAXLINE, f) != NULL; ){
+		c = strchr(line, '\n');
 		if(c != NULL) *c = '\0';
 
-		fprintf(stderr, "[%s]\n", buff);
+		if(sendToNet(sockfd, line, strlen(line), &srError) == PAINEL_NOK){
+			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
+			break;
+		}
+
+		if(recvFromNet(sockfd, line, MAXLINE, &recvSz, &srError) == PAINEL_NOK){
+			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
+			break;
+		}
 
 	}
 
 	fclose(f);
 
-	fprintf(stderr, "Terminating application with sucessfully!\n\n");
+	fprintf(stderr, "Terminating application with sucessfully!\n");
 
 	shutdown(sockfd, SHUT_RDWR);
 	close(sockfd);
