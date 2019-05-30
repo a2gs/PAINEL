@@ -56,7 +56,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 llist wizard_by_return client ncclient serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
+all: clean logtag sha256 llist wizard_by_return client ncclient sendRecvCmd serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
 	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
@@ -119,6 +119,11 @@ ncclient: sha256 logtag wizard_by_return llist
 	@echo
 	@echo "=== ncclient =================="
 	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/util.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -lform -l$(LIB_SHA256) -l$(LIB_LLIST) -l$(LIB_WIZPATPATH) $(CFLAGS) -Wno-incompatible-pointer-types
+
+sendRecvCmd:
+	@echo
+	@echo "=== sendRecvCmd =================="
+	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 serv: logtag
 	@echo
