@@ -303,7 +303,7 @@ int SG_db_inserting(SG_registroDB_t *data)
 
 	if(dbInsert(sqlCmd) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Erro inserindo registro! [%s]\n", sqlCmd);
-		return(PAINEL_OK);
+		return(PAINEL_NOK);
 	}
 
 	return(PAINEL_OK);

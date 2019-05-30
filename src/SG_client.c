@@ -699,6 +699,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 				return(PAINEL_NOK);
 			}
 #endif
+			break;
 		}
 	}
 
@@ -734,8 +735,10 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 		return(PAINEL_NOK);
 	}
 
-	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == PAINEL_NOK)
+	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Tentativa de acesso com DRT [%s] nao reconhecida ou com funcao cadastrada invalida as [%s].\n", drt, time_DDMMYYhhmmss());
+		return(PAINEL_NOK);
+	}
 
 	/* PASS */
 	printf("Digite sua senha: ");
