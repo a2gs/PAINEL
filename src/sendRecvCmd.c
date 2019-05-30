@@ -56,10 +56,13 @@
 int main(int argc, char *argv[])
 {
 	int sockfd = 0;
-	struct addrinfo hints, *res = NULL, *rp = NULL;
 	int errGetAddrInfoCode = 0, errConnect = 0;
 	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	void *pAddr = NULL;
+	FILE *f = NULL;
+	char buff[MAXLINE] = {'\0'};
+	char *c = NULL;
+	struct addrinfo hints, *res = NULL, *rp = NULL;
 
 	if(argc != 4){
 		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FILE_CMDs>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
@@ -114,9 +117,21 @@ int main(int argc, char *argv[])
 
 	freeaddrinfo(res);
 
-	for(;;){
+	f = fopen(argv[1], "r");
+	if(f == NULL){
+		printf("Unable to open file: [%s]\n", strerror(errno));
+		return(-1);
+	}
+
+	for(; fgets(buff, MAXLINE, f) != NULL; ){
+		c = strchr(buff, '\n');
+		if(c != NULL) *c = '\0';
+
+		fprintf(stderr, "[%s]\n", buff);
 
 	}
+
+	fclose(f);
 
 	fprintf(stderr, "Terminating application with sucessfully!\n\n");
 
