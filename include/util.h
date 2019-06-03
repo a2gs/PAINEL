@@ -276,4 +276,14 @@ int html_fclose(htmlFiles_t *htmls);
  */
 size_t alltrim(char *strIn, char *strOut, size_t szSrtOut);
 
+/* size_t n_strncpy(char *dest, const char *src, size_t n)
+ *
+ *
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ */
+size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
+
 #endif

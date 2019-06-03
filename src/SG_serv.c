@@ -43,7 +43,7 @@ typedef struct _getUserIFace_t{
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-static char SG_checkLogin_NOROW = SQL_NO_ROW;
+static char SG_NOROW_RET = SQL_NO_ROW;
 static log_t *log = NULL;
 
 
@@ -56,7 +56,7 @@ void getLogSystem_SGServer(log_t *logClient)
 
 int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
-	SG_checkLogin_NOROW = SQL_HAS_ROW;
+	SG_NOROW_RET = SQL_HAS_ROW;
 	return(0);
 }
 
@@ -66,14 +66,14 @@ int SG_checkLogin(char *user, char *passhash, char *func)
 
 	snprintf(sql, SZ_SG_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'", DB_USERS_TABLE, user, func, passhash);
 
-	SG_checkLogin_NOROW = SQL_NO_ROW;
+	SG_NOROW_RET = SQL_NO_ROW;
 
 	if(dbSelect(sql, SG_checkLogin_callback, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user login from table.\n");
 		return(PAINEL_NOK);
 	}
 
-	if(SG_checkLogin_NOROW == SQL_NO_ROW)
+	if(SG_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
 
 	return(PAINEL_OK);
@@ -309,25 +309,12 @@ int SG_db_inserting(SG_registroDB_t *data)
 	return(PAINEL_OK);
 }
 
-size_t n_strncpy(char *dest, const char *src, size_t n) /* man strncpy(3) */
-{
-	size_t i;
-
-	for (i = 0; i < n && src[i] != '\0'; i++)
-		dest[i] = src[i];
-
-	dest[i] = '\0';
-
-	return(i);
-}
-
-
 int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 {
 	int i = 0;
 	getUserIFace_t *data = NULL;
 
-	SG_checkLogin_NOROW = SQL_HAS_ROW;
+	SG_NOROW_RET = SQL_HAS_ROW;
 	data = dt;
 
 	if(data->bufSzUsed != 0){
@@ -340,10 +327,10 @@ int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 		if(data->bufSzUsed >= data->bufSz)
 			return(0); /* error: small buffer */
 
-		data->bufSzUsed += n_strncpy(data->buf, argv[i], data->bufSz - data->bufSzUsed);
+		data->bufSzUsed += n_strncpy(&data->buf[data->bufSzUsed], argv[i], data->bufSz - data->bufSzUsed);
 
-		if(i < argc){
-			data->buf[++(data->bufSzUsed)] = ':';
+		if(i < argc - 1){
+			data->buf[(data->bufSzUsed)++] = ':';
 			data->buf[data->bufSzUsed]     = '\0';
 		}
 
@@ -364,17 +351,17 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 
 	snprintf(sqlCmd,
 	         SQL_COMMAND_SZ,
-				"SELECT (FIELD, FTYPE, FFMT, FDESC) FROM %s WHERE FUNCAO = '%s' ORDER BY FORDER ASC",
+				"SELECT FIELD, FTYPE, FFMT, FDESC FROM %s WHERE FUNCAO = '%s' ORDER BY FORDER ASC",
 	         DB_USRIFACE_TABLE, usrLevel);
 
-	SG_checkLogin_NOROW = SQL_NO_ROW;
+	SG_NOROW_RET = SQL_NO_ROW;
 
 	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, &data) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user iface from table.\n");
 		return(PAINEL_NOK);
 	}
 
-	if(SG_checkLogin_NOROW == SQL_NO_ROW)
+	if(SG_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
 
 	return(PAINEL_OK);

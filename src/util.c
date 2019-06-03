@@ -472,3 +472,15 @@ size_t alltrim(char *strIn, char *strOut, size_t szSrtOut)
 
 	return(toCopy);
 }
+
+size_t n_strncpy(char *dest, const char *src, size_t n) /* man strncpy(3) */
+{
+	size_t i;
+
+	for (i = 0; i < n && src[i] != '\0'; i++)
+		dest[i] = src[i];
+
+	dest[i] = '\0';
+
+	return(i);
+}
