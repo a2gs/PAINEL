@@ -686,6 +686,7 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
 
+SERV_CLEAR_AND_EXIT:
 	dbClose();
 	logClose(&log);
 	shutdown(connfd, SHUT_RDWR);
