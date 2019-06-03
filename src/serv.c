@@ -648,16 +648,38 @@ int main(int argc, char *argv[])
 
 						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged!\n"); /* TODO */
+
+							dbClose();
+							logClose(&log);
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-18);
 						}
 
 						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE malloc error!\n"); /* TODO */
+
+							dbClose();
+							logClose(&log);
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-19);
 						}
 
 						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
 
 						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error!\n"); /* TODO */
+
+							dbClose();
+							logClose(&log);
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-20);
 						}
 
 						free(msgBackToClient);
@@ -686,7 +708,6 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOGREDALERT, "Terminating application with sucessfully!\n\n");
 
-SERV_CLEAR_AND_EXIT:
 	dbClose();
 	logClose(&log);
 	shutdown(connfd, SHUT_RDWR);
