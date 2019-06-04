@@ -657,6 +657,8 @@ int main(int argc, char *argv[])
 							return(-18);
 						}
 
+logWrite(&log, LOGOPALERT, "aqui 1\n");
+
 						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE malloc error!\n"); /* TODO */
@@ -671,6 +673,8 @@ int main(int argc, char *argv[])
 
 						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
 
+logWrite(&log, LOGOPALERT, "aqui 2\n");
+
 						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error!\n"); /* TODO */
 
@@ -681,6 +685,8 @@ int main(int argc, char *argv[])
 
 							return(-20);
 						}
+
+logWrite(&log, LOGOPALERT, "aqui 3\n");
 
 						free(msgBackToClient);
 

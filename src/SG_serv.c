@@ -318,23 +318,31 @@ int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 	data = dt;
 
 	if(data->bufSzUsed != 0){
-		data->buf[++(data->bufSzUsed)] = '|';
-		data->buf[data->bufSzUsed]     = '\0';
+		data->buf[data->bufSzUsed++] = '|';
+		data->buf[data->bufSzUsed]   = '\0';
 	}
 
+logWrite(log, LOGOPALERT, "aqui 111 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz);
+
 	for(i = 0; i < argc; i++){
+
+logWrite(log, LOGOPALERT, "aqui 2222 [%s][%d]", argv[i], i);
 
 		if(data->bufSzUsed >= data->bufSz)
 			return(0); /* error: small buffer */
 
 		data->bufSzUsed += n_strncpy(&data->buf[data->bufSzUsed], argv[i], data->bufSz - data->bufSzUsed);
 
+logWrite(log, LOGOPALERT, " ----- [%s]\n", data->buf);
+
 		if(i < argc - 1){
-			data->buf[(data->bufSzUsed)++] = ':';
-			data->buf[data->bufSzUsed]     = '\0';
+			data->buf[data->bufSzUsed++] = ':';
+			data->buf[data->bufSzUsed]   = '\0';
 		}
 
 	}
+
+logWrite(log, LOGOPALERT, "aqui 333 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz);
 
 	return(0);
 }
@@ -356,10 +364,14 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 
 	SG_NOROW_RET = SQL_NO_ROW;
 
+logWrite(log, LOGOPALERT, "aqui 11\n");
+
 	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, &data) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user iface from table.\n");
 		return(PAINEL_NOK);
 	}
+
+logWrite(log, LOGOPALERT, "aqui 22\n");
 
 	if(SG_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
