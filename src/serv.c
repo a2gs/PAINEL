@@ -642,9 +642,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_IFACE:
-#define PROT_COD_IFACE_BUF_RESP   (20000)
-
-						logWrite(&log, LOGOPALERT, "---- PROT_COD_IFACE ---------------------------------------\n");
+#define PROT_COD_IFACE_BUF_RESP   (10000)
 
 						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged!\n"); /* TODO */
@@ -656,8 +654,6 @@ int main(int argc, char *argv[])
 
 							return(-18);
 						}
-
-logWrite(&log, LOGOPALERT, "aqui 1\n");
 
 						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
@@ -673,11 +669,10 @@ logWrite(&log, LOGOPALERT, "aqui 1\n");
 
 						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
 
-logWrite(&log, LOGOPALERT, "aqui 2\n");
-
 						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error!\n"); /* TODO */
 
+							free(msgBackToClient);
 							dbClose();
 							logClose(&log);
 							shutdown(connfd, SHUT_RDWR);
@@ -686,7 +681,17 @@ logWrite(&log, LOGOPALERT, "aqui 2\n");
 							return(-20);
 						}
 
-logWrite(&log, LOGOPALERT, "aqui 3\n");
+						if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "Error sent fail iface process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
+
+							free(msgBackToClient);
+							dbClose();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+							logClose(&log);
+
+							return(-21);
+						}
 
 						free(msgBackToClient);
 
