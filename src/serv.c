@@ -278,6 +278,10 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGOUT, (char *)data);
 			break;
 
+		case PROT_COD_IFACE:
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_IFACE, (char *)data);
+			break;
+
 		case PROT_COD_INSREG:
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_INSREG, (char *)data);
 			break;
