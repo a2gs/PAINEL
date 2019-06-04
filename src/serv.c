@@ -681,7 +681,7 @@ int main(int argc, char *argv[])
 							return(-20);
 						}
 
-						if(sendClientResponse(connfd, PROT_COD_INSREG, msgBackToClient) == PAINEL_NOK){
+						if(sendClientResponse(connfd, PROT_COD_IFACE, msgBackToClient) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "Error sent fail iface process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
 							free(msgBackToClient);
