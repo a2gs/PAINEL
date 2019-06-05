@@ -40,9 +40,6 @@
 #define DRT_FULLFILEPATH_SZ      (300)
 #define LINE_DRT_FILE_LEN        (200)
 
-#define STR_USR_FIELD_TEXT  ("TEXT")
-#define STR_USR_FIELD_NUM   ("NUM")
-#define STR_USR_FIELD_DATE  ("DATE")
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
 

@@ -58,6 +58,10 @@
 
 #define USR_IFACE_TOTAL_FIELDS               (10) /* IFACE cmd. At first version, only 10 fields */
 
+#define STR_USR_FIELD_TEXT  ("TEXT")
+#define STR_USR_FIELD_NUM   ("NUM")
+#define STR_USR_FIELD_DATE  ("DATE")
+
 typedef enum{
 	TEXT_USRFIELD = 1,
 	NUM_USRFIELD,
@@ -119,9 +123,9 @@ int usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].fmt,   ffmt,   USR_IFACE_FMTFIELD_SZ);
 	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].desc,  fdesc,  USR_IFACE_DESCFIELD_SZ);
 
-	if     (strcmp(ftype, "TEXT") == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = TEXT_USRFIELD;
-	else if(strcmp(ftype, "NUM" ) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = NUM_USRFIELD;
-	else if(strcmp(ftype, "DATE") == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = DATE_USRFIELD;
+	if     (strcmp(ftype, STR_USR_FIELD_TEXT) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = TEXT_USRFIELD;
+	else if(strcmp(ftype, STR_USR_FIELD_NUM ) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = NUM_USRFIELD;
+	else if(strcmp(ftype, STR_USR_FIELD_DATE) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = DATE_USRFIELD;
 	else                                usrIfaceFields.fields[usrIfaceFields.totFields].type = UNDEFINED_USRFIELD;
 
 	usrIfaceFields.totFields++;
