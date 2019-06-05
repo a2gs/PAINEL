@@ -54,10 +54,34 @@
 #define SERVERPORT_SZ                        (7)
 #define USERLOGGED_SZ                        (DRT_LEN)
 
-#define SUBPATH_RUNNING_DATA_NCCLI SUBPATH_RUNNING_DATA
+#define SUBPATH_RUNNING_DATA_NCCLI           SUBPATH_RUNNING_DATA
+
+#define USR_IFACE_TOTAL_FIELDS               (10) /* IFACE cmd. At first version, only 10 fields */
+
+typedef enum{
+	TEXT_USRFIELD = 1,
+	NUM_USRFIELD,
+	DATE_USRFIELD,
+	UNDEFINED_USRFIELD
+}usrFieldType_t;
+
+typedef struct _usrField_t{ /* IFACE cmd. Dowloaded from server at correct order to display. Sizes below are fixed at first version. */
+#define USR_IFACE_FIELD_SZ      (25)
+#define USR_IFACE_FMTFIELD_SZ   (15)
+#define USR_IFACE_DESCFIELD_SZ  (40)
+	char field[USR_IFACE_FIELD_SZ + 1];
+	usrFieldType_t type;
+	char fmt[USR_IFACE_FMTFIELD_SZ + 1];
+	char desc[USR_IFACE_DESCFIELD_SZ + 1];
+}usrField_t;
+
+typedef struct _usrFieldCtrl_t{ /* IFACE cmd. A dynamic list and self-interface (at userId.h) in futere versions. */
+	unsigned int totFields;
+	usrField_t fields[USR_IFACE_TOTAL_FIELDS];
+}usrFieldCtrl_t;
 
 static log_t log;
-static ll_node_t *headIface = NULL;
+static usrFieldCtrl_t usrIfaceFields;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
@@ -74,6 +98,36 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 
 /* -------------------------------------------------------------------------------------------------------- */
+
+int usrIsIfaceFieldsEmpty(void)
+{
+	return((usrIfaceFields.totFields == 0) ? 0 : 1);
+}
+
+void usrIfaceFieldsClear(void)
+{
+	memset(&usrIfaceFields, 0, sizeof(usrFieldCtrl_t));
+	usrIfaceFields.totFields = 0;
+}
+
+int usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
+{
+	if(usrIfaceFields.totFields >= USR_IFACE_TOTAL_FIELDS)
+		return(PAINEL_NOK);
+
+	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].field, ffield, USR_IFACE_FIELD_SZ);
+	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].fmt,   ffmt,   USR_IFACE_FMTFIELD_SZ);
+	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].desc,  fdesc,  USR_IFACE_DESCFIELD_SZ);
+
+	if     (strcmp(ftype, "TEXT") == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = TEXT_USRFIELD;
+	else if(strcmp(ftype, "NUM" ) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = NUM_USRFIELD;
+	else if(strcmp(ftype, "DATE") == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = DATE_USRFIELD;
+	else                                usrIfaceFields.fields[usrIfaceFields.totFields].type = UNDEFINED_USRFIELD;
+
+	usrIfaceFields.totFields++;
+
+	return(PAINEL_OK);
+}
 
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
 {
@@ -163,32 +217,62 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	return(screen_menu);
 }
 
-int clearIFaceFields(void)
-{
-
-	if(headIface != NULL){
-	}
-
-	return(PAINEL_OK);
-}
-
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
+#define SRC_LOGIN_MAX_LINES (40)
+#define SRC_LOGIN_MAX_COLS  (120)
+	int ch = 0;
 	WINDOW *thisScreen = NULL;
+	WINDOW *formLoginScreen = NULL;
+	FORM *formLoginDRT = NULL;
+	FIELD *dtrLogin[5] = {NULL, NULL, NULL};
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "User Login (DRT)") == PAINEL_NOK){
+	logWrite(&log, LOGDEV, "Login screen.\n");
+
+	if(screen_drawDefaultTheme(&thisScreen, SRC_LOGIN_MAX_LINES, SRC_LOGIN_MAX_COLS, "User Login (DRT)") == PAINEL_NOK){
 		return(NULL);
 	}
 
+	dtrLogin[0] = new_field(1, 4, 1, 1, 0, 0);
+	dtrLogin[1] = new_field(1, 10, 1, 6, 0, 0);
+	dtrLogin[2] = new_field(2, 4, 1, 6, 0, 0);
+	dtrLogin[3] = new_field(2, 10, 1, 6, 0, 0);
+	dtrLogin[4] = NULL;
 
-	/* ... */
+	set_field_buffer(dtrLogin[0], 0, "DRT:");
+	set_field_opts(dtrLogin[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(dtrLogin[1], A_UNDERLINE);
+	set_field_opts(dtrLogin[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	set_field_buffer(dtrLogin[2], 0, "Password:");
+	set_field_opts(dtrLogin[2], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(dtrLogin[3], A_UNDERLINE);
+	set_field_opts(dtrLogin[3], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	formLoginDRT = new_form(dtrLogin);
+	formLoginScreen = derwin(thisScreen, SRC_LOGIN_MAX_LINES - 4, SRC_LOGIN_MAX_COLS - 2, 3, 1);
+
+	set_form_win(formLoginDRT, thisScreen);
+	set_form_sub(formLoginDRT, formLoginScreen);
+
+	post_form(formLoginDRT);
+
+	curs_set(1);
+
+	wrefresh(thisScreen);
+	wrefresh(formLoginScreen);
+
+	while((ch = getch()) != ESC_KEY){
+	}
 
 
 	getch();
 
 	delwin(thisScreen);
 
-	/* User ok, get user iface */
+	/* User ok, get user IFACE cmd */
 
 	return(screen_menu);
 }
@@ -444,7 +528,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 	unsigned int i = 0;
 	int opt = 0;
 	a2gs_ToolBox_WizardReturnFunc_t nextScreen = NULL;
-	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "5) Client config", "", "0) EXIT"};
+	char *menus[SCREEN_MENU_TOTAL_OPTS] = {"1) Fazer login e entrar registros", "", "2) Listar DRTs cadastradas nesta estacao", "3) Adicionar uma nova DRT nesta estacao", "4) Remover DRT nesta estacao", "", "5) Client config", "", "0) EXIT"};
 
 	if(screen_drawDefaultTheme(&thisScreen, 18, 46, "MENU") == PAINEL_NOK){
 		return(NULL);

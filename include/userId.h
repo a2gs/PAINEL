@@ -55,24 +55,11 @@ typedef enum{
 	UNDEFINED_USER
 }tipoUsuario_t;
 
-typedef enum{
-	TEXT = 1,
-	NUM,
-	DATE,
-	UNDEFINED_USRFIELD
-}usrFieldType_t;
-
 typedef struct _userId_t{
 	char userId[DRT_LEN + 1];
 	tipoUsuario_t level;
 }userId_t;
 
-typedef struct _usrField_t{ /* IFACE cmd. Dowloaded from server at correct order to display. */
-	char *field;
-	usrFieldType_t type;
-	char *fmt;
-	char *desc;
-}usrField_t;
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 /* int loadUserIdFileToMemory(ll_node **head, char *userIdFullPath)
