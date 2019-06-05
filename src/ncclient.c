@@ -57,6 +57,7 @@
 #define SUBPATH_RUNNING_DATA_NCCLI SUBPATH_RUNNING_DATA
 
 static log_t log;
+static ll_node_t *headIface = NULL;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
@@ -162,6 +163,15 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	return(screen_menu);
 }
 
+int clearIFaceFields(void)
+{
+
+	if(headIface != NULL){
+	}
+
+	return(PAINEL_OK);
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
 	WINDOW *thisScreen = NULL;
@@ -177,6 +187,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	getch();
 
 	delwin(thisScreen);
+
+	/* User ok, get user iface */
 
 	return(screen_menu);
 }
@@ -207,7 +219,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT.\n");
-		ll_destroyList(&head);
+		ll_destroyList(&head, 1);
 		return(NULL);
 	}
 
@@ -235,7 +247,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 	delwin(listScreen);
 	delwin(thisScreen);
 
-	ll_destroyList(&head);
+	ll_destroyList(&head, 1);
 
 	return(screen_menu);
 }
@@ -346,7 +358,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT.\n");
-		ll_destroyList(&head);
+		ll_destroyList(&head, 1);
 		return(NULL);
 	}
 
@@ -415,7 +427,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	/* Cleanup... I will not create a function with 5 parameters ... Yes, that is a GOTO, but used with love and correctness */
 CLEANUP_SCREEN_DELDRT:
-	ll_destroyList(&head);
+	ll_destroyList(&head, 1);
 	unpost_form(formDelDRT);
 	free_form(formDelDRT);
 	free_field(dtrToDelete[0]);

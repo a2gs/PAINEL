@@ -75,15 +75,16 @@ int ll_add(ll_node_t **head, void *data);
  */
 int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem);
 
-/* int ll_destroyList(ll_node_t **head)
+/* int ll_destroyList(ll_node_t **head, short doesFreeMem)
  *
  * <Description>
  *
  * INPUT:
  *  <None>
+ *  doesFreeMem - 0 runs or !0 doesnt run free(3) upon ll_node_t->data
  * OUTPUT:
  *  <None>
  */
-int ll_destroyList(ll_node_t **head);
+int ll_destroyList(ll_node_t **head, short doesFreeMem);
 
 #endif

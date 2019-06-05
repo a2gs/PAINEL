@@ -108,7 +108,7 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 
 		if(ll_add(&head, newNode) == LL_NOK){
 			fclose(fUserIdDRT);
-			ll_destroyList(&head);
+			ll_destroyList(&head, 1);
 			return(PAINEL_NOK);
 		}
 	}
