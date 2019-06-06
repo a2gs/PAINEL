@@ -219,7 +219,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	}
 
 	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
-	drtCfg[1] = new_field(1, 10, 1, 6, 0, 0);
+	drtCfg[1] = new_field(1, 20, 1, 6, 0, 0);
 	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
 	drtCfg[1] = new_field(1, 10, 1, 6, 0, 0);
 	drtCfg[4] = NULL;
@@ -278,9 +278,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	}
 
 	dtrLogin[0] = new_field(1, 4, 1, 1, 0, 0);
-	dtrLogin[1] = new_field(1, 10, 1, 6, 0, 0);
+	dtrLogin[1] = new_field(1, 9, 1, 6, 0, 0);
 	dtrLogin[2] = new_field(2, 4, 1, 6, 0, 0);
-	dtrLogin[3] = new_field(2, 10, 1, 6, 0, 0);
+	dtrLogin[3] = new_field(2, 14, 1, 6, 0, 0);
 	dtrLogin[4] = NULL;
 
 	set_field_buffer(dtrLogin[0], 0, "DRT:");
