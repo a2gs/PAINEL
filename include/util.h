@@ -25,6 +25,7 @@
 /* *** INCLUDES ****************************************************** */
 #include <stdio.h>
 
+#include "SG.h"
 #include "log.h"
 
 
@@ -78,8 +79,46 @@ typedef struct _htmlFiles_t{
 	int fdStatic, fdRefresh;
 }htmlFiles_t;
 
+/* PROTOCOL SCHEMA */
+typedef struct _protoData_t{
+	char drt[DRT_LEN                         + 1];
+	char data[DATA_LEN                       + 1];
+	char loginout[1                          + 1];
+	char funcao[VALOR_FUNCAO_LEN             + 1];
+	char panela[FORNELET_PAMELA_LEN          + 1];
+	char ws[OPEMAQ_WS_LEN                    + 1];
+	char fornEletr[FORNELET_NUMFORELE_LEN    + 1];
+	char numMaquina[OPEMAQ_NUMMAQ_LEN        + 1];
+	char diamNom[OPEMAQ_DIAMNOM_LEN          + 1];
+	char classe[OPEMAQ_CLASSE_LEN            + 1];
+	char temp[OPEMAQ_TEMP_LEN                + 1];
+	char percFeSi[OPEMAQ_PERC_FESI_LEN       + 1];
+	char percMg[FORNELET_PERC_MG_LEN         + 1];
+	char percC[FORNELET_PERC_C_LEN           + 1];
+	char percS[FORNELET_PERC_S_LEN           + 1];
+	char percP[FORNELET_PERC_P_LEN           + 1];
+	char percInoculante[OPEMAQ_PERC_INOC_LEN + 1];
+	char enerEletTon[OPEMAQ_ENEELETON_LEN    + 1];
+	char cadencia[SUPMAQ_CADENCIA            + 1];
+	char oee[SUPMAQ_OEE                      + 1];
+	char aspecto[SUPMAQ_ASPEC_LEN            + 1];
+	char refugo[SUPMAG_REFUGO_LEN            + 1];
+	/* char ipport[VALOR_IPPORT_LEN             + 1]; */
+}protoData_t;
+
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
+
+/* int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, size_t *msgSzOut);
+ *
+ * 
+ *
+ * INPUT:
+ *  none
+ * OUTPUT:
+ *  none
+ */
+int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, size_t *msgSzOut);
 
 /* void getLogSystem_Util(log_t *logClient)
  *

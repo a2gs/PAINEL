@@ -484,3 +484,45 @@ size_t n_strncpy(char *dest, const char *src, size_t n) /* man strncpy(3) */
 
 	return(i);
 }
+
+int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, size_t *msgSzOut)
+{
+	memset(msg, 0, msgSzIn);
+
+	switch(protoCmd){
+		case PROT_COD_PING:
+			break;
+
+		case PROT_COD_LOGIN:
+			break;
+
+		case PROT_COD_LOGOUT:
+			break;
+
+		case PROT_COD_IFACE:
+			break;
+
+		case PROT_COD_INSREG:
+			*msgSzOut = snprintf(msg, msgSzIn,
+			                     "%d|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
+			                     protoCmd,         data->drt,            data->data,        data->loginout,
+										data->funcao,     data->panela,         data->ws,          data->fornEletr,
+			                     data->numMaquina, data->diamNom,        data->classe,      data->temp,
+			                     data->percFeSi,   data->percMg,         data->percC,       data->percS,
+			                     data->percP,      data->percInoculante, data->enerEletTon, data->cadencia,
+			                     data->oee,        data->aspecto,        data->refugo);
+			break;
+
+		case PROT_COD_SERCMD:
+			break;
+
+		case PROT_COD_CLICMD:
+			break;
+
+		default:
+			return(PAINEL_NOK);
+			break;
+	}
+
+	return(PAINEL_OK);
+}
