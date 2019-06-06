@@ -204,13 +204,53 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
+#define SRC_CFG_MAX_LINES (40)
+#define SRC_CFG_MAX_COLS  (120)
+	int ch = 0;
 	WINDOW *thisScreen = NULL;
+	WINDOW *formCfgScreen = NULL;
+	FORM *formCfgDRT = NULL;
+	FIELD *drtCfg[5] = {NULL, NULL, NULL, NULL, NULL};
 
-	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Client Configuration") == PAINEL_NOK){
+	logWrite(&log, LOGDEV, "Cfg screen.\n");
+
+	if(screen_drawDefaultTheme(&thisScreen, SRC_CFG_MAX_LINES, SRC_CFG_MAX_COLS, "Client Configuration") == PAINEL_NOK){
 		return(NULL);
 	}
 
+	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
+	drtCfg[1] = new_field(1, 10, 1, 6, 0, 0);
+	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
+	drtCfg[1] = new_field(1, 10, 1, 6, 0, 0);
+	drtCfg[4] = NULL;
 
+	set_field_buffer(drtCfg[0], 0, "Server address:");
+	set_field_opts(drtCfg[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(drtCfg[1], A_UNDERLINE);
+	set_field_opts(drtCfg[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	set_field_buffer(drtCfg[2], 0, "Port:");
+	set_field_opts(drtCfg[2], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(drtCfg[3], A_UNDERLINE);
+	set_field_opts(drtCfg[3], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	formCfgDRT = new_form(drtCfg);
+	formCfgScreen = derwin(thisScreen, SRC_CFG_MAX_LINES - 4, SRC_CFG_MAX_COLS - 2, 3, 1);
+
+	set_form_win(formCfgDRT, thisScreen);
+	set_form_sub(formCfgDRT, formCfgScreen);
+
+	post_form(formCfgDRT);
+
+	curs_set(1);
+
+	wrefresh(thisScreen);
+	wrefresh(formCfgScreen);
+
+	while((ch = getch()) != ESC_KEY){
+	}
 	/* ... */
 
 
@@ -229,7 +269,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	WINDOW *thisScreen = NULL;
 	WINDOW *formLoginScreen = NULL;
 	FORM *formLoginDRT = NULL;
-	FIELD *dtrLogin[5] = {NULL, NULL, NULL};
+	FIELD *dtrLogin[5] = {NULL, NULL, NULL, NULL, NULL};
 
 	logWrite(&log, LOGDEV, "Login screen.\n");
 
@@ -270,6 +310,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 	while((ch = getch()) != ESC_KEY){
 	}
+	/* ... */
 
 
 	getch();
@@ -277,6 +318,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	delwin(thisScreen);
 
 	/* User ok, get user IFACE cmd */
+	/* GO TO USER (defined) DYNAMIC SCREEN */
 
 	return(screen_menu);
 }
