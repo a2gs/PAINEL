@@ -205,20 +205,35 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 int formCfgDriver(FORM *formScreen, int ch)
 {
 	switch(ch){
-		case KEY_ENTER:
-		case 10: /* ENTER */
-				  /*
-			strncpy(drtToDelete, field_buffer(dtrToDelete[1], 0), DRT_LEN);
+		case KEY_F(2):
+			// Or the current field buffer won't be sync with what is displayed
+			form_driver(formScreen, REQ_NEXT_FIELD);
+			form_driver(formScreen, REQ_PREV_FIELD);
+
+			/*
+			move(LINES-3, 2);
+
+			for (i = 0; fields[i]; i++) {
+				printw("%s", trim_whitespaces(field_buffer(fields[i], 0)));
+				if (field_opts(fields[i]) & O_ACTIVE)
+					printw("\"\t");
+				else
+					printw(": \"");
+			}
+
+			refresh();
 			*/
+			pos_form_cursor(formScreen);
 			break;
 
-		case KEY_BACKSPACE:
-		case 127:
-			form_driver(formScreen, REQ_DEL_PREV);
+		case KEY_DOWN:
+			form_driver(formScreen, REQ_NEXT_FIELD);
+			form_driver(formScreen, REQ_END_LINE);
 			break;
 
-		case KEY_DC:
-			form_driver(formScreen, REQ_DEL_CHAR);
+		case KEY_UP:
+			form_driver(formScreen, REQ_PREV_FIELD);
+			form_driver(formScreen, REQ_END_LINE);
 			break;
 
 		case KEY_LEFT:
@@ -227,6 +242,17 @@ int formCfgDriver(FORM *formScreen, int ch)
 
 		case KEY_RIGHT:
 			form_driver(formScreen, REQ_NEXT_CHAR);
+			break;
+
+			// Delete the char before cursor
+		case KEY_BACKSPACE:
+		case 127:
+			form_driver(formScreen, REQ_DEL_PREV);
+			break;
+
+			// Delete the char under the cursor
+		case KEY_DC:
+			form_driver(formScreen, REQ_DEL_CHAR);
 			break;
 
 		default:
@@ -264,12 +290,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	set_field_buffer(drtCfg[0], 0, "Server address:");
 	set_field_opts(drtCfg[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
 
+	set_field_buffer(drtCfg[1], 0, serverAddress);
 	set_field_back(drtCfg[1], A_UNDERLINE);
 	set_field_opts(drtCfg[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
 
 	set_field_buffer(drtCfg[2], 0, "Port:");
 	set_field_opts(drtCfg[2], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
 
+	set_field_buffer(drtCfg[3], 0, serverPort);
 	set_field_back(drtCfg[3], A_UNDERLINE);
 	set_field_opts(drtCfg[3], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
 
@@ -289,9 +317,15 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	while((ch = getch()) != ESC_KEY)
 		formCfgDriver(formCfgDRT, ch);
 
-
-
-
+	if(ch == KEY_ENTER || ch == 10){
+		/*
+		 if (ping test() == OK){
+		 	quer salvar?
+		 }else{
+		 	server/port nao responde. loop
+		 }
+		 */
+	}
 
 	unpost_form(formCfgDRT);
 	free_form(formCfgDRT);
