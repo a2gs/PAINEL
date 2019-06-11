@@ -202,6 +202,43 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 	return(PAINEL_OK);
 }
 
+int formCfgDriver(FORM *formScreen, int ch)
+{
+	switch(ch){
+		case KEY_ENTER:
+		case 10: /* ENTER */
+				  /*
+			strncpy(drtToDelete, field_buffer(dtrToDelete[1], 0), DRT_LEN);
+			*/
+			break;
+
+		case KEY_BACKSPACE:
+		case 127:
+			form_driver(formScreen, REQ_DEL_PREV);
+			break;
+
+		case KEY_DC:
+			form_driver(formScreen, REQ_DEL_CHAR);
+			break;
+
+		case KEY_LEFT:
+			form_driver(formScreen, REQ_PREV_CHAR);
+			break;
+
+		case KEY_RIGHT:
+			form_driver(formScreen, REQ_NEXT_CHAR);
+			break;
+
+		default:
+			form_driver(formScreen, ch);
+			break;
+	}
+
+	wrefresh(formScreen);
+
+	return(PAINEL_OK);
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
 #define SRC_CFG_MAX_LINES (40)
@@ -220,8 +257,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
 	drtCfg[1] = new_field(1, 20, 1, 6, 0, 0);
-	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
-	drtCfg[1] = new_field(1, 10, 1, 6, 0, 0);
+	drtCfg[2] = new_field(1, 4, 1, 1, 0, 0);
+	drtCfg[3] = new_field(1, 10, 1, 6, 0, 0);
 	drtCfg[4] = NULL;
 
 	set_field_buffer(drtCfg[0], 0, "Server address:");
@@ -249,13 +286,20 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	wrefresh(thisScreen);
 	wrefresh(formCfgScreen);
 
-	while((ch = getch()) != ESC_KEY){
-	}
-	/* ... */
+	while((ch = getch()) != ESC_KEY)
+		formCfgDriver(formCfgDRT, ch);
 
 
-	getch();
 
+
+
+	unpost_form(formCfgDRT);
+	free_form(formCfgDRT);
+	free_field(drtCfg[0]);
+	free_field(drtCfg[1]);
+	free_field(drtCfg[2]);
+	free_field(drtCfg[3]);
+	delwin(formCfgScreen);
 	delwin(thisScreen);
 
 	return(screen_menu);
