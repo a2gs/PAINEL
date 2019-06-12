@@ -227,7 +227,7 @@ int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 
 		case KEY_IC:
 			if(insertFlag == 0) form_driver(formScreen, REQ_OVL_MODE);
-			else form_driver(formScreen, REQ_INS_MODE);
+			else                form_driver(formScreen, REQ_INS_MODE);
 			insertFlag = ~insertFlag;
 			break;
 
