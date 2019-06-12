@@ -267,7 +267,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	int ch = 0;
 	WINDOW *thisScreen = NULL;
 	WINDOW *formCfgScreen = NULL;
-	FORM *formCfgDRT = NULL;
+	FORM *formCfg = NULL;
 	FIELD *drtCfg[5] = {NULL, NULL, NULL, NULL, NULL};
 
 	logWrite(&log, LOGDEV, "Cfg screen.\n");
@@ -296,51 +296,67 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	set_field_back(drtCfg[3], A_UNDERLINE);
 	set_field_opts(drtCfg[3], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
 
-	formCfgDRT = new_form(drtCfg);
+	formCfg = new_form(drtCfg);
 	formCfgScreen = derwin(thisScreen, SRC_CFG_MAX_LINES - 4, SRC_CFG_MAX_COLS - 2, 3, 1);
 
-	set_form_win(formCfgDRT, thisScreen);
-	set_form_sub(formCfgDRT, formCfgScreen);
-
-	post_form(formCfgDRT);
-
-	curs_set(1);
-
-	wrefresh(thisScreen);
-	wrefresh(formCfgScreen);
+	set_form_win(formCfg, thisScreen);
+	set_form_sub(formCfg, formCfgScreen);
 
 	while(1){
+		post_form(formCfg);
+
+		curs_set(1);
+
+		wrefresh(thisScreen);
+		wrefresh(formCfgScreen);
+
 		ch = getch();
 
-		if(ch == ESC_KEY || ch == KEY_ENTER || ch == 10)
-			break;
+		if(ch == KEY_ENTER || ch == 10){
+			char auxSrvAdd[SERVERADDRESS_SZ + 1] = {'\0'};
+			char auxSrvPrt[SERVERPORT_SZ    + 1] = {'\0'};
 
-		formCfgDriver(formCfgScreen, formCfgDRT, ch);
-	}
+			alltrim(field_buffer(drtCfg[1], 0), auxSrvAdd, SERVERADDRESS_SZ);
+			alltrim(field_buffer(drtCfg[3], 0), auxSrvPrt, SERVERPORT_SZ);
 
-	if(ch == KEY_ENTER || ch == 10){
-		/*
-		 if (ping test() == OK){
-		 	quer salvar?
-		 }else{
-		 	server/port nao responde. loop
-		 }
-		 */
-		alltrim(field_buffer(drtCfg[1], 0), serverAddress, SERVERADDRESS_SZ);
-		alltrim(field_buffer(drtCfg[3], 0), serverPort,    SERVERPORT_SZ);
+			curs_set(0);
+
+			if(pingServer(auxSrvAdd, auxSrvPrt) == PAINEL_NOK){
+				mvwprintw(formCfgScreen, 3, 1, "Erro em tentar conexao. Corrigir ou sair? (c/S)");
+				wrefresh(formCfgScreen);
+
+				ch = getch();
+
+				if(ch == 'C' || ch == 'c'){
+					unpost_form(formCfg);
+					continue;
+				}else break;
+			}
+
+			mvwprintw(formCfgScreen, 3, 1, "Salvar alteracao? (s/N)");
+			wrefresh(formCfgScreen);
+
+			ch = getch();
+
+			if(ch == 'S' || ch == 's'){
+				strncpy(serverAddress, auxSrvAdd, SERVERADDRESS_SZ);
+				strncpy(serverPort,    auxSrvPrt, SERVERPORT_SZ);
+			}
+		}
+
+		if(ch == ESC_KEY) break;
+
+		formCfgDriver(formCfgScreen, formCfg, ch);
 	}
 
 	curs_set(0);
 
-	unpost_form(formCfgDRT);
-
-	free_form(formCfgDRT);
-
+	unpost_form(formCfg);
+	free_form(formCfg);
 	free_field(drtCfg[0]);
 	free_field(drtCfg[1]);
 	free_field(drtCfg[2]);
 	free_field(drtCfg[3]);
-
 	delwin(formCfgScreen);
 	delwin(thisScreen);
 
