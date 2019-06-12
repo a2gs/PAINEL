@@ -342,6 +342,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 				strncpy(serverAddress, auxSrvAdd, SERVERADDRESS_SZ);
 				strncpy(serverPort,    auxSrvPrt, SERVERPORT_SZ);
 			}
+
+			break;
 		}
 
 		if(ch == ESC_KEY) break;
