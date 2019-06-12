@@ -202,7 +202,7 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 	return(PAINEL_OK);
 }
 
-int formCfgDriver(FORM *formScreen, int ch)
+int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 {
 	switch(ch){
 		case KEY_DOWN:
@@ -237,7 +237,7 @@ int formCfgDriver(FORM *formScreen, int ch)
 			break;
 	}
 
-	wrefresh(formScreen);
+	wrefresh(screen);
 
 	return(PAINEL_OK);
 }
@@ -291,8 +291,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	wrefresh(thisScreen);
 	wrefresh(formCfgScreen);
 
-	while((ch = getch()) != ESC_KEY)
-		formCfgDriver(formCfgDRT, ch);
+	while(1){
+		ch = getch();
+
+		if(ch == ESC_KEY || ch == KEY_ENTER || ch == 10)
+			break;
+
+		formCfgDriver(formCfgScreen, formCfgDRT, ch);
+	}
 
 	if(ch == KEY_ENTER || ch == 10){
 		/*
