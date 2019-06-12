@@ -205,27 +205,6 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 int formCfgDriver(FORM *formScreen, int ch)
 {
 	switch(ch){
-		case KEY_F(2):
-			// Or the current field buffer won't be sync with what is displayed
-			form_driver(formScreen, REQ_NEXT_FIELD);
-			form_driver(formScreen, REQ_PREV_FIELD);
-
-			/*
-			move(LINES-3, 2);
-
-			for (i = 0; fields[i]; i++) {
-				printw("%s", trim_whitespaces(field_buffer(fields[i], 0)));
-				if (field_opts(fields[i]) & O_ACTIVE)
-					printw("\"\t");
-				else
-					printw(": \"");
-			}
-
-			refresh();
-			*/
-			pos_form_cursor(formScreen);
-			break;
-
 		case KEY_DOWN:
 			form_driver(formScreen, REQ_NEXT_FIELD);
 			form_driver(formScreen, REQ_END_LINE);
@@ -244,13 +223,11 @@ int formCfgDriver(FORM *formScreen, int ch)
 			form_driver(formScreen, REQ_NEXT_CHAR);
 			break;
 
-			// Delete the char before cursor
 		case KEY_BACKSPACE:
 		case 127:
 			form_driver(formScreen, REQ_DEL_PREV);
 			break;
 
-			// Delete the char under the cursor
 		case KEY_DC:
 			form_driver(formScreen, REQ_DEL_CHAR);
 			break;
