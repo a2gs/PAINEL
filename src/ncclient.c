@@ -253,6 +253,8 @@ int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 			break;
 	}
 
+	form_driver(formScreen, REQ_VALIDATION);
+
 	wrefresh(screen);
 
 	return(PAINEL_OK);
@@ -324,6 +326,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		 	server/port nao responde. loop
 		 }
 		 */
+		strncpy(serverAddress, field_buffer(drtCfg[1], 0), SERVERADDRESS_SZ);
+		strncpy(serverPort,    field_buffer(drtCfg[3], 0), SERVERPORT_SZ);
 	}
 
 	curs_set(0);
