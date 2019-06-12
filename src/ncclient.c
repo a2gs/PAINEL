@@ -204,6 +204,8 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 
 int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 {
+	static char insertFlag = 0;
+
 	switch(ch){
 		case KEY_DOWN:
 			form_driver(formScreen, REQ_NEXT_FIELD);
@@ -224,7 +226,9 @@ int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 			break;
 
 		case KEY_IC:
-			form_driver(formScreen, REQ_INS_MODE);
+			if(insertFlag == 0) form_driver(formScreen, REQ_OVL_MODE);
+			else form_driver(formScreen, REQ_INS_MODE);
+			insertFlag=~insertFlag;
 			break;
 
 		case KEY_HOME:
