@@ -326,8 +326,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		 	server/port nao responde. loop
 		 }
 		 */
-		strncpy(serverAddress, field_buffer(drtCfg[1], 0), SERVERADDRESS_SZ);
-		strncpy(serverPort,    field_buffer(drtCfg[3], 0), SERVERPORT_SZ);
+		alltrim(field_buffer(drtCfg[1], 0), serverAddress, SERVERADDRESS_SZ);
+		alltrim(field_buffer(drtCfg[3], 0), serverPort,    SERVERPORT_SZ);
 	}
 
 	curs_set(0);
