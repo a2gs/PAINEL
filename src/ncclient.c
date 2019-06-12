@@ -244,8 +244,8 @@ int formCfgDriver(FORM *formScreen, int ch)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 {
-#define SRC_CFG_MAX_LINES (40)
-#define SRC_CFG_MAX_COLS  (120)
+#define SRC_CFG_MAX_LINES (8)
+#define SRC_CFG_MAX_COLS  (60)
 	int ch = 0;
 	WINDOW *thisScreen = NULL;
 	WINDOW *formCfgScreen = NULL;
@@ -258,10 +258,10 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		return(NULL);
 	}
 
-	drtCfg[0] = new_field(1, 25, 1, 1, 0, 0);
-	drtCfg[1] = new_field(1, SERVERADDRESS_SZ, 1, 27, 0, 0);
-	drtCfg[2] = new_field(1, 5, 2, 1, 0, 0);
-	drtCfg[3] = new_field(1, SERVERPORT_SZ, 2, 7, 0, 0);
+	drtCfg[0] = new_field(1, 25, 1, 1,  0, 0);
+	drtCfg[1] = new_field(1, 30, 1, 27, 0, 0);
+	drtCfg[2] = new_field(1, 25, 2, 1,  0, 0);
+	drtCfg[3] = new_field(1, 5,  2, 27, 0, 0);
 	drtCfg[4] = NULL;
 
 	set_field_buffer(drtCfg[0], 0, "Server DNS or IP address:");
@@ -271,7 +271,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	set_field_back(drtCfg[1], A_UNDERLINE);
 	set_field_opts(drtCfg[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
 
-	set_field_buffer(drtCfg[2], 0, "Port:");
+	set_field_buffer(drtCfg[2], 0, "Port....................:");
 	set_field_opts(drtCfg[2], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
 
 	set_field_buffer(drtCfg[3], 0, serverPort);
@@ -304,12 +304,17 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		 */
 	}
 
+	getch();
+
 	unpost_form(formCfgDRT);
+
 	free_form(formCfgDRT);
+
 	free_field(drtCfg[0]);
 	free_field(drtCfg[1]);
 	free_field(drtCfg[2]);
 	free_field(drtCfg[3]);
+
 	delwin(formCfgScreen);
 	delwin(thisScreen);
 
