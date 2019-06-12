@@ -258,13 +258,13 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		return(NULL);
 	}
 
-	drtCfg[0] = new_field(1, 4, 1, 1, 0, 0);
-	drtCfg[1] = new_field(1, 20, 1, 6, 0, 0);
-	drtCfg[2] = new_field(1, 4, 1, 1, 0, 0);
-	drtCfg[3] = new_field(1, 10, 1, 6, 0, 0);
+	drtCfg[0] = new_field(1, 25, 1, 1, 0, 0);
+	drtCfg[1] = new_field(1, SERVERADDRESS_SZ, 1, 27, 0, 0);
+	drtCfg[2] = new_field(1, 5, 2, 1, 0, 0);
+	drtCfg[3] = new_field(1, SERVERPORT_SZ, 2, 7, 0, 0);
 	drtCfg[4] = NULL;
 
-	set_field_buffer(drtCfg[0], 0, "Server address:");
+	set_field_buffer(drtCfg[0], 0, "Server DNS or IP address:");
 	set_field_opts(drtCfg[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
 
 	set_field_buffer(drtCfg[1], 0, serverAddress);
@@ -720,21 +720,24 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
+	/*
 	strncpy(serverAddress, "no_server", SERVERADDRESS_SZ);
 	strncpy(serverPort, "0000", SERVERPORT_SZ);
+	*/
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
 
 	getLogSystem_Util(&log);
 
-	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], getPAINELEnvHomeVar());
+	strncpy(serverAddress, argv[1], SERVERADDRESS_SZ);
+	strncpy(serverPort,    argv[2], SERVERPORT_SZ);
 
-	if(pingServer(argv[1], argv[2]) == PAINEL_OK){
-		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", argv[1], argv[2]);
-		strncpy(serverAddress, argv[1], SERVERADDRESS_SZ);
-		strncpy(serverPort, argv[2], SERVERPORT_SZ);
+	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
+
+	if(pingServer(serverAddress, serverPort) == PAINEL_OK){
+		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", serverAddress, serverPort);
 		initFunc = screen_menu;
 	}else{
-		logWrite(&log, LOGOPALERT, "Unable to ping server [%s:%s]. Going to config screen.\n", argv[1], argv[2]);
+		logWrite(&log, LOGOPALERT, "Unable to ping server [%s:%s]. Going to config screen.\n", serverAddress, serverPort);
 		initFunc = screen_config;
 	}
 
