@@ -223,6 +223,18 @@ int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
 			form_driver(formScreen, REQ_NEXT_CHAR);
 			break;
 
+		case KEY_IC:
+			form_driver(formScreen, REQ_INS_MODE);
+			break;
+
+		case KEY_HOME:
+			form_driver(formScreen, REQ_BEG_FIELD);
+			break;
+
+		case KEY_END:
+			form_driver(formScreen, REQ_END_FIELD);
+			break;
+
 		case KEY_BACKSPACE:
 		case 127:
 			form_driver(formScreen, REQ_DEL_PREV);
@@ -310,7 +322,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 		 */
 	}
 
-	getch();
+	curs_set(0);
 
 	unpost_form(formCfgDRT);
 
