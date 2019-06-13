@@ -202,7 +202,7 @@ int screen_drawDefaultTheme(WINDOW **screen, int totLines, int totCols, char *ti
 	return(PAINEL_OK);
 }
 
-int formCfgDriver(WINDOW *screen, FORM *formScreen, int ch)
+int formDriver(WINDOW *screen, FORM *formScreen, int ch)
 {
 	static char insertFlag = 0;
 
@@ -348,7 +348,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 		if(ch == ESC_KEY) break;
 
-		formCfgDriver(formCfgScreen, formCfg, ch);
+		formDriver(formCfgScreen, formCfg, ch);
 	}
 
 	curs_set(0);
@@ -367,12 +367,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
-#define SRC_LOGIN_MAX_LINES (40)
-#define SRC_LOGIN_MAX_COLS  (120)
+#define SRC_LOGIN_MAX_LINES (8)
+#define SRC_LOGIN_MAX_COLS  (24)
 	int ch = 0;
 	WINDOW *thisScreen = NULL;
 	WINDOW *formLoginScreen = NULL;
-	FORM *formLoginDRT = NULL;
+	FORM *formLogin = NULL;
 	FIELD *dtrLogin[5] = {NULL, NULL, NULL, NULL, NULL};
 
 	logWrite(&log, LOGDEV, "Login screen.\n");
@@ -381,13 +381,13 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		return(NULL);
 	}
 
-	dtrLogin[0] = new_field(1, 4, 1, 1, 0, 0);
-	dtrLogin[1] = new_field(1, 9, 1, 6, 0, 0);
-	dtrLogin[2] = new_field(2, 4, 1, 6, 0, 0);
-	dtrLogin[3] = new_field(2, 14, 1, 6, 0, 0);
+	dtrLogin[0] = new_field(1, 9,  1, 1,  0, 0);
+	dtrLogin[1] = new_field(1, 7,  1, 11, 0, 0);
+	dtrLogin[2] = new_field(1, 9,  2, 1,  0, 0);
+	dtrLogin[3] = new_field(1, 10, 2, 11, 0, 0);
 	dtrLogin[4] = NULL;
 
-	set_field_buffer(dtrLogin[0], 0, "DRT:");
+	set_field_buffer(dtrLogin[0], 0, "DRT.....:");
 	set_field_opts(dtrLogin[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
 
 	set_field_back(dtrLogin[1], A_UNDERLINE);
@@ -399,30 +399,66 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	set_field_back(dtrLogin[3], A_UNDERLINE);
 	set_field_opts(dtrLogin[3], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
 
-	formLoginDRT = new_form(dtrLogin);
+	formLogin = new_form(dtrLogin);
 	formLoginScreen = derwin(thisScreen, SRC_LOGIN_MAX_LINES - 4, SRC_LOGIN_MAX_COLS - 2, 3, 1);
 
-	set_form_win(formLoginDRT, thisScreen);
-	set_form_sub(formLoginDRT, formLoginScreen);
+	set_form_win(formLogin, thisScreen);
+	set_form_sub(formLogin, formLoginScreen);
 
-	post_form(formLoginDRT);
+	post_form(formLogin);
 
 	curs_set(1);
 
 	wrefresh(thisScreen);
 	wrefresh(formLoginScreen);
 
-	while((ch = getch()) != ESC_KEY){
+	while(1){
+		post_form(formLogin);
+
+		curs_set(1);
+
+		wrefresh(thisScreen);
+		wrefresh(formLoginScreen);
+
+		ch = getch();
+
+		if(ch == KEY_ENTER || ch == 10){
+			char auxLogin[SERVERADDRESS_SZ + 1] = {'\0'};
+			char auxPass[SERVERPORT_SZ     + 1] = {'\0'};
+
+			alltrim(field_buffer(dtrLogin[1], 0), auxLogin, SERVERADDRESS_SZ);
+			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  SERVERPORT_SZ);
+
+			curs_set(0);
+
+			/*
+			 * if(Check if user/level are registred into DRTs.text) == OK{
+			 * 	User ok, get user IFACE cmd
+			 * 	GO TO USER (defined) DYNAMIC SCREEN
+			 * }else{
+			 *
+			 * }
+			 *
+			 */
+
+			break;
+		}
+
+		if(ch == ESC_KEY) break;
+
+		formDriver(formLoginScreen, formLogin, ch);
 	}
-	/* ... */
 
+	curs_set(0);
 
-	getch();
-
+	unpost_form(formLogin);
+	free_form(formLogin);
+	free_field(dtrLogin[0]);
+	free_field(dtrLogin[1]);
+	free_field(dtrLogin[2]);
+	free_field(dtrLogin[3]);
+	delwin(formLoginScreen);
 	delwin(thisScreen);
-
-	/* User ok, get user IFACE cmd */
-	/* GO TO USER (defined) DYNAMIC SCREEN */
 
 	return(screen_menu);
 }
@@ -769,10 +805,6 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	/*
-	strncpy(serverAddress, "no_server", SERVERADDRESS_SZ);
-	strncpy(serverPort, "0000", SERVERPORT_SZ);
-	*/
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
 
 	getLogSystem_Util(&log);
