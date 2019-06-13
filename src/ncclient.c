@@ -423,8 +423,6 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		goto CLEANUP_SCREEN_LOGIN;
 	}
 
-	/* TODO: GET LEVEL HERE */
-
 	while(1){
 		post_form(formLogin);
 
@@ -444,7 +442,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 			curs_set(0);
 
-			/*
+			/* GET LEVEL from DRTs.text
+			 *
 			 * if(Check if user are registred into DRTs.text) == OK{
 			 *    if(check login to server == OK){
 			 * 		User ok, get user IFACE cmd
