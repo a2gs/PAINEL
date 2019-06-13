@@ -365,6 +365,18 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 	return(screen_menu);
 }
 
+ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
+{
+	ll_node_t *walker = NULL;
+
+	for(walker = head; walker != NULL; walker = walker->next){
+		if(strncmp(drt, ((userId_t *)(walker->data))->userId, drtSz) == 0)
+			return(walker);
+	}
+
+	return(NULL);
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
 #define SRC_LOGIN_MAX_LINES (8)
@@ -441,6 +453,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  PASS_LEN);
 
 			curs_set(0);
+ 
+			walker = searchLLUserDRT(head, auxLogin, DRT_LEN);
+
+			/* DRT found inside DRT_FILE */
+			if(walker != NULL){
+			}
 
 			/* GET LEVEL from DRTs.text
 			 *
@@ -652,10 +670,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	alltrim(drtToDeleteInput, drtToDelete, DRT_LEN);
 
-	for(walker = head; walker != NULL; walker = walker->next){
-		if(strncmp(drtToDelete, ((userId_t *)(walker->data))->userId, DRT_LEN) == 0)
-			break;
-	}
+	walker = searchLLUserDRT(head, drtToDelete, DRT_LEN);
 
 	/* DRT found */
 	if(walker != NULL){
