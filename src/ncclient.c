@@ -85,6 +85,7 @@ typedef struct _usrFieldCtrl_t{ /* IFACE cmd. A dynamic list and self-interface 
 	usrField_t fields[USR_IFACE_TOTAL_FIELDS];
 }usrFieldCtrl_t;
 
+static int sockfd = 0; /* Socket */
 static log_t log;
 static usrFieldCtrl_t usrIfaceFields;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
@@ -380,8 +381,9 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 
 int sendLoginCmd(char *login, char *pass, char *level)
 {
+	int srError = 0;
 	uint8_t hash[PASS_SHA256_BIN_LEN + 1] = {0};
-	size_t msgFmtOut = 0;
+	size_t msgSzOut = 0;
 	char msg[MAXLINE + 1] = {0};
 	protoData_t data;
 
@@ -393,14 +395,16 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	strncpy(data.drt, login, DRT_LEN);
 	strncpy(data.funcao, level, VALOR_FUNCAO_LEN);
 
-	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgFmtOut) == PAINEL_NOK){
+	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgSzOut) == PAINEL_NOK){
 	}
 
-	/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) */
+	if(sendToNet(sockfd, msg, msgSzOut, &srError) == PAINEL_NOK){
+	}
 
+	if(recvFromNet(sockfd, msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
+	}
 
 	return(PAINEL_OK);
-
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
