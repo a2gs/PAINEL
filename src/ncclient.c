@@ -470,12 +470,18 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	strncpy(data.funcao, level, VALOR_FUNCAO_LEN);
 
 	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgSzOut) == PAINEL_NOK){
+		/* TODO */
+		return(PAINEL_NOK);
 	}
 
 	if(sendToNet(sockfd, msg, msgSzOut, &srError) == PAINEL_NOK){
+		/* TODO */
+		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(sockfd, msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
+		/* TODO */
+		return(PAINEL_NOK);
 	}
 
 	return(PAINEL_OK);
@@ -495,6 +501,13 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	FIELD *dtrLogin[5] = {NULL, NULL, NULL, NULL, NULL};
 
 	logWrite(&log, LOGDEV, "Login screen.\n");
+
+	if(isConnect() == 0){
+		if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
+			/* TODO */
+			return(screen_menu);
+		}
+	}
 
 	if(screen_drawDefaultTheme(&thisScreen, SRC_LOGIN_MAX_LINES, SRC_LOGIN_MAX_COLS, "User Login (DRT)") == PAINEL_NOK){
 		return(NULL);
@@ -575,6 +588,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 			 *    if(check login to server == OK){
 			 * 		User ok, get user IFACE cmd
 			 * 		GO TO USER (defined) DYNAMIC SCREEN
+			 * 		fill userLogged var
 			 * 	}
 			 * }else{
 			 *
