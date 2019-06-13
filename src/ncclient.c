@@ -370,6 +370,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 #define SRC_LOGIN_MAX_LINES (8)
 #define SRC_LOGIN_MAX_COLS  (24)
 	int ch = 0;
+	char drtFullFilePath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+	ll_node_t *head = NULL;
+	ll_node_t *walker = NULL;
 	WINDOW *thisScreen = NULL;
 	WINDOW *formLoginScreen = NULL;
 	FORM *formLogin = NULL;
@@ -412,6 +415,14 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	wrefresh(thisScreen);
 	wrefresh(formLoginScreen);
 
+	snprintf(drtFullFilePath, DRT_FULLFILEPATH_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE);
+	logWrite(&log, LOGDEV, "Opening UserId (DRT) file to delete: [%s].\n", drtFullFilePath);
+
+	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
+		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT para login.\n");
+		goto CLEANUP_SCREEN_LOGIN;
+	}
+
 	while(1){
 		post_form(formLogin);
 
@@ -449,8 +460,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		formDriver(formLoginScreen, formLogin, ch);
 	}
 
+
+CLEANUP_SCREEN_LOGIN:
+
 	curs_set(0);
 
+	ll_destroyList(&head, 1);
 	unpost_form(formLogin);
 	free_form(formLogin);
 	free_field(dtrLogin[0]);
@@ -701,6 +716,7 @@ CLEANUP_SCREEN_DELDRT:
 	unpost_form(formDelDRT);
 	free_form(formDelDRT);
 	free_field(dtrToDelete[0]);
+	free_field(dtrToDelete[1]);
 	delwin(formScreen);
 	delwin(thisScreen);
 
