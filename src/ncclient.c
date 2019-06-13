@@ -641,7 +641,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	/* DRT found */
 	if(walker != NULL){
-		char userIdNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
+		char userIdNewFullPath[DRT_FULLFILEPATH_SZ        + 1] = {'\0'};
 		char userIdTempBkpNewFullPath[DRT_FULLFILEPATH_SZ + 1] = {'\0'};
 
 		memset(userIdNewFullPath,        '\0', DRT_FULLFILEPATH_SZ + 1);
@@ -671,7 +671,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file [%s] to [%s].\n", userIdNewFullPath, userIdTempBkpNewFullPath);
 
 			if(rename(drtFullFilePath, userIdNewFullPath) == -1){
-				mvwprintw(formScreen, 5, 1, "Pausa."); /* TODO */
+				mvwprintw(formScreen, 5, 1, "Pausa 1."); /* TODO */
 				logWrite(&log, LOGOPALERT, "[%s]\n", strerror(errno)); /* TODO */
 				getch();
 
@@ -682,7 +682,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 			logWrite(&log, LOGDEV, "Renaming new temp file [%s] to default name [%s].\n", userIdNewFullPath, drtFullFilePath);
 
 			if(rename(userIdTempBkpNewFullPath, drtFullFilePath) == -1){
-				mvwprintw(formScreen, 5, 1, "Pausa."); /* TODO */
+				mvwprintw(formScreen, 5, 1, "Pausa 2."); /* TODO */
 				logWrite(&log, LOGOPALERT, "[%s]\n", strerror(errno)); /* TODO */
 				getch();
 
