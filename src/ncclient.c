@@ -108,6 +108,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 /* -------------------------------------------------------------------------------------------------------- */
 
+/* 0 - Not connect | 1 - Connected */
 int isConnect(void)
 {
 	return((sockfd == -1) ? 0 : 1);
