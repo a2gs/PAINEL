@@ -471,16 +471,19 @@ int sendLoginCmd(char *login, char *pass, char *level)
 
 	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgSzOut) == PAINEL_NOK){
 		/* TODO */
+		logWrite(&log, LOGOPALERT, "formatProtocol() error\n");
 		return(PAINEL_NOK);
 	}
 
 	if(sendToNet(sockfd, msg, msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
+		logWrite(&log, LOGOPALERT, "sendToNet() error\n");
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(sockfd, msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
+		logWrite(&log, LOGOPALERT, "recvFromNet() error\n");
 		return(PAINEL_NOK);
 	}
 
@@ -505,6 +508,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	if(isConnect() == 0){
 		if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
 			/* TODO */
+			logWrite(&log, LOGOPALERT, "connectSrvPainel() error\n");
 			return(screen_menu);
 		}
 	}
@@ -580,6 +584,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				strncpy(auxLevel, userType_t_2_String(((userId_t *)walker->data)->level), VALOR_FUNCAO_LEN);
 
 				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
+					/* TODO */
+					logWrite(&log, LOGOPALERT, "sendLoginCmd() error\n");
 				}
 
 				/* TODO ------------------------------------------------------ */
