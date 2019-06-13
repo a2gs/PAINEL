@@ -27,7 +27,10 @@
 #include <signal.h>
 #include <ncurses.h>
 #include <form.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 
 #include "util.h"
 #include "SG.h"
@@ -85,7 +88,7 @@ typedef struct _usrFieldCtrl_t{ /* IFACE cmd. A dynamic list and self-interface 
 	usrField_t fields[USR_IFACE_TOTAL_FIELDS];
 }usrFieldCtrl_t;
 
-static int sockfd = 0; /* Socket */
+static int sockfd = -1; /* Socket */
 static log_t log;
 static usrFieldCtrl_t usrIfaceFields;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
@@ -104,6 +107,77 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 
 /* -------------------------------------------------------------------------------------------------------- */
+
+int isConnect(void)
+{
+	return((sockfd == -1) ? 0 : 1);
+}
+
+int disconnectSrvPainel(void)
+{
+	shutdown(sockfd, SHUT_RDWR);
+	close(sockfd);
+
+	sockfd = -1;
+
+	return(PAINEL_OK);
+}
+
+int connectSrvPainel(char *srvAdd, char *srvPort)
+{
+	struct addrinfo hints, *res = NULL, *rp = NULL;
+	int errGetAddrInfoCode = 0, errConnect = 0;
+	void *pAddr = NULL;
+	char strAddr[STRADDR_SZ + 1] = {'\0'};
+
+	if(isConnect() == 1)
+		disconnectSrvPainel();
+
+	memset (&hints, 0, sizeof (hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags |= AI_CANONNAME;
+
+	errGetAddrInfoCode = getaddrinfo(srvAdd, srvPort, &hints, &res);
+	if(errGetAddrInfoCode != 0){
+		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n\n", gai_strerror(errGetAddrInfoCode));
+		logClose(&log);
+		return(PAINEL_NOK);
+	}
+
+	for(rp = res; rp != NULL; rp = rp->ai_next){
+		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sockfd == -1){
+			logWrite(&log, LOGOPALERT, "ERRO: socket() [%s].\n", strerror(errno));
+			continue;
+		}
+
+		if(rp->ai_family == AF_INET)       pAddr = &((struct sockaddr_in *) rp->ai_addr)->sin_addr;
+		else if(rp->ai_family == AF_INET6) pAddr = &((struct sockaddr_in6 *) rp->ai_addr)->sin6_addr;
+		else                               pAddr = NULL;
+
+		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
+		logWrite(&log, LOGOPMSG, "Trying connect to [%s/%s:%s].\n", rp->ai_canonname, strAddr, srvPort);
+
+		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
+		if(errConnect == 0)
+			break;
+
+		logWrite(&log, LOGOPALERT, "ERRO: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, srvPort, strerror(errno));
+
+		close(sockfd);
+	}
+
+	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
+		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address. Terminating application with ERRO.\n\n");
+		logClose(&log);
+		return(-4);
+	}
+
+	freeaddrinfo(res);
+
+	return(PAINEL_OK);
+}
 
 int usrIsIfaceFieldsEmpty(void)
 {
@@ -495,6 +569,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
 				}
 
+				/* TODO ------------------------------------------------------ */
+
 			 /* if(Check if user are registred into DRTs.text) == OK{
 			 *    if(check login to server == OK){
 			 * 		User ok, get user IFACE cmd
@@ -604,6 +680,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 
 
 	/* ... */
+	/* TODO ------------------------------------------------------ */
 
 
 	getch();
@@ -735,6 +812,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 				/* Cleanup... */
 				goto CLEANUP_SCREEN_DELDRT;
 			}
+
+			/* TODO do test ------------------------------------------------------ */
 
 			snprintf(userIdTempBkpNewFullPath, DRT_FULLFILEPATH_SZ, "%s/%s/%s_%s", getPAINELEnvHomeVar(), SUBPATH_RUNNING_DATA_NCCLI, DRT_FILE, time_DDMMYYhhmmss());
 			logWrite(&log, LOGDEV, "Backuping current UserId (DRT) file [%s] to [%s].\n", userIdNewFullPath, userIdTempBkpNewFullPath);
