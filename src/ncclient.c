@@ -134,6 +134,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 		disconnectSrvPainel();
 
 	memset (&hints, 0, sizeof (hints));
+
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags |= AI_CANONNAME;
@@ -141,7 +142,6 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 	errGetAddrInfoCode = getaddrinfo(srvAdd, srvPort, &hints, &res);
 	if(errGetAddrInfoCode != 0){
 		logWrite(&log, LOGOPALERT, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n\n", gai_strerror(errGetAddrInfoCode));
-		logClose(&log);
 		return(PAINEL_NOK);
 	}
 
@@ -170,8 +170,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
 		logWrite(&log, LOGOPALERT, "ERRO: Unable connect to any address. Terminating application with ERRO.\n\n");
-		logClose(&log);
-		return(-4);
+		return(PAINEL_NOK);
 	}
 
 	freeaddrinfo(res);
