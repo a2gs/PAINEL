@@ -50,7 +50,7 @@ typedef struct _userIdent_t{
 	char username[DRT_LEN + 1];
 	char level[VALOR_FUNCAO_LEN + 1];
 	char dateTime[DATA_LEN + 1];
-	char passhash[PASS_SHA256_LEN + 1];
+	char passhash[PASS_SHA256_ASCII_LEN + 1];
 }userIdent_t;
 
 
@@ -236,7 +236,7 @@ int parsingLogin(char *msg, userIdent_t *userSession)
 	cutter(&p, '|', userSession->level, VALOR_FUNCAO_LEN);
 
 	/* PASSHASH */
-	cutter(&p, '|', userSession->passhash, PASS_SHA256_LEN);
+	cutter(&p, '|', userSession->passhash, PASS_SHA256_ASCII_LEN);
 
 	return(PAINEL_OK);
 }

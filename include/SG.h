@@ -32,7 +32,8 @@
 
 #define DRT_LEN						(25)
 #define PASS_LEN						(100)
-#define PASS_SHA256_LEN				(64+1)
+#define PASS_SHA256_BIN_LEN		(32)
+#define PASS_SHA256_ASCII_LEN		(64)
 
 #define VALOR_PANELA_LEN			(3)
 #define VALOR_PORCENTAGEM_LEN		(sizeof("xxx,yy"))

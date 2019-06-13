@@ -266,7 +266,7 @@ int dbAddUser(char *user, char *func, char *pass, char *DBPath)
 	int rc = 0;
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	uint8_t hash[32] = {0};
-	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
+	char passhash[PASS_SHA256_ASCII_LEN + 1] = {'\0'};
 
 	rc = sqlite3_enable_shared_cache(1);
 	if(rc != SQLITE_OK){

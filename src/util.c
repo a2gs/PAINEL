@@ -290,7 +290,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: rece
 	size_t srSz = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
-	memset(netBuff, '\0', MAXLINE + 1);
+	/* memset(netBuff, '\0', MAXLINE + 1); */
 
 	msgHostOderSz = srSz = msgSz;
 
@@ -318,16 +318,16 @@ retornando (PAINEL_OK):
 */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError)
 {
-	ssize_t srRet = 0, srRetAux = 0;
-	size_t srSz = 0;
+	size_t srSz   = 0;
 	size_t lessSz = 0;
+	ssize_t srRet = 0, srRetAux = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 
 	memset(netBuff, '\0', MAXLINE + 1);
-	memset(msg, '\0', msgSz);
+	memset(msg,     '\0', msgSz);
 
 	*recvError = 0;
-	*recvSz = 0;
+	*recvSz    = 0;
 
 	recv(sockfd, &msgNetOrderSz, 4, 0);
 	msgHostOderSz = ntohl(msgNetOrderSz);
@@ -494,6 +494,7 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 			break;
 
 		case PROT_COD_LOGIN:
+			*msgSzOut = snprintf(msg, msgSzIn, "%d|%s|%s|%s|%s", protoCmd, data->drt, time_DDMMYYhhmmss(), data->funcao, data->passhash);
 			break;
 
 		case PROT_COD_LOGOUT:
@@ -505,7 +506,7 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 		case PROT_COD_INSREG:
 			*msgSzOut = snprintf(msg, msgSzIn,
 			                     "%d|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
-			                     protoCmd,         data->drt,            data->data,        data->loginout,
+			                     protoCmd,         data->drt,            data->date,        data->loginout,
 										data->funcao,     data->panela,         data->ws,          data->fornEletr,
 			                     data->numMaquina, data->diamNom,        data->classe,      data->temp,
 			                     data->percFeSi,   data->percMg,         data->percC,       data->percS,

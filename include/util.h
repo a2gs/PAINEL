@@ -82,7 +82,8 @@ typedef struct _htmlFiles_t{
 /* PROTOCOL SCHEMA */
 typedef struct _protoData_t{
 	char drt[DRT_LEN                         + 1];
-	char data[DATA_LEN                       + 1];
+	char passhash[PASS_SHA256_ASCII_LEN      + 1];
+	char date[DATA_LEN                       + 1];
 	char loginout[1                          + 1];
 	char funcao[VALOR_FUNCAO_LEN             + 1];
 	char panela[FORNELET_PAMELA_LEN          + 1];

@@ -34,6 +34,7 @@
 #include "userId.h"
 
 #include <log.h>
+#include <sha-256.h>
 #include <wizard_by_return.h>
 #include <linkedlist.h>
 
@@ -377,6 +378,31 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 	return(NULL);
 }
 
+int sendLoginCmd(char *login, char *pass, char *level)
+{
+	uint8_t hash[PASS_SHA256_BIN_LEN + 1] = {0};
+	size_t msgFmtOut = 0;
+	char msg[MAXLINE + 1] = {0};
+	protoData_t data;
+
+	memset(&data, 0, sizeof(protoData_t));
+
+	calc_sha_256(hash, pass, strlen(pass));
+	hash_to_string(data.passhash, hash);
+
+	strncpy(data.drt, login, DRT_LEN);
+	strncpy(data.funcao, level, VALOR_FUNCAO_LEN);
+
+	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgFmtOut) == PAINEL_NOK){
+	}
+
+	/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) */
+
+
+	return(PAINEL_OK);
+
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
 #define SRC_LOGIN_MAX_LINES (8)
@@ -446,23 +472,26 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		ch = getch();
 
 		if(ch == KEY_ENTER || ch == 10){
-			char auxLogin[DRT_LEN + 1] = {'\0'};
-			char auxPass[PASS_LEN + 1] = {'\0'};
+			char auxLogin[DRT_LEN          + 1] = {'\0'};
+			char auxPass[PASS_LEN          + 1] = {'\0'};
+
+			curs_set(0);
 
 			alltrim(field_buffer(dtrLogin[1], 0), auxLogin, DRT_LEN);
 			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  PASS_LEN);
 
-			curs_set(0);
- 
 			walker = searchLLUserDRT(head, auxLogin, DRT_LEN);
 
 			/* DRT found inside DRT_FILE */
 			if(walker != NULL){
-			}
+				char auxLevel[VALOR_FUNCAO_LEN + 1] = {'\0'};
 
-			/* GET LEVEL from DRTs.text
-			 *
-			 * if(Check if user are registred into DRTs.text) == OK{
+				strncpy(auxLevel, userType_t_2_String(((userId_t *)walker->data)->level), VALOR_FUNCAO_LEN);
+
+				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
+				}
+
+			 /* if(Check if user are registred into DRTs.text) == OK{
 			 *    if(check login to server == OK){
 			 * 		User ok, get user IFACE cmd
 			 * 		GO TO USER (defined) DYNAMIC SCREEN
@@ -472,6 +501,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 			 * }
 			 *
 			 */
+
+			}
+
 
 			break;
 		}

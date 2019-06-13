@@ -115,8 +115,8 @@ int main(int argc, char *argv[])
 	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	void *pAddr = NULL;
 	char id[DRT_LEN + 1] = {'\0'};
-	char level[VALOR_FUNCAO_LEN + 1] = {'\0'};
-	char passhash[PASS_SHA256_LEN + 1] = {'\0'};
+	char level[VALOR_FUNCAO_LEN         + 1] = {'\0'};
+	char passhash[PASS_SHA256_ASCII_LEN + 1] = {'\0'};
 	log_t log;
 	tipoUsuario_t usrType = UNDEFINED_USER;
 
