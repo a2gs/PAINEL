@@ -434,11 +434,11 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		ch = getch();
 
 		if(ch == KEY_ENTER || ch == 10){
-			char auxLogin[SERVERADDRESS_SZ + 1] = {'\0'};
-			char auxPass[SERVERPORT_SZ     + 1] = {'\0'};
+			char auxLogin[DRT_LEN + 1] = {'\0'};
+			char auxPass[PASS_LEN + 1] = {'\0'};
 
-			alltrim(field_buffer(dtrLogin[1], 0), auxLogin, SERVERADDRESS_SZ);
-			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  SERVERPORT_SZ);
+			alltrim(field_buffer(dtrLogin[1], 0), auxLogin, DRT_LEN);
+			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  PASS_LEN);
 
 			curs_set(0);
 
