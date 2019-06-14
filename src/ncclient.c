@@ -453,6 +453,13 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 	return(NULL);
 }
 
+int getUserIFace(char *level)
+{
+
+
+	return(PAINEL_OK);
+}
+
 int sendLoginCmd(char *login, char *pass, char *level)
 {
 	int srError = 0;
@@ -586,7 +593,19 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
 					/* TODO */
 					logWrite(&log, LOGOPALERT, "sendLoginCmd() error\n");
+					break;
+				}else{
+					/* TODO: user not registred into DRTs.text */
+					break;
 				}
+
+				if(getUserIFace(userType_t_2_String(((userId_t *)walker->data)->level)) == PAINEL_NOK){
+					/* TODO */
+					break;
+				}
+
+
+				strncpy(userLogged, auxLogin, DRT_LEN);
 
 				/* TODO ------------------------------------------------------ */
 
