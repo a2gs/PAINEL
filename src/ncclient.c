@@ -455,6 +455,12 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 
 int getUserIFace(char *level)
 {
+	char msgIFace[MAXLINE + 1] = {0};
+/*
+usrIsIfaceFieldsEmpty(void)
+usrIfaceFieldsClear(void)
+usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
+ */
 
 
 	return(PAINEL_OK);
