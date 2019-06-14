@@ -108,10 +108,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 /* -------------------------------------------------------------------------------------------------------- */
 
+/* ---aaa - begin--------- */
 /* 0 - Not connect | 1 - Connected */
 int isConnect(void)
 {
 	return((sockfd == -1) ? 0 : 1);
+}
+
+int getSocket(void)
+{
+	return(sockfd);
 }
 
 int disconnectSrvPainel(void)
@@ -179,6 +185,9 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 	return(PAINEL_OK);
 }
 
+/* ---aaa - end----------- */
+
+/* ---bbb - begin--------- */
 int usrIsIfaceFieldsEmpty(void)
 {
 	return((usrIfaceFields.totFields == 0) ? 0 : 1);
@@ -208,6 +217,7 @@ int usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 
 	return(PAINEL_OK);
 }
+/* ---bbb - end----------- */
 
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
 {
@@ -455,9 +465,11 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 
 int getUserIFace(char *level)
 {
+#define BUFAUX_SZ     USR_IFACE_DESCFIELD_SZ /* this size is the largest field into usrField_t */
 	int srError = 0;
 	size_t msgSzOut = 0;
-	char msgIFace[MAXLINE + 1] = {0};
+	char msgIFace[MAXLINE + 1] = {'\0'}, *msgWalker = NULL;
+	char bufAux[BUFAUX_SZ + 1] = {'\0'};
 	protoData_t data;
 
 
@@ -472,19 +484,34 @@ usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 		return(PAINEL_NOK);
 	}
 
-	if(sendToNet(sockfd, msgIFace, msgSzOut, &srError) == PAINEL_NOK){
+	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
 		logWrite(&log, LOGOPALERT, "sendToNet() error getUserIFace()\n");
 		return(PAINEL_NOK);
 	}
 
-	if(recvFromNet(sockfd, msgIFace, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
+	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
 		logWrite(&log, LOGOPALERT, "recvFromNet() error getUserIFace()\n");
 		return(PAINEL_NOK);
 	}
 
 
+	/*
+
+10|PERCFESI:TEXT:6:FeSi|PERCINOCLNT:TEXT:6:Inoculante|ASPECTUBO:TEXT:200:Aspecto do Tubo|PANELA:TEXT:3:Panela|WS:TEXT:6:WS|TEMP:TEXT:10:Temperatura|NUMMAQUINA:TEXT:2:Numero da Maquina|ENELETTON:TEXT:9:Energia/Tonelada
+
+	cutter(char **buffer, int c, char *out, size_t outSz)
+	*/
+
+	msgWalker = msgIFace;
+
+	cutter(&msgWalker, '|', bufAux, BUFAUX_SZ); /* jumping the first '|' from protocol: Protocol code */
+
+	for(;;){
+		for(;;){
+		}
+	}
 
 
 
@@ -513,13 +540,13 @@ int sendLoginCmd(char *login, char *pass, char *level)
 		return(PAINEL_NOK);
 	}
 
-	if(sendToNet(sockfd, msg, msgSzOut, &srError) == PAINEL_NOK){
+	if(sendToNet(getSocket(), msg, msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
 		logWrite(&log, LOGOPALERT, "sendToNet() error sendLoginCmd()\n");
 		return(PAINEL_NOK);
 	}
 
-	if(recvFromNet(sockfd, msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
+	if(recvFromNet(getSocket(), msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
 		logWrite(&log, LOGOPALERT, "recvFromNet() error sendLoginCmd()\n");
 		return(PAINEL_NOK);

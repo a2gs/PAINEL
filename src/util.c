@@ -501,6 +501,7 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 			break;
 
 		case PROT_COD_IFACE:
+			*msgSzOut = snprintf(msg, msgSzIn, "%d|", protoCmd);
 			break;
 
 		case PROT_COD_INSREG:
