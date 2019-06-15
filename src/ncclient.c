@@ -566,6 +566,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	WINDOW *formLoginScreen = NULL;
 	FORM *formLogin = NULL;
 	FIELD *dtrLogin[5] = {NULL, NULL, NULL, NULL, NULL};
+	a2gs_ToolBox_WizardReturnFunc_t ret = NULL;
 
 	logWrite(&log, LOGDEV, "Login screen.\n");
 
@@ -578,7 +579,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	}
 
 	if(screen_drawDefaultTheme(&thisScreen, SRC_LOGIN_MAX_LINES, SRC_LOGIN_MAX_COLS, "User Login (DRT)") == PAINEL_NOK){
-		return(NULL);
+		return(screen_menu);
 	}
 
 	dtrLogin[0] = new_field(1, 9,  1, 1,  0, 0);
@@ -617,6 +618,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 	if(loadUserIdFileToMemory(&head, drtFullFilePath) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro carregando lista do arquivo de DRT para login.\n");
+		ret = screen_menu;
 		goto CLEANUP_SCREEN_LOGIN;
 	}
 
@@ -649,22 +651,19 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
 					/* TODO */
-					logWrite(&log, LOGOPALERT, "sendLoginCmd() error\n");
-					break;
-				}else{
-					/* TODO: user not registred into DRTs.text */
-					break;
+					logWrite(&log, LOGOPALERT, "sendLoginCmd() error screen_login()\n");
+					ret = screen_menu;
+					goto CLEANUP_SCREEN_LOGIN;
 				}
 
 				if(getUserIFace(userType_t_2_String(((userId_t *)walker->data)->level)) == PAINEL_NOK){
 					/* TODO */
-					break;
+					logWrite(&log, LOGOPALERT, "getUserIFace() error screen_login()\n");
+					ret = screen_menu;
+					goto CLEANUP_SCREEN_LOGIN;
 				}
 
-
 				strncpy(userLogged, auxLogin, DRT_LEN);
-
-				/* TODO ------------------------------------------------------ */
 
 			 /* if(Check if user are registred into DRTs.text) == OK{
 			 *    if(check login to server == OK){
@@ -704,7 +703,7 @@ CLEANUP_SCREEN_LOGIN:
 	delwin(formLoginScreen);
 	delwin(thisScreen);
 
-	return(screen_menu);
+	return(ret);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
