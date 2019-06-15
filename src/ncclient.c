@@ -679,7 +679,10 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 			}
 		}
 
-		if(ch == ESC_KEY) break;
+		if(ch == ESC_KEY){
+			ret = screen_menu;
+			goto CLEANUP_SCREEN_LOGIN;
+		}
 
 		formDriver(formLoginScreen, formLogin, ch);
 	}
