@@ -473,12 +473,6 @@ int getUserIFace(char *level)
 	usrField_t bufAux;
 	protoData_t data;
 
-
-/*
-usrIsIfaceFieldsEmpty(void)
-usrIfaceFieldsClean(void)
-usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
- */
 	if(formatProtocol(&data, PROT_COD_IFACE, msgIFace, MAXLINE, &msgSzOut) == PAINEL_NOK){
 		/* TODO */
 		logWrite(&log, LOGOPALERT, "formatProtocol() error getUserIFace()\n");
@@ -496,19 +490,6 @@ usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 		logWrite(&log, LOGOPALERT, "recvFromNet() error getUserIFace()\n");
 		return(PAINEL_NOK);
 	}
-
-
-	/* IFace protocol sample:
-
-10|PERCFESI:TEXT:6:FeSi|PERCINOCLNT:TEXT:6:Inoculante|ASPECTUBO:TEXT:200:Aspecto do Tubo|PANELA:TEXT:3:Panela|WS:TEXT:6:WS|TEMP:TEXT:10:Temperatura|NUMMAQUINA:TEXT:2:Numero da Maquina|ENELETTON:TEXT:9:Energia/Tonelada
-
-	cutter(char **buffer, int c, char *out, size_t outSz)
-
-	   char field[USR_IFACE_FIELD_SZ + 1];
-   usrFieldType_t type;
-   char fmt[USR_IFACE_FMTFIELD_SZ + 1];
-   char desc[USR_IFACE_DESCFIELD_SZ + 1];
-	*/
 
 	msgWalker = strchr(msgIFace, '|'); /* jumping the first '|' from protocol: Protocol code */
 	if(msgWalker == NULL)
@@ -531,9 +512,7 @@ usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 			logWrite(&log, LOGOPALERT, "usrIfaceFieldAdd() error getUserIFace()\n");
 			return(PAINEL_NOK);
 		}
-
 	}
-
 
 	return(PAINEL_OK);
 }
