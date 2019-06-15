@@ -669,14 +669,16 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				}
 
 				strncpy(userLogged, auxLogin, DRT_LEN);
+
 				ret = screen_dynamicUserScreen;
 			}else{
 				/* TODO */
 				/* User not registred into DRTs.text */
 				logWrite(&log, LOGOPALERT, "User not registred into DRTs.text\n");
 				ret = screen_menu;
-				goto CLEANUP_SCREEN_LOGIN;
 			}
+
+			goto CLEANUP_SCREEN_LOGIN;
 		}
 
 		if(ch == ESC_KEY){
