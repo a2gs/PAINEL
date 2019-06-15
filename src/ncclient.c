@@ -62,6 +62,7 @@
 
 #define USR_IFACE_TOTAL_FIELDS               (10) /* IFACE cmd. At first version, only 10 fields */
 
+#define FTYPE_MAX_SZ        (20) /* Max size of field type (below) */
 #define STR_USR_FIELD_TEXT  ("TEXT")
 #define STR_USR_FIELD_NUM   ("NUM")
 #define STR_USR_FIELD_DATE  ("DATE")
@@ -193,7 +194,7 @@ int usrIsIfaceFieldsEmpty(void)
 	return((usrIfaceFields.totFields == 0) ? 0 : 1);
 }
 
-void usrIfaceFieldsClear(void)
+void usrIfaceFieldsClean(void)
 {
 	memset(&usrIfaceFields, 0, sizeof(usrFieldCtrl_t));
 	usrIfaceFields.totFields = 0;
@@ -211,7 +212,7 @@ int usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 	if     (strcmp(ftype, STR_USR_FIELD_TEXT) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = TEXT_USRFIELD;
 	else if(strcmp(ftype, STR_USR_FIELD_NUM ) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = NUM_USRFIELD;
 	else if(strcmp(ftype, STR_USR_FIELD_DATE) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = DATE_USRFIELD;
-	else                                usrIfaceFields.fields[usrIfaceFields.totFields].type = UNDEFINED_USRFIELD;
+	else                                            usrIfaceFields.fields[usrIfaceFields.totFields].type = UNDEFINED_USRFIELD;
 
 	usrIfaceFields.totFields++;
 
@@ -465,17 +466,17 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 
 int getUserIFace(char *level)
 {
-#define BUFAUX_SZ     USR_IFACE_DESCFIELD_SZ /* this size is the largest field into usrField_t */
 	int srError = 0;
 	size_t msgSzOut = 0;
 	char msgIFace[MAXLINE + 1] = {'\0'}, *msgWalker = NULL;
-	char bufAux[BUFAUX_SZ + 1] = {'\0'};
+	char bufAuxFType[FTYPE_MAX_SZ + 1] = {'\0'};
+	usrField_t bufAux;
 	protoData_t data;
 
 
 /*
 usrIsIfaceFieldsEmpty(void)
-usrIfaceFieldsClear(void)
+usrIfaceFieldsClean(void)
 usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
  */
 	if(formatProtocol(&data, PROT_COD_IFACE, msgIFace, MAXLINE, &msgSzOut) == PAINEL_NOK){
@@ -497,22 +498,41 @@ usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
 	}
 
 
-	/*
+	/* IFace protocol sample:
 
 10|PERCFESI:TEXT:6:FeSi|PERCINOCLNT:TEXT:6:Inoculante|ASPECTUBO:TEXT:200:Aspecto do Tubo|PANELA:TEXT:3:Panela|WS:TEXT:6:WS|TEMP:TEXT:10:Temperatura|NUMMAQUINA:TEXT:2:Numero da Maquina|ENELETTON:TEXT:9:Energia/Tonelada
 
 	cutter(char **buffer, int c, char *out, size_t outSz)
+
+	   char field[USR_IFACE_FIELD_SZ + 1];
+   usrFieldType_t type;
+   char fmt[USR_IFACE_FMTFIELD_SZ + 1];
+   char desc[USR_IFACE_DESCFIELD_SZ + 1];
 	*/
 
-	msgWalker = msgIFace;
+	msgWalker = strchr(msgIFace, '|'); /* jumping the first '|' from protocol: Protocol code */
+	if(msgWalker == NULL)
+		return(PAINEL_NOK); /* bad formatted protocol */
 
-	cutter(&msgWalker, '|', bufAux, BUFAUX_SZ); /* jumping the first '|' from protocol: Protocol code */
+	msgWalker++;
+
+	usrIfaceFieldsClean();
 
 	for(;;){
-		for(;;){
-		}
-	}
+		memset(&bufAux, 0, sizeof(usrField_t));
 
+		cutter(&msgWalker, ':', bufAux.field, USR_IFACE_FIELD_SZ);
+		cutter(&msgWalker, ':', bufAuxFType,  FTYPE_MAX_SZ);
+		cutter(&msgWalker, ':', bufAux.fmt, USR_IFACE_FMTFIELD_SZ);
+		cutter(&msgWalker, '|', bufAux.desc, USR_IFACE_DESCFIELD_SZ); /* at least */
+
+		if(usrIfaceFieldAdd(bufAux.field, bufAuxFType, bufAux.fmt, bufAux.desc) == PAINEL_NOK){
+			/* TODO */
+			logWrite(&log, LOGOPALERT, "usrIfaceFieldAdd() error getUserIFace()\n");
+			return(PAINEL_NOK);
+		}
+
+	}
 
 
 	return(PAINEL_OK);
