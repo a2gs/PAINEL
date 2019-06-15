@@ -554,6 +554,11 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	return(PAINEL_OK);
 }
 
+a2gs_ToolBox_WizardReturnFunc_t screen_dynamicUserScreen(void *data) /* TODO <<<<<<<<<<<<<<<<<<<<<<<< */
+{
+	return(NULL);
+}
+
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 {
 #define SRC_LOGIN_MAX_LINES (8)
@@ -664,21 +669,9 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				}
 
 				strncpy(userLogged, auxLogin, DRT_LEN);
-
-			 /* if(Check if user are registred into DRTs.text) == OK{
-			 *    if(check login to server == OK){
-			 * 		User ok, get user IFACE cmd
-			 * 		GO TO USER (defined) DYNAMIC SCREEN
-			 * 		fill userLogged var
-			 * 	}
-			 * }else{
-			 *
-			 * }
-			 *
-			 */
+				ret = screen_dynamicUserScreen;
 
 			}
-
 
 			break;
 		}
@@ -688,6 +681,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		formDriver(formLoginScreen, formLogin, ch);
 	}
 
+	ret = NULL; /* must never falls here... */
 
 CLEANUP_SCREEN_LOGIN:
 
