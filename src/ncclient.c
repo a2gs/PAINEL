@@ -474,20 +474,19 @@ int getUserIFace(char *level)
 	protoData_t data;
 
 	if(formatProtocol(&data, PROT_COD_IFACE, msgIFace, MAXLINE, &msgSzOut) == PAINEL_NOK){
-		/* TODO */
-		logWrite(&log, LOGOPALERT, "formatProtocol() error getUserIFace()\n");
+		logWrite(&log, LOGOPALERT, "Erro formatando protocol PROT_COD_IFACE.\n");
 		return(PAINEL_NOK);
 	}
 
 	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
-		logWrite(&log, LOGOPALERT, "sendToNet() error getUserIFace()\n");
+		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_IFACE.\n");
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
 		/* TODO */
-		logWrite(&log, LOGOPALERT, "recvFromNet() error getUserIFace()\n");
+		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_IFACE.\n");
 		return(PAINEL_NOK);
 	}
 
