@@ -630,14 +630,15 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 		ch = getch();
 
 		if(ch == KEY_ENTER || ch == 10){
-			char auxLogin[DRT_LEN          + 1] = {'\0'};
-			char auxPass[PASS_LEN          + 1] = {'\0'};
+			char auxLogin[DRT_LEN + 1] = {'\0'};
+			char auxPass[PASS_LEN + 1] = {'\0'};
 
 			curs_set(0);
 
 			alltrim(field_buffer(dtrLogin[1], 0), auxLogin, DRT_LEN);
 			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  PASS_LEN);
 
+			/* TODO: it is looking only for DRT/User, looking with Level too. */
 			walker = searchLLUserDRT(head, auxLogin, DRT_LEN);
 
 			/* DRT found inside DRT_FILE */
@@ -647,15 +648,13 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 				strncpy(auxLevel, userType_t_2_String(((userId_t *)walker->data)->level), VALOR_FUNCAO_LEN);
 
 				if(sendLoginCmd(auxLogin, auxPass, auxLevel) == PAINEL_NOK){
-					/* TODO */
-					logWrite(&log, LOGOPALERT, "sendLoginCmd() error screen_login()\n");
+					logWrite(&log, LOGOPALERT, "Erro enviando comando de login: [%s/%s].\n", auxLogin, auxLevel);
 					ret = screen_menu;
 					goto CLEANUP_SCREEN_LOGIN;
 				}
 
 				if(getUserIFace(userType_t_2_String(((userId_t *)walker->data)->level)) == PAINEL_NOK){
-					/* TODO */
-					logWrite(&log, LOGOPALERT, "getUserIFace() error screen_login()\n");
+					logWrite(&log, LOGOPALERT, "Erro baixando interface do usuario: [%s].\n", auxLevel);
 					ret = screen_menu;
 					goto CLEANUP_SCREEN_LOGIN;
 				}
@@ -664,9 +663,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 				ret = screen_dynamicUserScreen;
 			}else{
-				/* TODO */
 				/* User not registred into DRTs.text */
-				logWrite(&log, LOGOPALERT, "User not registred into DRTs.text\n");
+				logWrite(&log, LOGOPALERT, "Usuario [%s] nao registrado no arquivo de DRT [%s].\n", auxLogin, drtFullFilePath);
 				ret = screen_menu;
 			}
 
