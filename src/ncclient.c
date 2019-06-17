@@ -479,12 +479,12 @@ int getUserIFace(char *level)
 	}
 
 	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError) == PAINEL_NOK){
-		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_IFACE.\n");
+		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_IFACE: [%s].\n", strerror(srError));
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
-		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_IFACE.\n");
+		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_IFACE: [%s].\n", ((srError == 0) ? "PAINEL_NOK" : strerror(srError)));
 		return(PAINEL_NOK);
 	}
 
@@ -535,12 +535,12 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	}
 
 	if(sendToNet(getSocket(), msg, msgSzOut, &srError) == PAINEL_NOK){
-		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_LOGIN.\n");
+		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_LOGIN: [%s].\n", strerror(srError));
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(getSocket(), msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
-		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_LOGIN.\n");
+		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_LOGIN: [%s].\n", ((srError == 0) ? "PAINEL_NOK" : strerror(srError)));
 		return(PAINEL_NOK);
 	}
 
@@ -570,8 +570,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 
 	if(isConnect() == 0){
 		if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
-			/* TODO */
-			logWrite(&log, LOGOPALERT, "connectSrvPainel() error\n");
+			logWrite(&log, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", serverAddress, serverPort);
 			return(screen_menu);
 		}
 	}
