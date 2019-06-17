@@ -479,13 +479,11 @@ int getUserIFace(char *level)
 	}
 
 	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError) == PAINEL_NOK){
-		/* TODO */
 		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_IFACE.\n");
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
-		/* TODO */
 		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_IFACE.\n");
 		return(PAINEL_NOK);
 	}
@@ -507,8 +505,7 @@ int getUserIFace(char *level)
 		cutter(&msgWalker, '|', bufAux.desc, USR_IFACE_DESCFIELD_SZ); /* at least */
 
 		if(usrIfaceFieldAdd(bufAux.field, bufAuxFType, bufAux.fmt, bufAux.desc) == PAINEL_NOK){
-			/* TODO */
-			logWrite(&log, LOGOPALERT, "usrIfaceFieldAdd() error getUserIFace()\n");
+			logWrite(&log, LOGOPALERT, "Erro inserindo registro de IFace na lista:  [%s].\n", msgIFace);
 			return(PAINEL_NOK);
 		}
 	}
@@ -533,20 +530,17 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	strncpy(data.funcao, level, VALOR_FUNCAO_LEN);
 
 	if(formatProtocol(&data, PROT_COD_LOGIN, msg, MAXLINE, &msgSzOut) == PAINEL_NOK){
-		/* TODO */
-		logWrite(&log, LOGOPALERT, "formatProtocol() error sendLoginCmd()\n");
+		logWrite(&log, LOGOPALERT, "Erro formatando protocol PROT_COD_LOGIN.\n");
 		return(PAINEL_NOK);
 	}
 
 	if(sendToNet(getSocket(), msg, msgSzOut, &srError) == PAINEL_NOK){
-		/* TODO */
-		logWrite(&log, LOGOPALERT, "sendToNet() error sendLoginCmd()\n");
+		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_LOGIN.\n");
 		return(PAINEL_NOK);
 	}
 
 	if(recvFromNet(getSocket(), msg, MAXLINE, &msgSzOut, &srError) == PAINEL_NOK){
-		/* TODO */
-		logWrite(&log, LOGOPALERT, "recvFromNet() error sendLoginCmd()\n");
+		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_LOGIN.\n");
 		return(PAINEL_NOK);
 	}
 
