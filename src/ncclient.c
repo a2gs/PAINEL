@@ -547,7 +547,7 @@ int sendLoginCmd(char *login, char *pass, char *level)
 	return(PAINEL_OK);
 }
 
-a2gs_ToolBox_WizardReturnFunc_t screen_dynamicUserScreen(void *data) /* TODO <<<<<<<<<<<<<<<<<<<<<<<< */
+a2gs_ToolBox_WizardReturnFunc_t screen_dynamicUserScreen(void *data) /* TODO <<<<<<<<<<<<<<<<<<<<<<<<< */
 {
 	return(NULL);
 }
