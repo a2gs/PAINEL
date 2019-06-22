@@ -717,7 +717,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-19);
+							return(-22);
 						}
 
 						memset(msgBackToClient, 0, PROT_COD_LEVELS_BUF_RESP + 1);
@@ -730,7 +730,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-20);
+							return(-23);
 						}
 
 						if(sendClientResponse(connfd, PROT_COD_LEVELS, msgBackToClient) == PAINEL_NOK){
@@ -742,7 +742,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-21);
+							return(-24);
 						}
 
 						free(msgBackToClient);
