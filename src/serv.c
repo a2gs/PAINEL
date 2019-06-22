@@ -282,6 +282,10 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_IFACE, (char *)data);
 			break;
 
+		case PROT_COD_LEVELS:
+			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LEVELS, (char *)data);
+			break;
+
 		case PROT_COD_INSREG:
 			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_INSREG, (char *)data);
 			break;
@@ -699,6 +703,10 @@ int main(int argc, char *argv[])
 
 						free(msgBackToClient);
 
+						break;
+
+					case PROT_COD_LEVELS:
+						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					case PROT_COD_SERCMD:

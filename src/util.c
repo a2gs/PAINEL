@@ -504,6 +504,10 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 			*msgSzOut = snprintf(msg, msgSzIn, "%d|", protoCmd);
 			break;
 
+		case PROT_COD_LEVELS:
+			*msgSzOut = snprintf(msg, msgSzIn, "%d|", protoCmd);
+			break;
+
 		case PROT_COD_INSREG:
 			*msgSzOut = snprintf(msg, msgSzIn,
 			                     "%d|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
