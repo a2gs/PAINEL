@@ -759,28 +759,94 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 {
+#define SRC_ADDDRT_MAX_LINES (40)
+#define SRC_ADDDRT_MAX_COLS  (120)
+	int ch = 0;
+	char drtToAdd[DRT_LEN + 1] = {'\0'};
 	WINDOW *thisScreen = NULL;
-	/*
+	WINDOW *formScreen = NULL;
+	FORM *formAddDRT = NULL;
 	FIELD *dtrToAdd[3] = {NULL, NULL, NULL};
-	*/
 
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Add DRT") == PAINEL_NOK){
 		return(NULL);
 	}
 
-	/*
 	dtrToAdd[0] = new_field(1, 4, 1, 1, 0, 0);
 	dtrToAdd[1] = new_field(1, 10, 1, 6, 0, 0);
 	dtrToAdd[2] = NULL;
-	*/
 
 
-	/* ... */
-	/* TODO ------------------------------------------------------ */
+	/* TODO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
+	set_field_buffer(dtrToAdd[0], 0, "DRT:");
+	set_field_opts(dtrToAdd[0], O_VISIBLE | O_PUBLIC | O_AUTOSKIP);
+
+	set_field_back(dtrToAdd[1], A_UNDERLINE);
+	set_field_opts(dtrToAdd[1], O_VISIBLE | O_PUBLIC | O_EDIT | O_ACTIVE);
+
+	formAddDRT = new_form(dtrToAdd);
+	formScreen = derwin(thisScreen, SRC_ADDDRT_MAX_LINES - 4, SRC_ADDDRT_MAX_COLS - 2, 3, 1);
+
+	set_form_win(formAddDRT, thisScreen);
+	set_form_sub(formAddDRT, formScreen);
+
+	post_form(formAddDRT);
+
+	curs_set(1);
+
+	wrefresh(thisScreen);
+	wrefresh(formScreen);
+
+	while((ch = getch()) != ESC_KEY){
+
+		switch(ch){
+			case KEY_ENTER:
+			case 10: /* ENTER */
+				strncpy(drtToAdd, field_buffer(dtrToAdd[1], 0), DRT_LEN);
+				break;
+
+			case KEY_BACKSPACE:
+			case 127:
+				form_driver(formAddDRT, REQ_DEL_PREV);
+				break;
+
+			case KEY_DC:
+				form_driver(formAddDRT, REQ_DEL_CHAR);
+				break;
+
+			case KEY_LEFT:
+				form_driver(formAddDRT, REQ_PREV_CHAR);
+				break;
+
+			case KEY_RIGHT:
+				form_driver(formAddDRT, REQ_NEXT_CHAR);
+				break;
+
+			default:
+				form_driver(formAddDRT, ch);
+				break;
+		}
+
+		wrefresh(formScreen);
+	}
+
+	curs_set(0);
+
+	if(ch == ESC_KEY){
+		/* Cleanup... */
+		goto CLEANUP_SCREEN_DELDRT;
+	}
 
 	getch();
+	/* LEVELS MENU */
 
+CLEANUP_SCREEN_DELDRT:
+	unpost_form(formAddDRT);
+	free_form(formAddDRT);
+	free_field(dtrToAdd[0]);
+	free_field(dtrToAdd[1]);
+	delwin(formScreen);
 	delwin(thisScreen);
 
 	return(screen_menu);
