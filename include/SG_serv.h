@@ -175,4 +175,14 @@ int SG_db_inserting(SG_registroDB_t *data);
  */
 int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel);
 
+/* int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
+ *
+ *
+ * INPUT:
+ * OUTPUT:
+ *  PAINEL_OK - Ok
+ *  PAINEL_NOK - Error selecting
+ */
+int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz);
+
 #endif

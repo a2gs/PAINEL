@@ -378,3 +378,51 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 
 	return(PAINEL_OK);
 }
+
+int SG_GetLevels_callback(void *dt, int argc, char **argv, char **azColName)
+{
+	char *data = NULL;
+#define SG_SERV_DB_LEVEL_LINE   (300)
+	char *fmtMask = NULL;
+	char fmt[SG_SERV_DB_LEVEL_LINE + 1] = {'\0'};
+
+	SG_NOROW_RET = SQL_HAS_ROW;
+	data = dt;
+
+	memset(fmt, 0, SG_SERV_DB_LEVEL_LINE + 1);
+
+	if(data[0] == '\0') /* first element */
+		fmtMask = "%s:%s";
+	else
+		fmtMask = "|%s:%s";
+
+	snprintf(fmt, SG_SERV_DB_LEVEL_LINE, fmtMask, argv[0], argv[1]);
+
+	strcat(data, fmt); /* TODO: strncat() */
+
+	return(0);
+}
+
+int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
+{
+	char sqlCmd[SZ_SG_SQLCMD + 1] = {'\0'};
+
+	memset(sqlCmd, '\0', SZ_SG_SQLCMD);
+
+	snprintf(sqlCmd,
+	         SQL_COMMAND_SZ,
+				"SELECT FUNCAO, DESCRIPT FROM %s WHERE FUNCAO IS NOT 'All'",
+	         DB_USERLEVEL_TABLE);
+
+	SG_NOROW_RET = SQL_NO_ROW;
+
+	if(dbSelect(sqlCmd, SG_GetLevels_callback, msgBackToClient) == PAINEL_NOK){
+		logWrite(log, LOGOPALERT, "Error selecting levels from table.\n");
+		return(PAINEL_NOK);
+	}
+
+	if(SG_NOROW_RET == SQL_NO_ROW)
+		return(PAINEL_NOK);
+
+	return(PAINEL_OK);
+}

@@ -706,7 +706,47 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_LEVELS:
-						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
+#define PROT_COD_LEVELS_BUF_RESP   (10000)
+
+						msgBackToClient = malloc(PROT_COD_LEVELS_BUF_RESP + 1);
+						if(msgBackToClient == NULL){
+							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS malloc error!\n"); /* TODO */
+
+							dbClose();
+							logClose(&log);
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-19);
+						}
+
+						memset(msgBackToClient, 0, PROT_COD_LEVELS_BUF_RESP + 1);
+						if(SG_getLevels(msgBackToClient, PROT_COD_LEVELS_BUF_RESP) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS SG_getLevels() error!\n"); /* TODO */
+
+							free(msgBackToClient);
+							dbClose();
+							logClose(&log);
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+
+							return(-20);
+						}
+
+						if(sendClientResponse(connfd, PROT_COD_LEVELS, msgBackToClient) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "Error sent fail levels process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
+
+							free(msgBackToClient);
+							dbClose();
+							shutdown(connfd, SHUT_RDWR);
+							close(connfd);
+							logClose(&log);
+
+							return(-21);
+						}
+
+						free(msgBackToClient);
+
 						break;
 
 					case PROT_COD_SERCMD:

@@ -760,10 +760,19 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 {
 	WINDOW *thisScreen = NULL;
+	/*
+	FIELD *dtrToAdd[3] = {NULL, NULL, NULL};
+	*/
 
 	if(screen_drawDefaultTheme(&thisScreen, 40, 120, "Add DRT") == PAINEL_NOK){
 		return(NULL);
 	}
+
+	/*
+	dtrToAdd[0] = new_field(1, 4, 1, 1, 0, 0);
+	dtrToAdd[1] = new_field(1, 10, 1, 6, 0, 0);
+	dtrToAdd[2] = NULL;
+	*/
 
 
 	/* ... */
