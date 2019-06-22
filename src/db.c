@@ -357,6 +357,7 @@ int dbCreateAllTables(void)
 
 	snprintf(sql, SQL_COMMAND_SZ, "CREATE TABLE IF NOT EXISTS %s (" \
 	                              "FUNCAO TEXT, "                   \
+	                              "DESCRIPT TEXT, "                 \
 	                              "PRIMARY KEY(FUNCAO))",
 	                              DB_USERLEVEL_TABLE);
 
