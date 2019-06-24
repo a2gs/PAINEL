@@ -67,6 +67,9 @@
 #define STR_USR_FIELD_NUM   ("NUM")
 #define STR_USR_FIELD_DATE  ("DATE")
 
+#define TOT_MENU_LEVELS_LABEL  (40)
+#define LEVEL_DESCRIPTION_SZ   (20) /* TODO: send to db.h or where else */
+
 typedef enum{
 	TEXT_USRFIELD = 1,
 	NUM_USRFIELD,
@@ -84,6 +87,11 @@ typedef struct _usrField_t{ /* IFACE cmd. Dowloaded from server at correct order
 	char desc[USR_IFACE_DESCFIELD_SZ + 1];
 }usrField_t;
 
+typedef struct _levelMenu_t{
+	char levelDesc[LEVEL_DESCRIPTION_SZ + 1];
+	usrFieldType_t type;
+}levelMenu_t;
+
 typedef struct _usrFieldCtrl_t{ /* IFACE cmd. A dynamic list and self-interface (at userId.h) in futere versions. */
 	unsigned int totFields;
 	usrField_t fields[USR_IFACE_TOTAL_FIELDS];
@@ -95,6 +103,7 @@ static usrFieldCtrl_t usrIfaceFields;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
+static levelMenu_t *menuLevelLabel[TOT_MENU_LEVELS_LABEL] = {NULL};
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -840,6 +849,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_addDRT(void *data)
 
 	getch();
 	/* LEVELS MENU */
+	/* static levelMenu_t *menuLevelLabel[TOT_MENU_LEVELS_LABEL] = {NULL}; */
 
 CLEANUP_SCREEN_DELDRT:
 	unpost_form(formAddDRT);
