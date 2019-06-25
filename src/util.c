@@ -533,7 +533,7 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 	return(PAINEL_OK);
 }
 
-int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
+int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz, size_t *cfgSzRead)
 {
 	FILE *f = NULL;
 	char *c = NULL;
@@ -546,6 +546,8 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 		logWrite(logUtil, LOGOPALERT, "Unable to open file (only-read) [%s]: [%s].\n", pathCfg, strerror(errno));
 		return(PAINEL_NOK);
 	}
+
+	*cfgSzRead = 0;
 
 	for(i = 0; fgets(line, LINE_CFG_BUFF_SZ, f) != NULL; i++){
 		if(line[0] == '#' || line[0] == '\0' || line[0] == '\n' || line[0] == '\r' || line[0] == '=') continue;
@@ -560,7 +562,7 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 
 		if(strcmp(optLine, opt) == 0){
 
-			alltrim(c + 1, cfg, cfgSz);
+			*cfgSzRead = alltrim(c + 1, cfg, cfgSz);
 
 			fclose(f);
 			return(PAINEL_OK);

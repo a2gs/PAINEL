@@ -338,8 +338,9 @@ size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
  *  
  * OUTPUT:
  *  PAINEL_OK - Open and read cfg file (it will not indicate if the option key was located. Just if the cfg file was able to be read)
- *  PAINEL_NOK - Unable to read cfg file
+ *  PAINEL_NOK - Unable to read cfg file (logged)
  *  cfg - Return the value of 'option key' (with max cfgSz length). Space and TAB are suppressed at begin and tail (alltrim())
+ *  cfgSzRead - Value' length read ('\0' at cfg)
  */
 /* Cfg file sample (max option key length is OPTLINE_CFG_BUFF_SZ and max line (key+value+'=') is LINE_CFG_BUFF_SZ):
  *
@@ -352,6 +353,6 @@ size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
  */
 #define LINE_CFG_BUFF_SZ    (30000)
 #define OPTLINE_CFG_BUFF_SZ (200)
-int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz);
+int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz, size_t *cfgSzRead);
 
 #endif
