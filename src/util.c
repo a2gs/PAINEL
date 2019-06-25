@@ -533,8 +533,8 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 	return(PAINEL_OK);
 }
 
-#define LINE_CFG_BUFF_SZ 30000
-#define OPTLINE_CFG_BUFF_SZ 200
+#define LINE_CFG_BUFF_SZ    (30000)
+#define OPTLINE_CFG_BUFF_SZ (200)
 int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 {
 	FILE *f = NULL;
@@ -548,6 +548,22 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 		return(PAINEL_NOK);
 	}
 
+	for(i = 0; fgets(line, LINE_CFG_BUFF_SZ, f) != NULL; i++){
 
+		c = strchr(line, '=');
+		if(c == NULL) continue;
+
+		alltrim(line, optLine, c - line);
+
+		if(strcmp(optLine, opt) == 0){
+
+			alltrim(c, cfg, cfgSz);
+
+			fclose(f);
+			return(PAINEL_OK);
+		}
+	}
+
+	fclose(f);
 	return(PAINEL_OK);
 }
