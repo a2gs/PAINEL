@@ -543,7 +543,7 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz, size_t *cfgSzR
 
 	f = fopen(pathCfg, "r");
 	if(f == NULL){
-		logWrite(logUtil, LOGOPALERT, "Unable to open file (only-read) [%s]: [%s].\n", pathCfg, strerror(errno));
+		logWrite(logUtil, LOGOPALERT, "Unable to open file (only-read) [%s] to read [%s] value: [%s].\n", pathCfg, opt, strerror(errno));
 		return(PAINEL_NOK);
 	}
 
