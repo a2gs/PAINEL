@@ -319,11 +319,15 @@ size_t alltrim(char *strIn, char *strOut, size_t szSrtOut);
 
 /* size_t n_strncpy(char *dest, const char *src, size_t n)
  *
- *
+ * Like strncpy, but return the number of bytes copied until *src first '\0' or n bytes.
  *
  * INPUT:
+ *  src - Source string
+ *  n - Max size of *dest
  *  
  * OUTPUT:
+ *  dest - String copied
+ *  size_t - Number of bytes copied
  */
 size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
 
