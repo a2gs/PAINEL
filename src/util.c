@@ -533,6 +533,21 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 	return(PAINEL_OK);
 }
 
+#define LINE_CFG_BUFF_SZ 30000
+#define OPTLINE_CFG_BUFF_SZ 200
 int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 {
+	FILE *f = NULL;
+	char *c = NULL;
+	unsigned int i = 0;
+	char line[LINE_CFG_BUFF_SZ + 1] = {'\0'};
+	char optLine[OPTLINE_CFG_BUFF_SZ + 1] = {'\0'};
+
+	f = fopen(pathCfg, "r");
+	if(f == NULL){
+		return(PAINEL_NOK);
+	}
+
+
+	return(PAINEL_OK);
 }
