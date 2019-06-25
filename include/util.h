@@ -329,12 +329,14 @@ size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
 
 /* int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
  *
- *
+ * Read a file ('configuration file', format like above).
  *
  * INPUT:
  *  
  * OUTPUT:
  */
+#define LINE_CFG_BUFF_SZ    (30000)
+#define OPTLINE_CFG_BUFF_SZ (200)
 int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz);
 
 #endif
