@@ -549,6 +549,10 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 	}
 
 	for(i = 0; fgets(line, LINE_CFG_BUFF_SZ, f) != NULL; i++){
+		if(line[0] == '#' || line[0] == '\0' || line[0] == '\n' || line[0] == '\r' || line[0] == '=') continue;
+
+		c = strchr(line, '\n');
+		if(c != NULL) *c = '\0';
 
 		c = strchr(line, '=');
 		if(c == NULL) continue;
@@ -557,7 +561,7 @@ int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
 
 		if(strcmp(optLine, opt) == 0){
 
-			alltrim(c, cfg, cfgSz);
+			alltrim(c + 1, cfg, cfgSz);
 
 			fclose(f);
 			return(PAINEL_OK);
