@@ -532,3 +532,7 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 
 	return(PAINEL_OK);
 }
+
+int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
+{
+}
