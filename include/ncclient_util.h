@@ -8,7 +8,7 @@
  */
 
 
-/* sc.h
+/* ncclient_util.h
  * Project's auxiliary functions (client/server).
  *
  *  Who     | When       | What

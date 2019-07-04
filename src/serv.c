@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
 #define PROT_COD_IFACE_BUF_RESP   (10000)
 
 						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged!\n"); /* TODO */
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);
@@ -666,7 +666,7 @@ int main(int argc, char *argv[])
 
 						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE malloc error!\n"); /* TODO */
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE malloc error! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);
@@ -679,7 +679,7 @@ int main(int argc, char *argv[])
 						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
 
 						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error!\n"); /* TODO */
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error! Disconnected.\n");
 
 							free(msgBackToClient);
 							dbClose();
@@ -711,7 +711,7 @@ int main(int argc, char *argv[])
 
 						msgBackToClient = malloc(PROT_COD_LEVELS_BUF_RESP + 1);
 						if(msgBackToClient == NULL){
-							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS malloc error!\n"); /* TODO */
+							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS malloc error! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);
@@ -723,7 +723,7 @@ int main(int argc, char *argv[])
 
 						memset(msgBackToClient, 0, PROT_COD_LEVELS_BUF_RESP + 1);
 						if(SG_getLevels(msgBackToClient, PROT_COD_LEVELS_BUF_RESP) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS SG_getLevels() error!\n"); /* TODO */
+							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS SG_getLevels() error! Disconnected.\n");
 
 							free(msgBackToClient);
 							dbClose();
