@@ -27,11 +27,8 @@
 #include <signal.h>
 #include <ncurses.h>
 #include <form.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 
+#include "ncclient_util.h"
 #include "util.h"
 #include "util_network.h"
 #include "SG.h"
@@ -61,45 +58,16 @@
 
 #define SUBPATH_RUNNING_DATA_NCCLI           SUBPATH_RUNNING_DATA
 
-#define USR_IFACE_TOTAL_FIELDS               (10) /* IFACE cmd. At first version, only 10 fields */
-
-#define FTYPE_MAX_SZ        (20) /* Max size of field type (below) */
-#define STR_USR_FIELD_TEXT  ("TEXT")
-#define STR_USR_FIELD_NUM   ("NUM")
-#define STR_USR_FIELD_DATE  ("DATE")
 
 #define TOT_MENU_LEVELS_LABEL  (40)
 #define LEVEL_DESCRIPTION_SZ   (20) /* TODO: send to db.h or where else */
-
-typedef enum{
-	TEXT_USRFIELD = 1,
-	NUM_USRFIELD,
-	DATE_USRFIELD,
-	UNDEFINED_USRFIELD
-}usrFieldType_t;
-
-typedef struct _usrField_t{ /* IFACE cmd. Dowloaded from server at correct order to display. Sizes below are fixed at first version. */
-#define USR_IFACE_FIELD_SZ      (25)
-#define USR_IFACE_FMTFIELD_SZ   (15)
-#define USR_IFACE_DESCFIELD_SZ  (40)
-	char field[USR_IFACE_FIELD_SZ + 1];
-	usrFieldType_t type;
-	char fmt[USR_IFACE_FMTFIELD_SZ + 1];
-	char desc[USR_IFACE_DESCFIELD_SZ + 1];
-}usrField_t;
 
 typedef struct _levelMenu_t{
 	char levelDesc[LEVEL_DESCRIPTION_SZ + 1];
 	usrFieldType_t type;
 }levelMenu_t;
 
-typedef struct _usrFieldCtrl_t{ /* IFACE cmd. A dynamic list and self-interface (at userId.h) in futere versions. */
-	unsigned int totFields;
-	usrField_t fields[USR_IFACE_TOTAL_FIELDS];
-}usrFieldCtrl_t;
-
 static log_t log;
-static usrFieldCtrl_t usrIfaceFields;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
@@ -114,42 +82,6 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 
 /* *** FUNCTIONS *********************************************************************** */
-
-
-/* -------------------------------------------------------------------------------------------------------- */
-
-/* ---bbb - begin--------- */
-int usrIsIfaceFieldsEmpty(void)
-{
-	return((usrIfaceFields.totFields == 0) ? 0 : 1);
-}
-
-void usrIfaceFieldsClean(void)
-{
-	memset(&usrIfaceFields, 0, sizeof(usrFieldCtrl_t));
-	usrIfaceFields.totFields = 0;
-}
-
-int usrIfaceFieldAdd(char *ffield, char *ftype, char *ffmt, char *fdesc)
-{
-	if(usrIfaceFields.totFields >= USR_IFACE_TOTAL_FIELDS)
-		return(PAINEL_NOK);
-
-	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].field, ffield, USR_IFACE_FIELD_SZ);
-	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].fmt,   ffmt,   USR_IFACE_FMTFIELD_SZ);
-	strncpy(usrIfaceFields.fields[usrIfaceFields.totFields].desc,  fdesc,  USR_IFACE_DESCFIELD_SZ);
-
-	if     (strcmp(ftype, STR_USR_FIELD_TEXT) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = TEXT_USRFIELD;
-	else if(strcmp(ftype, STR_USR_FIELD_NUM ) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = NUM_USRFIELD;
-	else if(strcmp(ftype, STR_USR_FIELD_DATE) == 0) usrIfaceFields.fields[usrIfaceFields.totFields].type = DATE_USRFIELD;
-	else                                            usrIfaceFields.fields[usrIfaceFields.totFields].type = UNDEFINED_USRFIELD;
-
-	usrIfaceFields.totFields++;
-
-	return(PAINEL_OK);
-}
-/* ---bbb - end----------- */
-
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
 {
 	size_t msgSz = 0;
