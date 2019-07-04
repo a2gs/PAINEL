@@ -338,7 +338,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 			curs_set(0);
 
-			if(pingServer(auxSrvAdd, auxSrvPrt, &log) == PAINEL_NOK){
+			if(pingServer(auxSrvAdd, auxSrvPrt) == PAINEL_NOK){
 				mvwprintw(formCfgScreen, 3, 1, "Erro em tentar conexao. Corrigir ou sair? (c/S)");
 				wrefresh(formCfgScreen);
 
@@ -499,7 +499,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 	logWrite(&log, LOGDEV, "Login screen.\n");
 
 	if(isConnect() == 0){
-		if(connectSrvPainel(serverAddress, serverPort, &log) == PAINEL_NOK){
+		if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
 			logWrite(&log, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", serverAddress, serverPort);
 			return(screen_menu);
 		}
@@ -1050,13 +1050,14 @@ int main(int argc, char *argv[])
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
 
 	getLogSystem_Util(&log);
+	getLogSystem_UtilNetwork(&log);
 
 	strncpy(serverAddress, argv[1], SERVERADDRESS_SZ);
 	strncpy(serverPort,    argv[2], SERVERPORT_SZ);
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
 
-	if(pingServer(serverAddress, serverPort, &log) == PAINEL_OK){
+	if(pingServer(serverAddress, serverPort) == PAINEL_OK){
 		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", serverAddress, serverPort);
 		initFunc = screen_menu;
 	}else{

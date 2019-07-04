@@ -37,6 +37,17 @@
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
 
+/* void getLogSystem_UtilNetwork(log_t *lg)
+ *
+ * 
+ *
+ * INPUT:
+ *  none
+ * OUTPUT:
+ *  none
+ */
+void getLogSystem_UtilNetwork(log_t *lg);
+
 /* int isConnect(void)
  *
  * 
@@ -70,7 +81,7 @@ int getSocket(void);
  */
 int disconnectSrvPainel(void);
 
-/* int connectSrvPainel(char *srvAdd, char *srvPort, log_t *log)
+/* int connectSrvPainel(char *srvAdd, char *srvPort)
  *
  * 
  *
@@ -79,9 +90,9 @@ int disconnectSrvPainel(void);
  * OUTPUT:
  *  none
  */
-int connectSrvPainel(char *srvAdd, char *srvPort, log_t *log);
+int connectSrvPainel(char *srvAdd, char *srvPort);
 
-/* int pingServer(char *ip, char *port, log_t *log)
+/* int pingServer(char *ip, char *port)
  *
  *
  *
@@ -90,7 +101,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort, log_t *log);
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int pingServer(char *ip, char *port, log_t *log);
+int pingServer(char *ip, char *port);
 
 /* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError)
  *

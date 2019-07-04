@@ -29,12 +29,6 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <sys/stat.h>
-/*
-#include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-*/
 
 #include "util.h"
 

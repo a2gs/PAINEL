@@ -39,11 +39,18 @@
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+static log_t *log = NULL;
 static int sockfd = -1; /* Socket */
 static char netBuff[MAXLINE + 1] = {0};
 
 
 /* *** FUNCTIONS *********************************************************************** */
+void getLogSystem_UtilNetwork(log_t *lg)
+{
+	log = lg;
+	return;
+}
+
 /* 0 - Not connect | 1 - Connected */
 int isConnect(void)
 {
@@ -65,7 +72,7 @@ int disconnectSrvPainel(void)
 	return(PAINEL_OK);
 }
 
-int connectSrvPainel(char *srvAdd, char *srvPort, log_t *log)
+int connectSrvPainel(char *srvAdd, char *srvPort)
 {
 	struct addrinfo hints, *res = NULL, *rp = NULL;
 	int errGetAddrInfoCode = 0, errConnect = 0;
@@ -204,7 +211,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	return(PAINEL_OK);
 }
 
-int pingServer(char *ip, char *port, log_t *logUtil)
+int pingServer(char *ip, char *port)
 {
 	int sockfd = 0;
 	int srError = 0;
@@ -222,14 +229,14 @@ int pingServer(char *ip, char *port, log_t *logUtil)
 
 	errGetAddrInfoCode = getaddrinfo(ip, port, &hints, &res);
 	if(errGetAddrInfoCode != 0){
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
+		logWrite(log, LOGOPALERT, "ERRO PING: getaddrinfo() [%s].\n", gai_strerror(errGetAddrInfoCode));
 		return(PAINEL_NOK);
 	}
 
 	for(rp = res; rp != NULL; rp = rp->ai_next){
 		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sockfd == -1){
-			logWrite(logUtil, LOGOPALERT, "ERRO PING: socket() [%s].\n", strerror(errno));
+			logWrite(log, LOGOPALERT, "ERRO PING: socket() [%s].\n", strerror(errno));
 			continue;
 		}
 
@@ -238,19 +245,19 @@ int pingServer(char *ip, char *port, log_t *logUtil)
 		else                               pAddr = NULL;
 
 		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
-		logWrite(logUtil, LOGOPMSG, "Trying PING (connect) to [%s/%s:%s].\n", rp->ai_canonname, strAddr, port);
+		logWrite(log, LOGOPMSG, "Trying PING (connect) to [%s/%s:%s].\n", rp->ai_canonname, strAddr, port);
 
 		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
 		if(errConnect == 0)
 			break;
 
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, port, strerror(errno));
+		logWrite(log, LOGOPALERT, "ERRO PING: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, port, strerror(errno));
 
 		close(sockfd);
 	}
 
 	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable connect to any address.\n");
+		logWrite(log, LOGOPALERT, "ERRO PING: Unable connect to any address.\n");
 		return(PAINEL_NOK);
 	}
 
@@ -260,10 +267,10 @@ int pingServer(char *ip, char *port, log_t *logUtil)
 	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
 	msgSRSz = snprintf(pingPongMsg, PINGPONG_MSG_SZ, "%d|PING", PROT_COD_PING);
 
-	logWrite(logUtil, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
+	logWrite(log, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
 
 	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError) == PAINEL_NOK){
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
+		logWrite(log, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
 		return(PAINEL_NOK);
@@ -273,13 +280,13 @@ int pingServer(char *ip, char *port, log_t *logUtil)
 	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
 
 	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError) == PAINEL_NOK){
-		logWrite(logUtil, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
+		logWrite(log, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
 		return(PAINEL_NOK);
 	}
 
-	logWrite(logUtil, LOGOPMSG, "Ping response from server: [%s].\n", pingPongMsg);
+	logWrite(log, LOGOPMSG, "Ping response from server: [%s].\n", pingPongMsg);
 
 	shutdown(sockfd, SHUT_RDWR);
 	close(sockfd);
