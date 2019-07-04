@@ -133,48 +133,6 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
  */
 void getLogSystem_Util(log_t *log);
 
-/* int pingServer(char *ip, char *port)
- *
- *
- *
- * INPUT:
- * OUTPUT:
- *  PAINEL_OK - 
- *  PAINEL_NOK - 
- */
-int pingServer(char *ip, char *port);
-
-/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError)
- *
- * PAINEL Oficial network send. It adds 4 bytes (binary) in front of msg.
- *
- * INPUT:
- *  sockfd - 
- *  msg - 
- *  msgSz - 
- * OUTPUT:
- *  sendError - send(2) errno
- *  PAINEL_OK - 
- *  PAINEL_NOK - 
- */
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError);
-
-/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError)
- *
- * PAINEL Oficial network receive. It reads 4 bytes (binary) in front of msg.
- *
- * INPUT:
- *  sockfd - 
- *  msg - 
- *  msgSz - 
- * OUTPUT:
- *  recvSz - 
- *  recvError - recv(2) errno
- *  PAINEL_OK - 
- *  PAINEL_NOK - 
- */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError);
-
 /* char * getPAINELEnvHomeVar(void)
  *
  * Return a poiter to PAINEL_HOME enviroument variable.

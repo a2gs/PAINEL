@@ -32,6 +32,7 @@
 #include <netdb.h>
 
 #include "util.h"
+#include "util_network.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -79,6 +80,8 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, SIG_IGN);
 
 	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], argv[3], getPAINELEnvHomeVar());
+
+	/* TODO: change below to connectSrvPainel() */
 
 	memset (&hints, 0, sizeof (hints));
 	hints.ai_family = AF_UNSPEC;

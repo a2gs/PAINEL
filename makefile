@@ -108,12 +108,12 @@ sha256:
 pingServ: logtag
 	@echo
 	@echo "=== pingServ =================="
-	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 client: sha256 logtag
 	@echo
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS) -Wno-incompatible-pointer-types
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS) -Wno-incompatible-pointer-types
 
 ncclient: sha256 logtag wizard_by_return llist
 	@echo
@@ -123,12 +123,12 @@ ncclient: sha256 logtag wizard_by_return llist
 sendRecvCmd:
 	@echo
 	@echo "=== sendRecvCmd =================="
-	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 serv: logtag
 	@echo
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_html: logtag
 	@echo

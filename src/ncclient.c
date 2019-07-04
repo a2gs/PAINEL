@@ -338,7 +338,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 			curs_set(0);
 
-			if(pingServer(auxSrvAdd, auxSrvPrt) == PAINEL_NOK){
+			if(pingServer(auxSrvAdd, auxSrvPrt, &log) == PAINEL_NOK){
 				mvwprintw(formCfgScreen, 3, 1, "Erro em tentar conexao. Corrigir ou sair? (c/S)");
 				wrefresh(formCfgScreen);
 
@@ -1056,7 +1056,7 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
 
-	if(pingServer(serverAddress, serverPort) == PAINEL_OK){
+	if(pingServer(serverAddress, serverPort, &log) == PAINEL_OK){
 		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", serverAddress, serverPort);
 		initFunc = screen_menu;
 	}else{

@@ -22,6 +22,7 @@
 #include <stdio.h>
 
 #include "util.h"
+#include "util_network.h"
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -58,7 +59,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "[%s] Ping [%s] Port: [%s]\n", time_DDMMYYhhmmss(), argv[1], argv[2]);
 
-	if(pingServer(argv[1], argv[2]) == PAINEL_NOK){
+	if(pingServer(argv[1], argv[2], NULL) == PAINEL_NOK){
 		fprintf(stderr, "[%s] Ping erro!\n", time_DDMMYYhhmmss());
 		return(-2);
 	}

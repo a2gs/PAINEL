@@ -29,6 +29,7 @@
 #include <arpa/inet.h>
 
 #include "util.h"
+#include "util_network.h"
 #include "client.h"
 #include "SG_client.h"
 #include "userId.h"

@@ -35,6 +35,7 @@
 #include <arpa/inet.h>
 
 #include "util.h"
+#include "util_network.h"
 #include "db.h"
 #include "SG_serv.h"
 
