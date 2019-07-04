@@ -33,6 +33,10 @@
 
 #define FTYPE_MAX_SZ           (20) /* Max size of field type (below) */
 
+#define TOT_MENU_LEVELS_LABEL  (40)
+#define LEVEL_DESCRIPTION_SZ   (20) /* TODO: send to db.h or where else */
+
+
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */
 
 
@@ -43,6 +47,11 @@ typedef enum{
 	DATE_USRFIELD,
 	UNDEFINED_USRFIELD
 }usrFieldType_t;
+
+typedef struct _levelMenu_t{
+	char levelDesc[LEVEL_DESCRIPTION_SZ + 1];
+	usrFieldType_t type;
+}levelMenu_t;
 
 typedef struct _usrField_t{ /* IFACE cmd. Dowloaded from server at correct order to display. Sizes below are fixed at first version. */
 	char field[USR_IFACE_FIELD_SZ + 1];

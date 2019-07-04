@@ -59,26 +59,15 @@
 #define SUBPATH_RUNNING_DATA_NCCLI           SUBPATH_RUNNING_DATA
 
 
-#define TOT_MENU_LEVELS_LABEL  (40)
-#define LEVEL_DESCRIPTION_SZ   (20) /* TODO: send to db.h or where else */
-
-typedef struct _levelMenu_t{
-	char levelDesc[LEVEL_DESCRIPTION_SZ + 1];
-	usrFieldType_t type;
-}levelMenu_t;
-
-static log_t log;
-static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
-static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
-static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
-static levelMenu_t *menuLevelLabel[TOT_MENU_LEVELS_LABEL] = {NULL};
-
-
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+static log_t log;
+static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
+static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
+static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
 
 
 /* *** FUNCTIONS *********************************************************************** */

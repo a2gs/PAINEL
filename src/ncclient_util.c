@@ -36,6 +36,7 @@
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 static usrFieldCtrl_t usrIfaceFields;
+static levelMenu_t *menuLevelLabel[TOT_MENU_LEVELS_LABEL] = {NULL};
 
 
 /* *** FUNCTIONS *********************************************************************** */
