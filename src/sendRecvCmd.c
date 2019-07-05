@@ -26,10 +26,6 @@
 #include <signal.h>
 #include <errno.h>
 #include <time.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 
 #include "util.h"
 #include "util_network.h"
@@ -56,14 +52,9 @@
  */
 int main(int argc, char *argv[])
 {
-	int sockfd = 0;
-	int errGetAddrInfoCode = 0, errConnect = 0;
-	char strAddr[STRADDR_SZ + 1] = {'\0'};
-	void *pAddr = NULL;
 	FILE *f = NULL;
 	char line[MAXLINE] = {'\0'};
 	char *c = NULL;
-	struct addrinfo hints, *res = NULL, *rp = NULL;
 	int srError = 0;
 	size_t recvSz = 0;
 
@@ -73,7 +64,7 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	/* getLogSystem_Util(NULL); */
+	getLogSystem_Util(NULL);
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
@@ -81,48 +72,10 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], argv[3], getPAINELEnvHomeVar());
 
-	/* TODO: change below to connectSrvPainel() */
-
-	memset (&hints, 0, sizeof (hints));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags |= AI_CANONNAME;
-
-	errGetAddrInfoCode = getaddrinfo(argv[1], argv[2], &hints, &res);
-	if(errGetAddrInfoCode != 0){
-		fprintf(stderr, "ERRO: getaddrinfo() [%s]. Terminating application with ERRO.\n", gai_strerror(errGetAddrInfoCode));
-		return(-3);
+	if(connectSrvPainel(argv[1], argv[2]) == PAINEL_NOK){
+		logWrite(NULL, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", argv[1], argv[2]);
+		return(-1);
 	}
-
-	for(rp = res; rp != NULL; rp = rp->ai_next){
-		sockfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		if (sockfd == -1){
-			fprintf(stderr, "ERRO: socket() [%s].\n", strerror(errno));
-			continue;
-		}
-
-		if(rp->ai_family == AF_INET)       pAddr = &((struct sockaddr_in *) rp->ai_addr)->sin_addr;
-		else if(rp->ai_family == AF_INET6) pAddr = &((struct sockaddr_in6 *) rp->ai_addr)->sin6_addr;
-		else                               pAddr = NULL;
-
-		inet_ntop(rp->ai_family, pAddr, strAddr, STRADDR_SZ);
-		fprintf(stderr, "Trying connect to [%s/%s:%s].\n", rp->ai_canonname, strAddr, argv[2]);
-
-		errConnect = connect(sockfd, rp->ai_addr, rp->ai_addrlen);
-		if(errConnect == 0)
-			break;
-
-		fprintf(stderr, "ERRO: connect() to [%s/%s:%s] [%s].\n", rp->ai_canonname, strAddr, argv[2], strerror(errno));
-
-		close(sockfd);
-	}
-
-	if(res == NULL || errConnect == -1){ /* End of getaddrinfo() list or connect() returned error */
-		fprintf(stderr, "ERRO: Unable connect to any address. Terminating application with ERRO.\n");
-		return(-4);
-	}
-
-	freeaddrinfo(res);
 
 	f = fopen(argv[3], "r");
 	if(f == NULL){
@@ -135,12 +88,12 @@ int main(int argc, char *argv[])
 		if(c != NULL) *c = '\0';
 
 		fprintf(stderr, "Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
-		if(sendToNet(sockfd, line, strlen(line), &srError) == PAINEL_NOK){
+		if(sendToNet(getSocket(), line, strlen(line), &srError) == PAINEL_NOK){
 			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
 
-		if(recvFromNet(sockfd, line, MAXLINE, &recvSz, &srError) == PAINEL_NOK){
+		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError) == PAINEL_NOK){
 			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
@@ -152,8 +105,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "Terminating application with sucessfully!\n");
 
-	shutdown(sockfd, SHUT_RDWR);
-	close(sockfd);
+	disconnectSrvPainel();
 
 	return(0);
 }
