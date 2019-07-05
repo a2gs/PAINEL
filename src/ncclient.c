@@ -400,7 +400,17 @@ int sendLoginCmd(char *login, char *pass, char *level)
 
 a2gs_ToolBox_WizardReturnFunc_t screen_dynamicUserScreen(void *data) /* TODO <<<<<<<<<<<<<<<<<<<<<<<<< */
 {
-	return(NULL);
+#define SRC_DYNSCREEN_MAX_LINES (120)
+#define SRC_DYNSCREEN_MAX_COLS  (40)
+	WINDOW *thisScreen = NULL;
+
+	if(screen_drawDefaultTheme(&thisScreen, SRC_DYNSCREEN_MAX_LINES, SRC_DYNSCREEN_MAX_COLS, "REGISTER") == PAINEL_NOK){
+		return(screen_menu);
+	}
+
+	delwin(thisScreen);
+
+	return(screen_menu);
 }
 
 a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
