@@ -651,7 +651,6 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_IFACE:
-#define PROT_COD_IFACE_BUF_RESP   (10000)
 
 						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged! Disconnected.\n");
@@ -664,9 +663,11 @@ int main(int argc, char *argv[])
 							return(-18);
 						}
 
-						msgBackToClient = malloc(PROT_COD_IFACE_BUF_RESP + 1);
-						if(msgBackToClient == NULL){
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE malloc error! Disconnected.\n");
+						msgBackToClient = msg;
+						memset(msg, '\0', sizeof(msg));
+
+						if(SG_getUserIFace(msgBackToClient, sizeof(msg), userSession.level) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);
@@ -676,77 +677,45 @@ int main(int argc, char *argv[])
 							return(-19);
 						}
 
-						memset(msgBackToClient, 0, PROT_COD_IFACE_BUF_RESP + 1);
+						if(sendClientResponse(connfd, PROT_COD_IFACE, msgBackToClient) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "Error sent fail iface process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
-						if(SG_getUserIFace(msgBackToClient, PROT_COD_IFACE_BUF_RESP, userSession.level) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error! Disconnected.\n");
-
-							free(msgBackToClient);
 							dbClose();
-							logClose(&log);
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
+							logClose(&log);
 
 							return(-20);
 						}
 
-						if(sendClientResponse(connfd, PROT_COD_IFACE, msgBackToClient) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "Error sent fail iface process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
-
-							free(msgBackToClient);
-							dbClose();
-							shutdown(connfd, SHUT_RDWR);
-							close(connfd);
-							logClose(&log);
-
-							return(-21);
-						}
-
-						free(msgBackToClient);
-
 						break;
 
 					case PROT_COD_LEVELS:
-#define PROT_COD_LEVELS_BUF_RESP   (10000)
 
-						msgBackToClient = malloc(PROT_COD_LEVELS_BUF_RESP + 1);
-						if(msgBackToClient == NULL){
-							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS malloc error! Disconnected.\n");
+						msgBackToClient = msg;
+						memset(msg, '\0', sizeof(msg));
 
-							dbClose();
-							logClose(&log);
-							shutdown(connfd, SHUT_RDWR);
-							close(connfd);
-
-							return(-22);
-						}
-
-						memset(msgBackToClient, 0, PROT_COD_LEVELS_BUF_RESP + 1);
-						if(SG_getLevels(msgBackToClient, PROT_COD_LEVELS_BUF_RESP) == PAINEL_NOK){
+						if(SG_getLevels(msgBackToClient, sizeof(msg)) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS SG_getLevels() error! Disconnected.\n");
 
-							free(msgBackToClient);
 							dbClose();
 							logClose(&log);
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-23);
+							return(-21);
 						}
 
 						if(sendClientResponse(connfd, PROT_COD_LEVELS, msgBackToClient) == PAINEL_NOK){
 							logWrite(&log, LOGOPALERT, "Error sent fail levels process message back to client [%s:%d] [%s]!\n", clientFrom, portFrom, msgBackToClient);
 
-							free(msgBackToClient);
 							dbClose();
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 							logClose(&log);
 
-							return(-24);
+							return(-22);
 						}
-
-						free(msgBackToClient);
 
 						break;
 
