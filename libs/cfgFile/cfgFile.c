@@ -120,18 +120,37 @@ int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError)
 
 int cfgFileOpt(cfgFile_t *ctx, char *label, char **value)
 {
-	return(CFGFILE_OK);
+	ll_node_t *walker = NULL;
+	cfgFileNode_t *node = NULL;
+
+	*value = NULL;
+
+	for(walker = ctx->head; walker != NULL; walker = walker->next){
+		node = walker->data;
+
+		if(strcmp(node->label, label) == 0){
+			*value = node->value;
+
+			return(CFGFILE_OK);
+		}
+	}
+
+	return(CFGFILE_NOK);
 }
 
 int cfgFileFree(cfgFile_t *ctx)
 {
-	cfgFileNode_t *walker = NULL;
+	ll_node_t *walker = NULL;
+	cfgFileNode_t *node = NULL;
 
-	/*
-	for(walker = head; walker != NULL; walker = walker->next){
-		ll_delete(&head, walker, 1);
+	for(walker = ctx->head; walker != NULL; walker = walker->next){
+		node = walker->data;
+
+		free(node->label);
+		free(node->value);
 	}
-	*/
+
+	ll_destroyList(&ctx->head, 1);
 
 	return(CFGFILE_OK);
 }

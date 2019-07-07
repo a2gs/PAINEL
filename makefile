@@ -110,8 +110,7 @@ sha256:
 cfgfile:
 	@echo
 	@echo "=== lib CFGFILE ================="
-	#$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c $(LLISTPATH)/linkedlist.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS)
-	$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS)
+	$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS) -Wno-unused-value
 	$(AR) rc $(LIBS_BIN_PATH)/libcfgFile.a $(LIBS_BIN_PATH)/cfgFile.o
 	$(RANLIB) $(LIBS_BIN_PATH)/libcfgFile.a
 	$(CP) $(CFGFILEPATH)/cfgFile.h $(LIBS_BIN_PATH)

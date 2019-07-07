@@ -1,3 +1,21 @@
+/* Andre Augusto Giannotti Scota (a2gs)
+ * andre.scota@gmail.com
+ *
+ * PAINEL
+ *
+ * Apache License 2.0
+ *
+ */
+
+
+/* sample.c
+ *
+ *  Who     | When       | What
+ *  --------+------------+----------------------------
+ *   a2gs   | 05/03/2019 | Creation
+ *          |            |
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
