@@ -11,7 +11,7 @@ typedef struct _cfgFileNode_t{
 	char *value;
 }cfgFileNode_t;
 
-size_t alltrim(char *strIn, char *strOut, size_t szSrtOut)
+size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO ............................. */
 {
    char *init = NULL, *end = NULL;
    size_t toCopy = 0;
@@ -81,30 +81,27 @@ int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError)
       	return(CFGFILE_NOK); /* TODO: free previous allocated memory */
 		}
 
-
-		/*
-      if(strcmp(valueAux, opt) == 0){
-
-         *cfgSzRead = alltrim(c + 1, cfg, cfgSz);
-
-         fclose(f);
-         return(PAINEL_OK);
-      }
-		*/
+		ll_add(&ctx->head, newNode);
    }
-
-
 
 	return(CFGFILE_OK);
 }
 
-int cfgFileOpt(cfgFile_t *ctx, char *label)
+int cfgFileOpt(cfgFile_t *ctx, char *label, char **value)
 {
 	return(CFGFILE_OK);
 }
 
 int cfgFileFree(cfgFile_t *ctx)
 {
+	cfgFileNode_t *walker = NULL;
+
+	/*
+	for(walker = head; walker != NULL; walker = walker->next){
+		ll_delete(&head, walker, 1);
+	}
+	*/
+
 	return(CFGFILE_OK);
 }
 

@@ -15,7 +15,7 @@ typedef struct _cfgFile_t{
 }cfgFile_t;
 
 int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError);
-int cfgFileOpt(cfgFile_t *ctx, char *label);
+int cfgFileOpt(cfgFile_t *ctx, char *label, char **value);
 int cfgFileFree(cfgFile_t *ctx);
 
 /* int cfgReadOpt(char *pathCfg, char *opt, char *cfg, size_t cfgSz)
