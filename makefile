@@ -30,11 +30,13 @@ LIB_SHA256 = sha-256
 LIB_LOG = log
 LIB_LLIST = linkedlist
 LIB_WIZPATPATH = wizard_by_return
+LIB_CFGFILE = cfgFile
 
 SHA256PATH = $(LOCAL_LIBS)/$(LIB_SHA256)
 LOGPATH = $(LOCAL_LIBS)/$(LIB_LOG)
 LLISTPATH = $(LOCAL_LIBS)/$(LIB_LLIST)
 WIZPATPATH = $(LOCAL_LIBS)/$(LIB_WIZPATPATH)
+CFGFILEPATH = $(LOCAL_LIBS)/$(LIB_CFGFILE)
 
 # Libs to ALL modules:
 LIBS = -lsqlite3 -l$(LIB_LOG) # Common libs, libs to all modules or system libs
@@ -56,7 +58,7 @@ CPPCHECK = cppcheck
 
 CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
-all: clean logtag sha256 llist wizard_by_return client ncclient sendRecvCmd serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
+all: clean logtag sha256 llist cfgfile wizard_by_return client ncclient sendRecvCmd serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
 	@echo
 	@echo "=== ctags ==================="
 	ctags -R *
@@ -104,6 +106,16 @@ sha256:
 	$(RANLIB) $(LIBS_BIN_PATH)/libsha-256.a
 	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
+
+cfgfile:
+	@echo
+	@echo "=== lib CFGFILE ================="
+	#$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c $(LLISTPATH)/linkedlist.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS)
+	$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/libcfgFile.a $(LIBS_BIN_PATH)/cfgFile.o
+	$(RANLIB) $(LIBS_BIN_PATH)/libcfgFile.a
+	$(CP) $(CFGFILEPATH)/cfgFile.h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/cfgFile.o
 
 pingServ: logtag
 	@echo
