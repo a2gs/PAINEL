@@ -38,6 +38,7 @@
 #include <sha-256.h>
 #include <wizard_by_return.h>
 #include <linkedlist.h>
+#include <cfgFile.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
