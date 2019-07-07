@@ -1,3 +1,24 @@
+/* Andre Augusto Giannotti Scota (a2gs)
+ * andre.scota@gmail.com
+ *
+ * PAINEL
+ *
+ * Apache License 2.0
+ *
+ */
+
+
+/* util.c
+ * Project's auxiliary functions (client/server).
+ *
+ *  Who     | When       | What
+ *  --------+------------+----------------------------
+ *   a2gs   | 13/08/2018 | Creation
+ *          |            |
+ */
+
+
+/* *** INCLUDES ************************************************************************ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,11 +27,21 @@
 #include "cfgFile.h"
 #include "linkedlist.h"
 
+
+/* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 typedef struct _cfgFileNode_t{
 	char *label;
 	char *value;
 }cfgFileNode_t;
 
+
+/* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+
+
+/* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+
+
+/* *** FUNCTIONS *********************************************************************** */
 size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO ............................. */
 {
    char *init = NULL, *end = NULL;

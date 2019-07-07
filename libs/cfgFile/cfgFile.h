@@ -1,8 +1,31 @@
+/* Andre Augusto Giannotti Scota (a2gs)
+ * andre.scota@gmail.com
+ *
+ * PAINEL
+ *
+ * Apache License 2.0
+ *
+ */
+
+
+/* util.c
+ * Project's auxiliary functions (client/server).
+ *
+ *  Who     | When       | What
+ *  --------+------------+----------------------------
+ *   a2gs   | 13/08/2018 | Creation
+ *          |            |
+ */
+
+
 #ifndef __CFG_FILE_H__
 #define __CFG_FILE_H__
 
+/* *** INCLUDES ************************************************************************ */
 #include "linkedlist.h"
 
+
+/* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
 #define CFGFILE_OK  (0)
 #define CFGFILE_NOK (1)
 
@@ -13,6 +36,15 @@
 typedef struct _cfgFile_t{
 	ll_node_t *head;
 }cfgFile_t;
+
+
+/* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
+
+
+/* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
+
+
+/* *** FUNCTIONS *********************************************************************** */
 
 int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError);
 int cfgFileOpt(cfgFile_t *ctx, char *label, char **value);
