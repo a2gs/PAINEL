@@ -66,54 +66,57 @@ size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO .............
 
 int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError)
 {
-   FILE *f = NULL;
-   char *c = NULL;
-	cfgFileNode_t *newNode = NULL;
-   char line    [CFGFILE_LINE_SZ  + 1] = {'\0'};
-   char labelAux[CFGFILE_LABEL_SZ + 1] = {'\0'};
-   char valueAux[CFGFILE_VALUE_SZ + 1] = {'\0'};
+	FILE *f = NULL;
+	char *c = NULL;
+	char line    [CFGFILE_LINE_SZ  + 1] = {'\0'};
+	char labelAux[CFGFILE_LABEL_SZ + 1] = {'\0'};
+	char valueAux[CFGFILE_VALUE_SZ + 1] = {'\0'};
 	size_t labelAuxSz = 0;
 	size_t valueAuxSz = 0;
+	cfgFileNode_t *newNode = NULL;
 
-	lineError = 0;
+	*lineError = 0;
 
-   f = fopen(cfgFilePath, "r");
-   if(f == NULL){
-      return(CFGFILE_NOK);
-   }
+	f = fopen(cfgFilePath, "r");
+	if(f == NULL){
+		return(CFGFILE_NOK);
+	}
 
 	ctx->head = NULL;
 	ll_create(&ctx->head);
 
-   for(*lineError = 1; fgets(line, CFGFILE_LINE_SZ, f) != NULL; *lineError++){
-      if(line[0] == '#' || line[0] == '\0' || line[0] == '\n' || line[0] == '\r' || line[0] == '=') continue;
+	for(*lineError = 1; fgets(line, CFGFILE_LINE_SZ, f) != NULL; *lineError++){
+		if(line[0] == '#' || line[0] == '\0' || line[0] == '\n' || line[0] == '\r' || line[0] == '=') continue;
 
-      c = strchr(line, '\n');
-      if(c != NULL) *c = '\0';
+		c = strchr(line, '\n');
+		if(c != NULL) *c = '\0';
 
-      c = strchr(line, '=');
-      if(c == NULL) continue;
+		c = strchr(line, '=');
+		if(c == NULL) return(CFGFILE_NOK);
+		*c = '\0';
 
-      labelAuxSz = alltrim(line , labelAux, c - line);
-      valueAuxSz = alltrim(c + 1, valueAux, CFGFILE_VALUE_SZ);
+		labelAuxSz = alltrim(line , labelAux, (CFGFILE_LABEL_SZ < c - line ? CFGFILE_LABEL_SZ : c - line));
+		valueAuxSz = alltrim(c + 1, valueAux, CFGFILE_VALUE_SZ);
 
 		newNode = (cfgFileNode_t *)malloc(sizeof(cfgFileNode_t));
 		if(newNode == NULL){
-      	return(CFGFILE_NOK); /* TODO: free previous allocated memory */
+			return(CFGFILE_NOK); /* TODO: free previous allocated memory */
 		}
 
-		newNode->label = (char *)malloc(labelAuxSz);
+		newNode->label = (char *)malloc(labelAuxSz + 1);
 		if(newNode->label == NULL){
-      	return(CFGFILE_NOK); /* TODO: free previous allocated memory */
+			return(CFGFILE_NOK); /* TODO: free previous allocated memory */
 		}
+		strncpy(newNode->label, labelAux, labelAuxSz);
 
-		newNode->value = (char *)malloc(valueAuxSz);
+		newNode->value = (char *)malloc(valueAuxSz + 1);
 		if(newNode->value == NULL){
-      	return(CFGFILE_NOK); /* TODO: free previous allocated memory */
+			return(CFGFILE_NOK); /* TODO: free previous allocated memory */
 		}
+		strncpy(newNode->value, valueAux, valueAuxSz);
 
 		ll_add(&ctx->head, newNode);
-   }
+	}
 
 	return(CFGFILE_OK);
 }
@@ -146,8 +149,11 @@ int cfgFileFree(cfgFile_t *ctx)
 	for(walker = ctx->head; walker != NULL; walker = walker->next){
 		node = walker->data;
 
-		free(node->label);
-		free(node->value);
+		if(node->label != NULL)
+			free(node->label);
+
+		if(node->value != NULL)
+			free(node->value);
 	}
 
 	ll_destroyList(&ctx->head, 1);
