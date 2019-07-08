@@ -961,17 +961,10 @@ int main(int argc, char *argv[])
 	unsigned int cfgLineError = 0;
 	char *cfgServerAddress = NULL;
 	char *cfgServerPort    = NULL;
-	char *cfgLogFile  = NULL;
-	char *cfgLogLevel = NULL;
+	char *cfgLogFile       = NULL;
+	char *cfgLogLevel      = NULL;
 	cfgFile_t nccCfg;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
-
-/*
-PAINE_SERVER_ADDRESS
-PAINE_SERVER_PORT
-LOG_FILE
-LOG_LEVEL
-*/
 
 /*
 	if(argc != 5){
@@ -1000,28 +993,28 @@ LOG_LEVEL
 	}
 
 	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
-		printf("Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n");
-		return(-1);
+		printf("Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
+		return(-3);
 	}
 
 	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
-		printf("Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n");
-		return(-1);
+		printf("Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
+		return(-4);
 	}
 
 	if(cfgFileOpt(&nccCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
-		printf("Config with label LOG_FILE not found into file [%s]! Exit.\n");
-		return(-1);
+		printf("Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
+		return(-5);
 	}
 
 	if(cfgFileOpt(&nccCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
-		printf("Config with label LOG_LEVEL not found into file [%s]! Exit.\n");
-		return(-1);
+		printf("Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
+		return(-6);
 	}
 
-	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
+	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-2);
+		return(-7);
 	}
 
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
@@ -1029,8 +1022,13 @@ LOG_LEVEL
 	getLogSystem_Util(&log);
 	getLogSystem_UtilNetwork(&log);
 
-	strncpy(serverAddress, argv[1], SERVERADDRESS_SZ);
-	strncpy(serverPort,    argv[2], SERVERPORT_SZ);
+	strncpy(serverAddress, cfgServerAddress, SERVERADDRESS_SZ);
+	strncpy(serverPort,    cfgServerPort,    SERVERPORT_SZ);
+
+	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
+		printf("Error at cfgFileFree().\n");
+		return(-8);
+	}
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
 
@@ -1045,7 +1043,7 @@ LOG_LEVEL
 	if(initscr() == NULL){;
 		printf("Erro initializating ncurses!\n");
 		logClose(&log);
-		return(-3);
+		return(-9);
 	}
 
 	keypad(stdscr, TRUE);
@@ -1061,28 +1059,28 @@ LOG_LEVEL
 		endwin();
 		printf("O terminal precisa ter no minimo 80x24");
 		logClose(&log);
-		return(-4);
+		return(-10);
 	}
 
 	if(has_colors() == FALSE){
 		endwin();
 		printf("Terminal nao suporta cores (has_colors() = FALSE).\n");
 		logClose(&log);
-		return(-5);
+		return(-11);
 	}
 
 	if(can_change_color() == FALSE){
 		endwin();
 		printf("Terminal nao suporta mudar as cores (can_change_colors() = FALSE).\n");
 		logClose(&log);
-		return(-6);
+		return(-12);
 	}
 
 	if(start_color() != OK){
 		endwin();
 		printf("Erro em iniciar cores (start_colors() = FALSE).\n");
 		logClose(&log);
-		return(-7);
+		return(-13);
 	}
 
 	set_escdelay(0);
