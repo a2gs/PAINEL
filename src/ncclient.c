@@ -996,9 +996,28 @@ LOG_LEVEL
 
 	if(cfgFileLoad(&nccCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
 		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
+		return(-2);
+	}
+
+	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
+		printf("Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n");
 		return(-1);
 	}
 
+	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
+		printf("Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n");
+		return(-1);
+	}
+
+	if(cfgFileOpt(&nccCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
+		printf("Config with label LOG_FILE not found into file [%s]! Exit.\n");
+		return(-1);
+	}
+
+	if(cfgFileOpt(&nccCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
+		printf("Config with label LOG_LEVEL not found into file [%s]! Exit.\n");
+		return(-1);
+	}
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
