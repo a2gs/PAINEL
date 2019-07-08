@@ -43,25 +43,25 @@ typedef struct _cfgFileNode_t{
 
 /* *** FUNCTIONS *********************************************************************** */
 static size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO: 'static' to not conflites with THE SAME alltrim() into util.c. Unify. */
-{
-   char *init = NULL, *end = NULL;
-   size_t toCopy = 0;
+	{
+	char *init = NULL, *end = NULL;
+	size_t toCopy = 0;
 
-   for(init = strIn; (*init == ' ' || *init == '\t'); init++);
+	for(init = strIn; (*init == ' ' || *init == '\t'); init++);
 
-   end = strrchr(init, '\0');
-   if(end == NULL)
-      return(0);
+	end = strrchr(init, '\0');
+	if(end == NULL)
+		return(0);
 
-   for(end--; (*end == ' ' || *end == '\t'); end--);
+	for(end--; (*end == ' ' || *end == '\t'); end--);
 
-   if((size_t)(end - init) < szSrtOut) toCopy = end - init + 1;
-   else toCopy = szSrtOut;
+	if((size_t)(end - init) < szSrtOut) toCopy = end - init + 1;
+		else toCopy = szSrtOut;
 
-   memcpy(strOut, init, toCopy);
-   strOut[toCopy] = '\0';
+	memcpy(strOut, init, toCopy);
+	strOut[toCopy] = '\0';
 
-   return(toCopy);
+	return(toCopy);
 }
 
 int cfgFileLoad(cfgFile_t *ctx, char *cfgFilePath, unsigned int *lineError)
