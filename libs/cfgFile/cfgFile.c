@@ -141,11 +141,31 @@ int cfgFileOpt(cfgFile_t *ctx, char *label, char **value)
 	return(CFGFILE_NOK);
 }
 
-int cfgFileFree(cfgFile_t *ctx)
+void freeCfgNode(void *data)
 {
-	ll_node_t *walker = NULL;
 	cfgFileNode_t *node = NULL;
 
+	node = (cfgFileNode_t *)data;
+
+	if(node->label != NULL)
+		free(node->label);
+
+	if(node->value != NULL)
+		free(node->value);
+
+	free(node);
+
+	return;
+}
+
+int cfgFileFree(cfgFile_t *ctx)
+{
+	/*
+	ll_node_t *walker = NULL;
+	cfgFileNode_t *node = NULL;
+	*/
+
+	/*
 	for(walker = ctx->head; walker != NULL; walker = walker->next){
 		node = walker->data;
 
@@ -156,7 +176,11 @@ int cfgFileFree(cfgFile_t *ctx)
 			free(node->value);
 	}
 
+
 	ll_destroyList(&ctx->head, 1);
+	*/
+
+	ll_destroyListWithFreeNode(&ctx->head, freeCfgNode);
 
 	return(CFGFILE_OK);
 }
