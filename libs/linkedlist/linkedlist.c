@@ -92,7 +92,25 @@ int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem)
 	return(LL_OK);
 }
 
-int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, void (*freeNodeFunc)(void *))
+void * ll_getData(ll_node_t *e)
+{
+	return(e->data);
+}
+
+ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2))
+{
+	ll_node_t *walker = NULL;
+
+	for(walker = *head; walker != NULL; walker = walker->next){
+		if((searchNodeFunc(walker, search)) == 0){
+			return(walker);
+		}
+	}
+
+	return((ll_node_t *)NULL);
+}
+
+int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, int (*freeNodeFunc)(void *))
 {
 	ll_node_t *walker = NULL;
 
@@ -118,7 +136,7 @@ int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, void (*freeNodeFunc)
 	return(LL_OK);
 }
 
-int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *))
+int ll_destroyListWithFreeNode(ll_node_t **head, int (*freeNodeFunc)(void *))
 {
 	ll_node_t *aux1 = NULL;
 	ll_node_t *aux2 = NULL;

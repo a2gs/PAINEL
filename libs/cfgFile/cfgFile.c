@@ -141,7 +141,7 @@ int cfgFileOpt(cfgFile_t *ctx, char *label, char **value)
 	return(CFGFILE_NOK);
 }
 
-void freeCfgNode(void *data)
+int freeCfgNode(void *data)
 {
 	cfgFileNode_t *node = NULL;
 
@@ -155,7 +155,7 @@ void freeCfgNode(void *data)
 
 	free(node);
 
-	return;
+	return(CFGFILE_NOK);
 }
 
 int cfgFileFree(cfgFile_t *ctx)

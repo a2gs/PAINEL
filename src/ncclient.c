@@ -308,6 +308,8 @@ ll_node_t *searchLLUserDRT(ll_node_t *head, char *drt, size_t drtSz)
 {
 	ll_node_t *walker = NULL;
 
+	/* TODO: change code below to ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2)) */
+
 	for(walker = head; walker != NULL; walker = walker->next){
 		if(strncmp(drt, ((userId_t *)(walker->data))->userId, drtSz) == 0)
 			return(walker);
@@ -501,6 +503,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_login(void *data)
 			alltrim(field_buffer(dtrLogin[3], 0), auxPass,  PASS_LEN);
 
 			/* TODO: it is looking only for DRT/User, looking with Level too. */
+			/* TODO: change code below to ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2)) and ll_getData() */
 			walker = searchLLUserDRT(head, auxLogin, DRT_LEN);
 
 			/* DRT found inside DRT_FILE */
@@ -592,6 +595,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_listDRT(void *data)
 
 	listScreen = derwin(thisScreen, SRC_LISTDRT_MAX_LINES - 4, SRC_LISTDRT_MAX_COLS - 2, 3, 1);
 
+	/* TODO: change code below to ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2)) and ll_getData() */
 	for(i = 0, j = 1, walker = head; walker != NULL; walker = walker->next, i++, j++){
 
 		mvwprintw(listScreen, i+1, 1, "%03d) %s - %s", j, ((userId_t *)(walker->data))->userId, userType_t_2_String(((userId_t *)walker->data)->level));
@@ -808,6 +812,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_delDRT(void *data)
 
 	alltrim(drtToDeleteInput, drtToDelete, DRT_LEN);
 
+	/* TODO: change code below to ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2)) and ll_getData() */
 	walker = searchLLUserDRT(head, drtToDelete, DRT_LEN);
 
 	/* DRT found */

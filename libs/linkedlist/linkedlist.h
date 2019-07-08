@@ -87,7 +87,7 @@ int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem);
  */
 int ll_destroyList(ll_node_t **head, short doesFreeMem);
 
-/* int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *))
+/* int ll_destroyListWithFreeNode(ll_node_t **head, int (*freeNodeFunc)(void *))
  *
  * <Description>
  *
@@ -96,9 +96,9 @@ int ll_destroyList(ll_node_t **head, short doesFreeMem);
  * OUTPUT:
  *  <None>
  */
-int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *));
+int ll_destroyListWithFreeNode(ll_node_t **head, int (*freeNodeFunc)(void *));
 
-/* int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, void (*freeNodeFunc)(void *))
+/* int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, int (*freeNodeFunc)(void *))
  *
  * <Description>
  *
@@ -107,6 +107,28 @@ int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *));
  * OUTPUT:
  *  <None>
  */
-int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, void (*freeNodeFunc)(void *));
+int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, int (*freeNodeFunc)(void *));
+
+/* void * ll_getData(ll_node_t *e)
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
+void * ll_getData(ll_node_t *e);
+
+/* ll_node * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2))
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
+ll_node_t * ll_search(ll_node_t **head, ll_node_t *search, int (*searchNodeFunc)(void *e1, void *e2));
 
 #endif
