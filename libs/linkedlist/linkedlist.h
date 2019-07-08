@@ -87,4 +87,15 @@ int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem);
  */
 int ll_destroyList(ll_node_t **head, short doesFreeMem);
 
+/* int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *))
+ *
+ * <Description>
+ *
+ * INPUT:
+ *  <None>
+ * OUTPUT:
+ *  <None>
+ */
+int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *));
+
 #endif

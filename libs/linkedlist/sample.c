@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		printf("[%s]\n", (char *)walker->data);
 	}
 
-	ll_destroyList(&head);
+	ll_destroyList(&head, 0);
 
 	return(0);
 }
