@@ -958,10 +958,12 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 int main(int argc, char *argv[])
 {
 	int cursor = 0;
+	unsigned int cfgLineError = 0;
 	char *cfgServerAddress = NULL;
 	char *cfgServerPort    = NULL;
 	char *cfgLogFile  = NULL;
 	char *cfgLogLevel = NULL;
+	cfgFile_t nccCfg;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
 /*
@@ -986,10 +988,17 @@ LOG_LEVEL
 		return(-1);
 	}
 */
-	if(argc != 5){
+	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
+
+	if(cfgFileLoad(&nccCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
+		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
+		return(-1);
+	}
+
 
 	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));

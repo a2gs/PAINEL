@@ -42,7 +42,7 @@ typedef struct _cfgFileNode_t{
 
 
 /* *** FUNCTIONS *********************************************************************** */
-size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO ............................. */
+static size_t alltrim(char *strIn, char *strOut, size_t szSrtOut) /* TODO: 'static' to not conflites with THE SAME alltrim() into util.c. Unify. */
 {
    char *init = NULL, *end = NULL;
    size_t toCopy = 0;

@@ -39,7 +39,7 @@
 int main(int argc, char *argv[])
 {
 	cfgFile_t ctx;
-	unsigned int lineError = 13;
+	unsigned int lineError = 0;
 	char *value = NULL;
 
 	if(argc != 3){
