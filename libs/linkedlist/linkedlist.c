@@ -92,7 +92,33 @@ int ll_delete(ll_node_t **head, ll_node_t *del, short doesFreeMem)
 	return(LL_OK);
 }
 
-int ll_deleteWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *))
+int ll_deleteWithFreeNode(ll_node_t **head, ll_node_t *del, void (*freeNodeFunc)(void *))
+{
+	ll_node_t *walker = NULL;
+
+	if(*head == del){
+		*head = del->next;
+		free(del->data);
+		free(del);
+		return(LL_OK);
+	}
+
+	for(walker = *head; walker != NULL; walker = walker->next){
+		if(walker->next == del){
+			walker->next = del->next;
+
+			if(freeNodeFunc != NULL)
+				freeNodeFunc(del->data);
+
+			free(del);
+			break;
+		}
+	}
+
+	return(LL_OK);
+}
+
+int ll_destroyListWithFreeNode(ll_node_t **head, void (*freeNodeFunc)(void *))
 {
 	ll_node_t *aux1 = NULL;
 	ll_node_t *aux2 = NULL;
