@@ -958,8 +958,20 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data)
 int main(int argc, char *argv[])
 {
 	int cursor = 0;
+	char *cfgServerAddress = NULL;
+	char *cfgServerPort    = NULL;
+	char *cfgLogFile  = NULL;
+	char *cfgLogLevel = NULL;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
+/*
+PAINE_SERVER_ADDRESS
+PAINE_SERVER_PORT
+LOG_FILE
+LOG_LEVEL
+*/
+
+/*
 	if(argc != 5){
 		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
@@ -971,6 +983,11 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\tMSG = Just a message\n");
 		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+		return(-1);
+	}
+*/
+	if(argc != 5){
+		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		return(-1);
 	}
 
