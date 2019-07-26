@@ -988,6 +988,21 @@ int main(int argc, char *argv[])
 */
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "CONFIG_FILE sample variables:\n");
+		fprintf(stderr, "\t#PAINE_SERVER_ADDRESS = 123.123.123.123\n");
+		fprintf(stderr, "\tPAINE_SERVER_ADDRESS = painel.server\n");
+		fprintf(stderr, "\tPAINE_SERVER_PORT = 9998\n");
+		fprintf(stderr, "\tLOG_FILE = ncclient.log\n");
+		fprintf(stderr, "\t#Log levels:\n");
+		fprintf(stderr, "\t#REDALERT = Red alert\n");
+		fprintf(stderr, "\t#DBALERT = Database alert\n");
+		fprintf(stderr, "\t#DBMSG = Database message\n");
+		fprintf(stderr, "\t#OPALERT = Operation alert\n");
+		fprintf(stderr, "\t#OPMSG = Operation message\n");
+		fprintf(stderr, "\t#MSG = Just a message\n");
+		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
+		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
+		fprintf(stderr, "\tPAINEL_PASSPHRASE = abcdefghijlmnopqrstuvxz\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
