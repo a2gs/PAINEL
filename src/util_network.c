@@ -29,6 +29,9 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
 
 #include "util.h"
 
@@ -127,7 +130,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 	return(PAINEL_OK);
 }
 
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError) /* TODO: receber size_t * indicando o quanto foi enviado */
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase) /* TODO: receber size_t * indicando o quanto foi enviado */
 {
 	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
@@ -159,7 +162,7 @@ retornando (PAINEL_NOK && recvError == 0): recv erro: Connection close unexpecte
 retornando (PAINEL_NOK && recvError != 0): recv erro. recvError mesmo valor de errno
 retornando (PAINEL_OK): 
 */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError)
+int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase)
 {
 	size_t srSz   = 0;
 	size_t lessSz = 0;
@@ -269,7 +272,7 @@ int pingServer(char *ip, char *port)
 
 	logWrite(log, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
 
-	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError) == PAINEL_NOK){
+	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
@@ -279,7 +282,7 @@ int pingServer(char *ip, char *port)
 	msgSRSz = 0; srError = 0;
 	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
 
-	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError) == PAINEL_NOK){
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);

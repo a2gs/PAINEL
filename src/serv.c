@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
 				msgBackToClient = NULL;
 
 				/* Reading the message */
-				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError) == PAINEL_NOK){
+				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, NULL) == PAINEL_NOK){
 					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
 					break;
 				}

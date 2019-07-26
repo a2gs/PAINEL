@@ -88,12 +88,12 @@ int main(int argc, char *argv[])
 		if(c != NULL) *c = '\0';
 
 		fprintf(stderr, "Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
-		if(sendToNet(getSocket(), line, strlen(line), &srError) == PAINEL_NOK){
+		if(sendToNet(getSocket(), line, strlen(line), &srError, NULL) == PAINEL_NOK){
 			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
 
-		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError) == PAINEL_NOK){
+		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError, NULL) == PAINEL_NOK){
 			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
