@@ -7,5 +7,7 @@ With HTML server build-in.<br>
 Dependences:
 - ncurses
 - SQLite3
+- OpenSSL (libssl-dev 1.1.1)
+
 
 ![PAINEL view](https://github.com/a2gs/PAINEL/blob/master/docs/PAINEL_view.png)
