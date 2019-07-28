@@ -289,6 +289,31 @@ size_t alltrim(char *strIn, char *strOut, size_t szSrtOut);
  */
 size_t n_strncpy(char *dest, const char *src, size_t n); /* man strncpy(3) */
 
-int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext);
-int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext);
+/* int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext, int *ciphertextSz)
+ *
+ *
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ * PAINEL_OK - 
+ * PAINEL_NOK - 
+ * ciphertext - 
+ * ciphertextSz - 
+ */
+int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext, int *ciphertextSz);
+
+/* int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *ciphertextSz)
+ *
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ * PAINEL_OK - 
+ * PAINEL_NOK - 
+ * plaintext - 
+ * plaintextSz - 
+ */
+int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *plaintextSz);
+
 #endif

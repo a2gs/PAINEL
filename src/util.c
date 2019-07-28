@@ -364,66 +364,74 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 	return(PAINEL_OK);
 }
 
-void handleErrors(void)
+int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext, int *ciphertextSz)
 {
-	ERR_print_errors_fp(stderr);
-	abort();
-}
+	EVP_CIPHER_CTX *ctx = NULL;
+	int len = 0;
 
-int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext)
-{
-	EVP_CIPHER_CTX *ctx;
+	*ciphertextSz = 0;
 
-	int len;
+	if(!(ctx = EVP_CIPHER_CTX_new())){
+		logWrite(logUtil, LOGOPALERT, "encrypt_SHA256(EVP_CIPHER_CTX_new()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	int ciphertext_len;
+	if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv)){
+		logWrite(logUtil, LOGOPALERT, "encrypt_SHA256(EVP_EncryptInit_ex()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(!(ctx = EVP_CIPHER_CTX_new()))
-		handleErrors();
+	if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len)){
+		logWrite(logUtil, LOGOPALERT, "encrypt_SHA256(EVP_EncryptUpdate()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
-		handleErrors();
+	*ciphertextSz = len;
 
-	if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
-		handleErrors();
+	if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)){
+		logWrite(logUtil, LOGOPALERT, "encrypt_SHA256(EVP_EncryptFinal_ex()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	ciphertext_len = len;
-
-	if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
-		handleErrors();
-
-	ciphertext_len += len;
+	*ciphertextSz += len;
 
 	EVP_CIPHER_CTX_free(ctx);
 
-	return ciphertext_len;
+	return(PAINEL_OK);
 }
 
-int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext)
+int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *plaintextSz)
 {
-	EVP_CIPHER_CTX *ctx;
+	EVP_CIPHER_CTX *ctx = NULL;
+	int len = 0;
 
-	int len;
+	*plaintextSz = 0;
 
-	int plaintext_len;
+	if(!(ctx = EVP_CIPHER_CTX_new())){
+		logWrite(logUtil, LOGOPALERT, "decrypt_SHA256(EVP_CIPHER_CTX_new()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(!(ctx = EVP_CIPHER_CTX_new()))
-		handleErrors();
+	if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv)){
+		logWrite(logUtil, LOGOPALERT, "decrypt_SHA256(EVP_DecryptInit_ex()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
-		handleErrors();
+	if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len)){
+		logWrite(logUtil, LOGOPALERT, "decrypt_SHA256(EVP_DecryptUpdate()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
-		handleErrors();
+	*plaintextSz = len;
 
-	plaintext_len = len;
+	if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len)){
+		logWrite(logUtil, LOGOPALERT, "decrypt_SHA256(EVP_DecryptFinal_ex()) error: [%s]!", ERR_error_string(ERR_get_error(), NULL));
+		return(PAINEL_NOK);
+	}
 
-	if(1 != EVP_DecryptFinal_ex(ctx, plaintext + len, &len))
-		handleErrors();
-
-	plaintext_len += len;
+	*plaintextSz += len;
 
 	EVP_CIPHER_CTX_free(ctx);
 
-	return plaintext_len;
+	return(PAINEL_OK);
 }
