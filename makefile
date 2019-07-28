@@ -39,7 +39,7 @@ WIZPATPATH = $(LOCAL_LIBS)/$(LIB_WIZPATPATH)
 CFGFILEPATH = $(LOCAL_LIBS)/$(LIB_CFGFILE)
 
 # Libs to ALL modules:
-LIBS = -lsqlite3 -l$(LIB_LOG) # Common libs, libs to all modules or system libs
+LIBS = -lsqlite3 -lssl -lcrypto -l$(LIB_LOG) # Common libs, libs to all modules or system libs
 
 # Paths normalizes
 SOURCEPATH = ./src
@@ -119,27 +119,27 @@ cfgfile:
 pingServ: logtag
 	@echo
 	@echo "=== pingServ =================="
-	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS) -lssl -lcrypto
+	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 client: sha256 logtag
 	@echo
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS) -Wno-incompatible-pointer-types -lssl -lcrypto
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS) -Wno-incompatible-pointer-types
 
 ncclient: sha256 logtag wizard_by_return llist cfgfile
 	@echo
 	@echo "=== ncclient =================="
-	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/ncclient_util.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -lform -l$(LIB_SHA256) -l$(LIB_LLIST) -l$(LIB_WIZPATPATH) -l$(LIB_CFGFILE) $(CFLAGS) -Wno-incompatible-pointer-types -lssl -lcrypto
+	$(CC) -o $(BINPATH)/ncclient $(SOURCEPATH)/ncclient.c $(SOURCEPATH)/ncclient_util.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -lncurses -lform -l$(LIB_SHA256) -l$(LIB_LLIST) -l$(LIB_WIZPATPATH) -l$(LIB_CFGFILE) $(CFLAGS) -Wno-incompatible-pointer-types
 
 sendRecvCmd:
 	@echo
 	@echo "=== sendRecvCmd =================="
-	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS) -lssl -lcrypto
+	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 serv: logtag
 	@echo
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS) -lssl -lcrypto
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) $(CFLAGS)
 
 select_html: logtag
 	@echo
@@ -159,7 +159,7 @@ userIdDB: sha256
 servList: logtag
 	@echo
 	@echo "=== servList ================"
-	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) -l$(LIB_LOG) $(CFLAGS)
+	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) $(CFLAGS)
 
 create_db: logtag
 	@echo
