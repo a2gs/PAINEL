@@ -132,13 +132,20 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
 
 	/* memset(netBuff, '\0', MAXLINE + 1); */
 
-	msgHostOderSz = srSz = msgSz;
+	msgHostOderSz = /*srSz =*/ msgSz;
+	*sendError = 0;
 
 	msgNetOrderSz = htonl(msgHostOderSz);
+
 	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+
+	if(encrypt_SHA256((unsigned char *)msg, (int) msgSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)netBuff, (int *)&srSz) == PAINEL_NOK){
+		return(PAINEL_NOK);
+	}
 
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
 		srRetAux = send(sockfd, &msg[srRet], srSz - srRet, 0);
@@ -165,6 +172,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	size_t lessSz = 0;
 	ssize_t srRet = 0, srRetAux = 0;
 	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
 
 	memset(netBuff, '\0', MAXLINE + 1);
 	memset(msg,     '\0', msgSz);
@@ -199,10 +207,15 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 
 		srRet += srRetAux;
 	}
-
+/*
 	*recvSz = msgHostOderSz;
+*/
 
-	memcpy(msg, netBuff, lessSz); /* Coping the safe amount of data (the rest will the burned) */
+	/* memcpy(msg, netBuff, lessSz); */ /* Coping the safe amount of data (the rest will the burned) */
+
+	if(decrypt_SHA256((unsigned char *)netBuff, srRet, (unsigned char *)hashpassphrase, iv, (unsigned char *)msg, (int *)recvSz) == PAINEL_NOK){
+		return(PAINEL_NOK);
+	}
 
 	srSz = msgHostOderSz - lessSz;
 	if(srSz > 0)
