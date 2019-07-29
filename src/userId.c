@@ -49,7 +49,11 @@ int dumpUserIdMemoryFromFile(ll_node_t **head, char *userIdFullPath)
 		return(PAINEL_NOK);
 	}
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 	for(walker = head; walker != NULL; walker = walker->next){
+#pragma GCC diagnostic pop
+
 		alltrim(((userId_t *)(walker->data))->userId, userIdTrim, DRT_LEN);
 
 		fprintf(fUserIdDRT, "%s-%s\n", userIdTrim, userType_t_2_String(((userId_t *)(walker->data))->level));
@@ -106,9 +110,18 @@ int loadUserIdFileToMemory(ll_node_t **head, char *userIdFullPath)
 		strncpy(newNode->userId, drt, DRT_LEN);
 		newNode->level = string_2_UserType_t(funcao);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 		if(ll_add(&head, newNode) == LL_NOK){
+#pragma GCC diagnostic pop
+
 			fclose(fUserIdDRT);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 			ll_destroyList(&head, 1);
+#pragma GCC diagnostic pop
+
 			return(PAINEL_NOK);
 		}
 	}
