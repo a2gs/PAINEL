@@ -36,6 +36,7 @@
 #include "util.h"
 
 #include <log.h>
+#include <sha-256.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -366,7 +367,10 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 
 int calcHashedNetKey(char *cfgNetKey, char *netkey)
 {
+	uint8_t hash[PASS_SHA256_BIN_LEN + 1] = {0};
 
+	calc_sha_256(hash, cfgNetKey, strlen(cfgNetKey));
+	hash_to_string(netkey, hash);
 
 	return(PAINEL_OK);
 }

@@ -974,21 +974,6 @@ int main(int argc, char *argv[])
 	cfgFile_t nccCfg;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
-/*
-	if(argc != 5){
-		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FULL_LOG_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
-		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
-		fprintf(stderr, "\tREDALERT = Red alert\n");
-		fprintf(stderr, "\tDBALERT = Database alert\n");
-		fprintf(stderr, "\tDBMSG = Database message\n");
-		fprintf(stderr, "\tOPALERT = Operation alert\n");
-		fprintf(stderr, "\tOPMSG = Operation message\n");
-		fprintf(stderr, "\tMSG = Just a message\n");
-		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
-		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
-		return(-1);
-	}
-*/
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "CONFIG_FILE sample variables:\n");
@@ -1016,42 +1001,47 @@ int main(int argc, char *argv[])
 	}
 
 	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
-		printf("Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
 	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
-		printf("Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
 
 	if(cfgFileOpt(&nccCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
-		printf("Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
 		return(-5);
 	}
 
 	if(cfgFileOpt(&nccCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
-		printf("Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
 		return(-6);
 	}
 
 	if(cfgFileOpt(&nccCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
-		printf("Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
 		return(-7);
 	}
 
 	if(cfgFileOpt(&nccCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
-		printf("Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
+		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-8);
 	}
 	strncpy(netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
 
 	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
+		fprintf(stderr, "Fail to hash netkey! Exit.\n");
+		return(-9);
 	}
+
+	memset(cfgNetKey, 0, strlen(cfgNetKey));
+	memset(cfgIVKey,  0, strlen(cfgIVKey ));
 
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-9);
+		return(-10);
 	}
 
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
@@ -1064,7 +1054,7 @@ int main(int argc, char *argv[])
 
 	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-9);
+		return(-11);
 	}
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
@@ -1080,7 +1070,7 @@ int main(int argc, char *argv[])
 	if(initscr() == NULL){;
 		printf("Erro initializating ncurses!\n");
 		logClose(&log);
-		return(-9);
+		return(-12);
 	}
 
 	keypad(stdscr, TRUE);
@@ -1096,28 +1086,28 @@ int main(int argc, char *argv[])
 		endwin();
 		printf("O terminal precisa ter no minimo 80x24");
 		logClose(&log);
-		return(-10);
+		return(-13);
 	}
 
 	if(has_colors() == FALSE){
 		endwin();
 		printf("Terminal nao suporta cores (has_colors() = FALSE).\n");
 		logClose(&log);
-		return(-11);
+		return(-14);
 	}
 
 	if(can_change_color() == FALSE){
 		endwin();
 		printf("Terminal nao suporta mudar as cores (can_change_colors() = FALSE).\n");
 		logClose(&log);
-		return(-12);
+		return(-15);
 	}
 
 	if(start_color() != OK){
 		endwin();
 		printf("Erro em iniciar cores (start_colors() = FALSE).\n");
 		logClose(&log);
-		return(-13);
+		return(-16);
 	}
 
 	set_escdelay(0);
