@@ -62,10 +62,6 @@
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
-typedef struct _netpass_t{
-	char key[PASS_SHA256_ASCII_LEN + 1];
-	char IV[IV_SHA256_LEN          + 1];
-}netpass_t;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -74,6 +70,7 @@ static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
 static netpass_t netcrypt = {{'\0'}, {'\0'}};
+
 
 /* *** FUNCTIONS *********************************************************************** */
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
@@ -264,7 +261,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 			curs_set(0);
 
-			if(pingServer(auxSrvAdd, auxSrvPrt) == PAINEL_NOK){
+			if(pingServer(auxSrvAdd, auxSrvPrt, &netcrypt) == PAINEL_NOK){
 				mvwprintw(formCfgScreen, 3, 1, "Erro em tentar conexao. Corrigir ou sair? (c/S)");
 				wrefresh(formCfgScreen);
 
@@ -973,6 +970,7 @@ int main(int argc, char *argv[])
 	char *cfgLogFile       = NULL;
 	char *cfgLogLevel      = NULL;
 	char *cfgNetKey        = NULL;
+	char *cfgIVKey         = NULL;
 	cfgFile_t nccCfg;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
@@ -1042,12 +1040,18 @@ int main(int argc, char *argv[])
 		return(-7);
 	}
 
+	if(cfgFileOpt(&nccCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
+		printf("Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
+		return(-8);
+	}
+	strncpy(netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
+
 	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
 	}
 
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-8);
+		return(-9);
 	}
 
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
@@ -1065,7 +1069,7 @@ int main(int argc, char *argv[])
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());
 
-	if(pingServer(serverAddress, serverPort) == PAINEL_OK){
+	if(pingServer(serverAddress, serverPort, &netcrypt) == PAINEL_OK){
 		logWrite(&log, LOGOPMSG, "Ping response from [%s:%s] ok. Going to main menu screen.\n", serverAddress, serverPort);
 		initFunc = screen_menu;
 	}else{

@@ -51,6 +51,8 @@
  */
 int main(int argc, char *argv[])
 {
+	netpass_t netcrypt = {{'\0'}, {'\0'}};
+
 	if(argc != 3){
 		fprintf(stderr, "[%s] Usage:\n%s <IP_ADDRESS> <PORT>\n", time_DDMMYYhhmmss(), argv[0]);
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
@@ -61,7 +63,7 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "[%s] Ping [%s] Port: [%s]\n", time_DDMMYYhhmmss(), argv[1], argv[2]);
 
-	if(pingServer(argv[1], argv[2]) == PAINEL_NOK){
+	if(pingServer(argv[1], argv[2], &netcrypt) == PAINEL_NOK){
 		fprintf(stderr, "[%s] Ping erro!\n", time_DDMMYYhhmmss());
 		return(-2);
 	}

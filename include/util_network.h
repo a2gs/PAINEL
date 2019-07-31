@@ -92,7 +92,7 @@ int disconnectSrvPainel(void);
  */
 int connectSrvPainel(char *srvAdd, char *srvPort);
 
-/* int pingServer(char *ip, char *port)
+/* int pingServer(char *ip, char *port, netpass_t *netcrypt)
  *
  *
  *
@@ -101,7 +101,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort);
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int pingServer(char *ip, char *port);
+int pingServer(char *ip, char *port, netpass_t *netcrypt);
 
 /* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError, char *hashpassphrase)
  *

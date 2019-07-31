@@ -224,7 +224,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	return(PAINEL_OK);
 }
 
-int pingServer(char *ip, char *port)
+int pingServer(char *ip, char *port, netpass_t *netcrypt)
 {
 	int sockfd = 0;
 	int srError = 0;

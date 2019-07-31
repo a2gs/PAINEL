@@ -74,6 +74,11 @@
 
 
 /* *** DATA TYPES **************************************************** */
+typedef struct _netpass_t{
+	char key[PASS_SHA256_ASCII_LEN + 1];
+	char IV[IV_SHA256_LEN          + 1];
+}netpass_t;
+
 typedef struct _htmlFiles_t{
 	FILE *htmlStatic;
 	FILE *htmlRefresh;
