@@ -62,6 +62,10 @@
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
 a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
+typedef struct _netpass_t{
+	char key[PASS_SHA256_ASCII_LEN + 1];
+	char IV[IV_SHA256_LEN          + 1];
+}netpass_t;
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
@@ -69,7 +73,7 @@ static log_t log;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
 static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
-
+static netpass_t netcrypt = {{'\0'}, {'\0'}};
 
 /* *** FUNCTIONS *********************************************************************** */
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
@@ -968,6 +972,7 @@ int main(int argc, char *argv[])
 	char *cfgServerPort    = NULL;
 	char *cfgLogFile       = NULL;
 	char *cfgLogLevel      = NULL;
+	char *cfgNetKey        = NULL;
 	cfgFile_t nccCfg;
 	a2gs_ToolBox_WizardReturnFunc_t initFunc = NULL;
 
@@ -1032,9 +1037,17 @@ int main(int argc, char *argv[])
 		return(-6);
 	}
 
+	if(cfgFileOpt(&nccCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
+		printf("Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
+		return(-7);
+	}
+
+	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
+	}
+
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
-		return(-7);
+		return(-8);
 	}
 
 	strncpy(userLogged, "Not Logged", USERLOGGED_SZ);
@@ -1047,7 +1060,7 @@ int main(int argc, char *argv[])
 
 	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-8);
+		return(-9);
 	}
 
 	logWrite(&log, LOGMUSTLOGIT, "StartUp nClient [%s]! Server: [%s] Port: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, getPAINELEnvHomeVar());

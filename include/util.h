@@ -316,4 +316,6 @@ int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *k
  */
 int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *plaintextSz);
 
+int calcHashedNetKey(char *plan, char*hashed);
+
 #endif

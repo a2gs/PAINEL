@@ -364,6 +364,13 @@ int formatProtocol(protoData_t *data, int protoCmd, char *msg, size_t msgSzIn, s
 	return(PAINEL_OK);
 }
 
+int calcHashedNetKey(char *cfgNetKey, char *netkey)
+{
+
+
+	return(PAINEL_OK);
+}
+
 int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *key, unsigned char *iv, unsigned char *ciphertext, int *ciphertextSz)
 {
 	EVP_CIPHER_CTX *ctx = NULL;
