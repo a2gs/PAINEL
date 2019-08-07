@@ -977,9 +977,9 @@ int main(int argc, char *argv[])
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "CONFIG_FILE sample variables:\n");
-		fprintf(stderr, "\t#PAINE_SERVER_ADDRESS = 123.123.123.123\n");
-		fprintf(stderr, "\tPAINE_SERVER_ADDRESS = painel.server\n");
-		fprintf(stderr, "\tPAINE_SERVER_PORT = 9998\n");
+		fprintf(stderr, "\t#PAINEL_SERVER_ADDRESS = 123.123.123.123\n");
+		fprintf(stderr, "\tPAINEL_SERVER_ADDRESS = painel.servers\n");
+		fprintf(stderr, "\tPAINEL_SERVER_PORT = 9998\n");
 		fprintf(stderr, "\tLOG_FILE = ncclient.log\n");
 		fprintf(stderr, "\t#Log levels:\n");
 		fprintf(stderr, "\t#REDALERT = Red alert\n");
@@ -1000,13 +1000,13 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label PAINE_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
+	if(cfgFileOpt(&nccCfg, "PAINEL_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label PAINEL_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
-	if(cfgFileOpt(&nccCfg, "PAINE_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label PAINE_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
+	if(cfgFileOpt(&nccCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
 
