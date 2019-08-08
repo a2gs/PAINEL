@@ -27,6 +27,8 @@
 
 
 /* *** DEFINES ******************************************************* */
+#define SERVERADDRESS_SZ                     (100)
+#define SERVERPORT_SZ                        (7)
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES *************************** */

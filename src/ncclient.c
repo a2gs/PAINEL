@@ -53,8 +53,6 @@
 
 #define ESC_KEY                              (27)
 
-#define SERVERADDRESS_SZ                     (100)
-#define SERVERPORT_SZ                        (7)
 #define USERLOGGED_SZ                        (DRT_LEN)
 
 #define SUBPATH_RUNNING_DATA_NCCLI           SUBPATH_RUNNING_DATA
@@ -67,8 +65,8 @@ a2gs_ToolBox_WizardReturnFunc_t screen_menu(void *data);
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
 static log_t log;
 static char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
-static char serverPort[SERVERPORT_SZ + 1] = {'\0'};
-static char userLogged[USERLOGGED_SZ + 1] = {'\0'};
+static char serverPort[SERVERPORT_SZ       + 1] = {'\0'};
+static char userLogged[USERLOGGED_SZ       + 1] = {'\0'};
 static netpass_t netcrypt = {{'\0'}, {'\0'}};
 
 
@@ -257,7 +255,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 			char auxSrvPrt[SERVERPORT_SZ    + 1] = {'\0'};
 
 			alltrim(field_buffer(drtCfg[1], 0), auxSrvAdd, SERVERADDRESS_SZ);
-			alltrim(field_buffer(drtCfg[3], 0), auxSrvPrt, SERVERPORT_SZ);
+			alltrim(field_buffer(drtCfg[3], 0), auxSrvPrt, SERVERPORT_SZ   );
 
 			curs_set(0);
 
@@ -280,7 +278,7 @@ a2gs_ToolBox_WizardReturnFunc_t screen_config(void *data)
 
 			if(ch == 'S' || ch == 's'){
 				strncpy(serverAddress, auxSrvAdd, SERVERADDRESS_SZ);
-				strncpy(serverPort,    auxSrvPrt, SERVERPORT_SZ);
+				strncpy(serverPort,    auxSrvPrt, SERVERPORT_SZ   );
 			}
 
 			break;
@@ -1050,7 +1048,7 @@ int main(int argc, char *argv[])
 	getLogSystem_UtilNetwork(&log);
 
 	strncpy(serverAddress, cfgServerAddress, SERVERADDRESS_SZ);
-	strncpy(serverPort,    cfgServerPort,    SERVERPORT_SZ);
+	strncpy(serverPort,    cfgServerPort,    SERVERPORT_SZ   );
 
 	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");

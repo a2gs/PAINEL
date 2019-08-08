@@ -57,10 +57,12 @@ int main(int argc, char *argv[])
 {
 	FILE *f = NULL;
 	char line[MAXLINE] = {'\0'};
+	char serverAddress[SERVERADDRESS_SZ + 1] = {'\0'};
+	char serverPort[SERVERPORT_SZ + 1] = {'\0'};
 	char *c = NULL;
 	int srError = 0;
 	size_t recvSz = 0;
-	cfgFile_t nccCfg;
+	cfgFile_t srcmdCfg;
 	unsigned int cfgLineError = 0;
 	char *cfgServerAddress = NULL;
 	char *cfgServerPort    = NULL;
@@ -78,27 +80,27 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	if(cfgFileLoad(&nccCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
+	if(cfgFileLoad(&srcmdCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
 		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
 		return(-2);
 	}
 
-	if(cfgFileOpt(&nccCfg, "PAINEL_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
+	if(cfgFileOpt(&srcmdCfg, "PAINEL_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label PAINEL_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
-	if(cfgFileOpt(&nccCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
+	if(cfgFileOpt(&srcmdCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
 
-	if(cfgFileOpt(&nccCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
+	if(cfgFileOpt(&srcmdCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
 		return(-5);
 	}
 
-	if(cfgFileOpt(&nccCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
+	if(cfgFileOpt(&srcmdCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-6);
 	}
@@ -111,6 +113,10 @@ int main(int argc, char *argv[])
 
 	memset(cfgNetKey, 0, strlen(cfgNetKey));
 	memset(cfgIVKey,  0, strlen(cfgIVKey ));
+
+	strncpy(serverAddress, cfgServerAddress, SERVERADDRESS_SZ);
+	strncpy(serverPort,    cfgServerPort,    SERVERPORT_SZ   );
+
 	getLogSystem_Util(NULL);
 
 	signal(SIGPIPE, SIG_IGN);
@@ -124,10 +130,15 @@ int main(int argc, char *argv[])
 		return(-8);
 	}
 
-	f = fopen(argv[3], "r");
+	f = fopen(argv[2], "r");
 	if(f == NULL){
-		printf("Unable to open file: [%s]\n", strerror(errno));
+		printf("Unable to open file [%s]: [%s]\n", argv[2], strerror(errno));
 		return(-9);
+	}
+
+	if(cfgFileFree(&srcmdCfg) == CFGFILE_NOK){
+		printf("Error at cfgFileFree().\n");
+		return(-11);
 	}
 
 	for(; fgets(line, MAXLINE, f) != NULL; ){
