@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
 	if(cfgFileFree(&srcmdCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-11);
+		return(-10);
 	}
 
 	for(; fgets(line, MAXLINE, f) != NULL; ){
