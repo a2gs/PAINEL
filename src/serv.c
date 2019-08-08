@@ -433,12 +433,12 @@ int main(int argc, char *argv[])
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 
-		return(-2);
+		return(-9);
 	}
 
 	if(cfgFileFree(&servCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-11);
+		return(-10);
 	}
 
 	getLogSystem_SGServer(&log); /* Loading log to business rules */
@@ -451,7 +451,7 @@ int main(int argc, char *argv[])
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-3);
+		return(-11);
 	}
 
 	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
@@ -466,7 +466,7 @@ int main(int argc, char *argv[])
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-4);
+		return(-12);
 	}
 
 	if(dbCreateAllTables() == PAINEL_NOK){
@@ -475,7 +475,7 @@ int main(int argc, char *argv[])
 
 		dbClose();
 		logClose(&log);
-		return(-5);
+		return(-13);
 	}
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -491,7 +491,7 @@ int main(int argc, char *argv[])
 
 		dbClose();
 		logClose(&log);
-		return(-6);
+		return(-14);
 	}
 
 	if(listen(listenfd, 250) != 0){
@@ -500,7 +500,7 @@ int main(int argc, char *argv[])
 
 		dbClose();
 		logClose(&log);
-		return(-7);
+		return(-15);
 	}
 
 	for(;;){
@@ -512,7 +512,7 @@ int main(int argc, char *argv[])
 
 			dbClose();
 			logClose(&log);
-			return(-8);
+			return(-16);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -564,7 +564,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-9);
+							return(-17);
 						}
 
 						break;
@@ -585,7 +585,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-10);
+							return(-18);
 						}
 
 						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == PAINEL_NOK){
@@ -602,7 +602,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-11);
+								return(-19);
 							}
 
 						}else{
@@ -628,7 +628,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-12);
+								return(-20);
 							}
 						}
 						break;
@@ -649,7 +649,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-13);
+							return(-21);
 
 						}else{
 							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
@@ -672,7 +672,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-14);
+								return(-22);
 							}
 						}
 
@@ -694,7 +694,7 @@ int main(int argc, char *argv[])
 								close(connfd);
 								logClose(&log);
 
-								return(-15);
+								return(-23);
 							}
 
 							continue;
@@ -712,7 +712,7 @@ int main(int argc, char *argv[])
 									close(connfd);
 									logClose(&log);
 
-									return(-16);
+									return(-24);
 								}
 							}
 						}
@@ -727,7 +727,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-17);
+							return(-25);
 						}
 
 						break;
@@ -742,7 +742,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-18);
+							return(-26);
 						}
 
 						msgBackToClient = msg;
@@ -756,7 +756,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-19);
+							return(-27);
 						}
 
 						if(sendClientResponse(connfd, PROT_COD_IFACE, msgBackToClient) == PAINEL_NOK){
@@ -767,7 +767,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-20);
+							return(-28);
 						}
 
 						break;
@@ -785,7 +785,7 @@ int main(int argc, char *argv[])
 							shutdown(connfd, SHUT_RDWR);
 							close(connfd);
 
-							return(-21);
+							return(-29);
 						}
 
 						if(sendClientResponse(connfd, PROT_COD_LEVELS, msgBackToClient) == PAINEL_NOK){
@@ -796,7 +796,7 @@ int main(int argc, char *argv[])
 							close(connfd);
 							logClose(&log);
 
-							return(-22);
+							return(-30);
 						}
 
 						break;
