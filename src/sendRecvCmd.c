@@ -64,21 +64,8 @@ int main(int argc, char *argv[])
 	unsigned int cfgLineError = 0;
 	char *cfgServerAddress = NULL;
 	char *cfgServerPort    = NULL;
-	/*
-	char *cfgLogFile       = NULL;
-	char *cfgLogLevel      = NULL;
-	*/
 	char *cfgNetKey        = NULL;
 	char *cfgIVKey         = NULL;
-
-	/*
-	if(argc != 4){
-		fprintf(stderr, "[%s %d] Usage:\n%s <IP_ADDRESS> <PORT> <FILE_CMDs>\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
-		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
-		return(-1);
-	}
-	*/
-
 
 	if(argc != 3){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE> <FILE_CMDs>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
@@ -86,18 +73,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\t#PAINEL_SERVER_ADDRESS = 123.123.123.123\n");
 		fprintf(stderr, "\tPAINEL_SERVER_ADDRESS = painel.servers\n");
 		fprintf(stderr, "\tPAINEL_SERVER_PORT = 9998\n");
-		/*
-		fprintf(stderr, "\tLOG_FILE = ncclient.log\n");
-		fprintf(stderr, "\t#Log levels:\n");
-		fprintf(stderr, "\t#REDALERT = Red alert\n");
-		fprintf(stderr, "\t#DBALERT = Database alert\n");
-		fprintf(stderr, "\t#DBMSG = Database message\n");
-		fprintf(stderr, "\t#OPALERT = Operation alert\n");
-		fprintf(stderr, "\t#OPMSG = Operation message\n");
-		fprintf(stderr, "\t#MSG = Just a message\n");
-		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
-		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
-		*/
 		fprintf(stderr, "\tPAINEL_PASSPHRASE = abcdefghijlmnopqrstuvxz\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
@@ -117,18 +92,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
-
-/*
-	if(cfgFileOpt(&nccCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
-		return(-5);
-	}
-
-	if(cfgFileOpt(&nccCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
-		return(-6);
-	}
-	*/
 
 	if(cfgFileOpt(&nccCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
