@@ -73,9 +73,9 @@ static netpass_t netcrypt = {{'\0'}, {'\0'}};
 /* *** FUNCTIONS *********************************************************************** */
 size_t formatTitle(char *titleOut, size_t titleOutSz, char *msg)
 {
-	size_t msgSz = 0;
+	size_t msgSz    = 0;
 	size_t midTitle = 0;
-	size_t midMsg = 0;
+	size_t midMsg   = 0;
 
 	msgSz = strlen(msg);
 
