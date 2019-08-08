@@ -134,7 +134,7 @@ ncclient: sha256 logtag wizard_by_return llist cfgfile
 sendRecvCmd:
 	@echo
 	@echo "=== sendRecvCmd =================="
-	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) -l$(LIB_CFGFILE) -l$(LIB_LLIST) $(CFLAGS)
 
 serv: logtag
 	@echo
