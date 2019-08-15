@@ -35,7 +35,8 @@
 
 #include "util.h"
 
-#include "log.h"
+#include <log.h>
+#include <cfgFile.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -75,6 +76,14 @@ int main(int argc, char **argv)
 	log_t log;
 	pid_t p = (pid_t)0;
 
+	unsigned int cfgLineError = 0;
+	/* char *cfgServerAddress = NULL; */
+	char *cfgServerPort    = NULL;
+	char *cfgLogFile       = NULL;
+	char *cfgLogLevel      = NULL;
+	cfgFile_t srvCfg;
+
+/*
 	if(argc != 5){
 		fprintf(stderr, "[%s %d] Usage:\n%s <PORT> <FILE> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
@@ -86,14 +95,66 @@ int main(int argc, char **argv)
 		fprintf(stderr, "\tMSG = Just a message\n");
 		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+		*/
 
+
+	if(argc != 2){
+		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "CONFIG_FILE sample variables:\n");
+		fprintf(stderr, "\t#PAINEL_BIND_ADDRESS = 123.123.123.123 # (not implemented yet) or DNS\n");
+		fprintf(stderr, "\tPAINEL_SERVER_PORT = 9998\n");
+		fprintf(stderr, "\tHTML_FILE = servList_Funcao.html\n");
+		fprintf(stderr, "\tLOG_FILE = servList.log\n");
+		fprintf(stderr, "\t#Log levels:\n");
+		fprintf(stderr, "\t#REDALERT = Red alert\n");
+		fprintf(stderr, "\t#DBALERT = Database alert\n");
+		fprintf(stderr, "\t#DBMSG = Database message\n");
+		fprintf(stderr, "\t#OPALERT = Operation alert\n");
+		fprintf(stderr, "\t#OPMSG = Operation message\n");
+		fprintf(stderr, "\t#MSG = Just a message\n");
+		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
+		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
+		fprintf(stderr, "\tPAINEL_PASSPHRASE = abcdefghijlmnopqrstuvxz\n\n");
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
-	if(logCreate(&log, argv[3], argv[4]) == LOG_NOK){
+	if(cfgFileLoad(&srvCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
+		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
+		return(-2);
+	}
+
+	/* TODO: not implemented yet
+	if(cfgFileOpt(&srvCfg, "PAINEL_BIND_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label PAINEL_BIND_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
+		return(-3);
+	}
+	*/
+
+	if(cfgFileOpt(&srvCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
+		return(-4);
+	}
+
+	if(cfgFileOpt(&srvCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
+		return(-5);
+	}
+
+	if(cfgFileOpt(&srvCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
+		return(-6);
+	}
+
+	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n",time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 
 		return(-2);
+	}
+
+	if(cfgFileFree(&srvCfg) == CFGFILE_NOK){
+		printf("Error at cfgFileFree().\n");
+		return(-10);
 	}
 
 	p = daemonizeWithoutLock(/*&log*/);
