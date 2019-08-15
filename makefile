@@ -159,7 +159,7 @@ userIdDB: sha256
 servList: logtag
 	@echo
 	@echo "=== servList ================"
-	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/servList $(SOURCEPATH)/servList.c $(SOURCEPATH)/util.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LOG) -l$(LIB_SHA256) -l$(LIB_CFGFILE) -l$(LIB_LLIST) $(CFLAGS)
 
 create_db: logtag
 	@echo
