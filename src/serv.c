@@ -332,7 +332,7 @@ int main(int argc, char *argv[])
 	char clientFrom[200]           = {'\0'};
 	char *msgP             = NULL;
 	char *msgBackToClient  = NULL;
-	char *cfgServerAddress = NULL;
+	/* char *cfgServerAddress = NULL; */
 	char *cfgServerPort    = NULL;
 	char *cfgLogFile       = NULL;
 	char *cfgLogLevel      = NULL;
@@ -385,16 +385,17 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-
 	if(cfgFileLoad(&servCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
 		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
 		return(-2);
 	}
 
+	/* TODO: not implemented yet
 	if(cfgFileOpt(&servCfg, "PAINEL_BIND_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label PAINEL_BIND_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
+	*/
 
 	if(cfgFileOpt(&servCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
