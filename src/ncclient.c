@@ -988,7 +988,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\t#MSG = Just a message\n");
 		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
 		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
-		fprintf(stderr, "\tNET_KEY = abcdefghijlmnopqrstuvxz\n\n");
+		fprintf(stderr, "\tNET_KEY = abcdefghijlmnopqrstuvxz\n");
 		fprintf(stderr, "\t#IV_KEY (128 bits length)\n");
 		fprintf(stderr, "\tIV_KEY = 0123456789012345\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
