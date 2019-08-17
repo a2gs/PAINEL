@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
 	char *cfgLevel = NULL;
 	char *cfgRegHTMLFile = NULL;
 	char *cfgHTMLReload = NULL;
-	cfgFile_t selHtml;
+	cfgFile_t selHtmlCfg;
 	unsigned int cfgLineError = 0;
 
 	if(argc != 2){
@@ -329,32 +329,32 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	if(cfgFileLoad(&selHtml, argv[1], &cfgLineError) == CFGFILE_NOK){
+	if(cfgFileLoad(&selHtmlCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
 		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
 		return(-2);
 	}
 
-	if(cfgFileOpt(&selHtml, "LEVEL", &cfgLevel) == CFGFILE_NOK){
+	if(cfgFileOpt(&selHtmlCfg, "LEVEL", &cfgLevel) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label LEVEL not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
-	if(cfgFileOpt(&selHtml, "REGENERATING_HTML_FILE_SECS", &cfgRegHTMLFile) == CFGFILE_NOK){
+	if(cfgFileOpt(&selHtmlCfg, "REGENERATING_HTML_FILE_SECS", &cfgRegHTMLFile) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label REGENERATING_HTML_FILE_SECS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
-	if(cfgFileOpt(&selHtml, "HTML_RELOAD", &cfgHTMLReload) == CFGFILE_NOK){
+	if(cfgFileOpt(&selHtmlCfg, "HTML_RELOAD", &cfgHTMLReload) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label HTML_RELOAD not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
 
-	if(cfgFileOpt(&selHtml, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
+	if(cfgFileOpt(&selHtmlCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
 		return(-5);
 	}
 
-	if(cfgFileOpt(&selHtml, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
+	if(cfgFileOpt(&selHtmlCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
 		return(-6);
 	}
@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
-	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
+	if(cfgFileFree(&selHtmlCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
 		return(-11);
 	}
