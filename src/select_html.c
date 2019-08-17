@@ -262,7 +262,7 @@ int hmtl_constructEmptyTable(htmlFiles_t *htmls)
  */
 int main(int argc, char *argv[])
 {
-	char *funcao = NULL;
+	char funcao[VALOR_FUNCAO_LEN + 1] = {'\0'};
 	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
 	char fHtmlStatic[SZ_HTMLFILENAME + 1] = {'\0'};
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
@@ -282,23 +282,6 @@ int main(int argc, char *argv[])
 		.columnsTable = {0},
 		.title = {0}
 	};
-/*
-	if(argc != 6){
-		fprintf(stderr, "[%s %d] Usage:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
-		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
-		fprintf(stderr, "\tREDALERT = Red alert\n");
-		fprintf(stderr, "\tDBALERT = Database alert\n");
-		fprintf(stderr, "\tDBMSG = Database message\n");
-		fprintf(stderr, "\tOPALERT = Operation alert\n");
-		fprintf(stderr, "\tOPMSG = Operation message\n");
-		fprintf(stderr, "\tMSG = Just a message\n");
-		fprintf(stderr, "\tDEV = Developer (DEBUG) message\n\n");
-		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
-
-		return(-1);
-	}
-
-*/
 	char *cfgLogFile       = NULL;
 	char *cfgLogLevel      = NULL;
 	char *cfgLevel = NULL;
@@ -310,11 +293,9 @@ int main(int argc, char *argv[])
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "CONFIG_FILE sample variables:\n");
-
 		fprintf(stderr, "\tLEVEL = <FUNCAO>\n");
 		fprintf(stderr, "\tREGENERATING_HTML_FILE_SECS = 5\n");
 		fprintf(stderr, "\tHTML_RELOAD = 10\n");
-
 		fprintf(stderr, "\tLOG_FILE = ncclient.log\n");
 		fprintf(stderr, "\t#Log levels:\n");
 		fprintf(stderr, "\t#REDALERT = Red alert\n");
@@ -365,6 +346,10 @@ int main(int argc, char *argv[])
 		return(-2);
 	}
 
+	segReaload = atoi(cfgHTMLReload);
+	segRefresh = atoi(cfgRegHTMLFile);
+	strncpy(funcao, cfgLevel, VALOR_FUNCAO_LEN);
+
 	if(cfgFileFree(&selHtmlCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
 		return(-11);
@@ -381,10 +366,6 @@ int main(int argc, char *argv[])
 		logClose(&log);
 		return(-3);
 	}
-
-	funcao = argv[1];
-	segReaload = atoi(argv[2]);
-	segRefresh = atoi(argv[3]);
 
 	snprintf(fHtmlStatic, SZ_HTMLFILENAME, "%s/%s/%s_Static.html", getPAINELEnvHomeVar(), HTML_PATH, argv[1]);
 	snprintf(fHtmlRefresh, SZ_HTMLFILENAME, "%s/%s/%s_Refresh.html", getPAINELEnvHomeVar(), HTML_PATH, argv[1]);
