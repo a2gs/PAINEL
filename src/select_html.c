@@ -322,28 +322,27 @@ int main(int argc, char *argv[])
 
 	if(cfgFileOpt(&selHtmlCfg, "REGENERATING_HTML_FILE_SECS", &cfgRegHTMLFile) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label REGENERATING_HTML_FILE_SECS not found into file [%s]! Exit.\n", argv[1]);
-		return(-3);
+		return(-4);
 	}
 
 	if(cfgFileOpt(&selHtmlCfg, "HTML_RELOAD", &cfgHTMLReload) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label HTML_RELOAD not found into file [%s]! Exit.\n", argv[1]);
-		return(-4);
+		return(-5);
 	}
 
 	if(cfgFileOpt(&selHtmlCfg, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
-		return(-5);
+		return(-6);
 	}
 
 	if(cfgFileOpt(&selHtmlCfg, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
-		return(-6);
+		return(-7);
 	}
 
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
-
-		return(-2);
+		return(-8);
 	}
 
 	segReaload = atoi(cfgHTMLReload);
@@ -352,7 +351,7 @@ int main(int argc, char *argv[])
 
 	if(cfgFileFree(&selHtmlCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-11);
+		return(-9);
 	}
 
 	getLogSystem_Util(&log); /* Loading log to util functions */
@@ -364,7 +363,7 @@ int main(int argc, char *argv[])
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-3);
+		return(-10);
 	}
 
 	snprintf(fHtmlStatic, SZ_HTMLFILENAME, "%s/%s/%s_Static.html", getPAINELEnvHomeVar(), HTML_PATH, argv[1]);
@@ -383,7 +382,7 @@ int main(int argc, char *argv[])
 			dbClose();
 			logClose(&log);
 
-			return(-4);
+			return(-11);
 		}
 
 		/* Defining report layout by user level (fucao) */
@@ -400,7 +399,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
         
-			return(-5);
+			return(-12);
 		}
 		logWrite(&log, LOGDEV, "Data returned: [%s][%s][%s]\n", pageInfo.title, pageInfo.columnsHeaders, pageInfo.columnsTable);
 
@@ -422,7 +421,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
-			return(-6);
+			return(-13);
 		}
 
 		if(html_header(&htmls, pageInfo.title, segRefresh) == PAINEL_NOK){
@@ -430,7 +429,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
-			return(-7);
+			return(-14);
 		}
 
 		if(html_startTable(&htmls, pageInfo.columnsHeaders) == PAINEL_NOK){
@@ -438,7 +437,7 @@ int main(int argc, char *argv[])
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
-			return(-8);
+			return(-15);
 		}
 
 		/* Selecting data by user level (funcao). ALL = all database */
@@ -457,7 +456,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
         
-			return(-9);
+			return(-16);
 		}
 
 		if(select_NOROW == SQL_NO_ROW){
@@ -473,7 +472,7 @@ int main(int argc, char *argv[])
 			logClose(&log);
 			dbClose();
 
-			return(-10);
+			return(-17);
 		}
 
 		html_fflush(&htmls);
