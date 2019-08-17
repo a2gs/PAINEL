@@ -134,12 +134,12 @@ int main(int argc, char **argv)
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n",time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 
-		return(-2);
+		return(-7);
 	}
 
 	if(cfgFileFree(&srvCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-10);
+		return(-8);
 	}
 
 	p = daemonizeWithoutLock(/*&log*/);
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-3);
+		return(-9);
 	}
 
 	fileName = argv[2];
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-4);
+		return(-10);
 	}
 
 	memset(&servaddr, 0, sizeof(servaddr));
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-5);
+		return(-11);
 	}
 
 	if(listen(listenfd, 250) != 0){
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-6);
+		return(-12);
 	}
 
 	for(;;){
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
-			return(-7);
+			return(-13);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
 				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
-				return(-9);
+				return(-14);
 			}
 
 			retLock = html_testHtmlLock(f);
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
-				return(-10);
+				return(-15);
 			}
 		}
 
