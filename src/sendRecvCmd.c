@@ -75,7 +75,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\t#PAINEL_SERVER_ADDRESS = 123.123.123.123\n");
 		fprintf(stderr, "\tPAINEL_SERVER_ADDRESS = painel.servers\n");
 		fprintf(stderr, "\tPAINEL_SERVER_PORT = 9998\n");
-		fprintf(stderr, "\tPAINEL_PASSPHRASE = abcdefghijlmnopqrstuvxz\n\n");
+		fprintf(stderr, "\tNET_KEY = abcdefghijlmnopqrstuvxz\n");
+		fprintf(stderr, "\t#IV_KEY (128 bits length)\n");
+		fprintf(stderr, "\tIV_KEY = 0123456789012345\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
