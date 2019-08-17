@@ -31,7 +31,8 @@
 #include "SG_serv.h"
 #include "util.h"
 
-#include "log.h"
+#include <log.h>
+#include <cfgFile.h>
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
@@ -281,7 +282,7 @@ int main(int argc, char *argv[])
 		.columnsTable = {0},
 		.title = {0}
 	};
-
+/*
 	if(argc != 6){
 		fprintf(stderr, "[%s %d] Usage:\n%s <FUNCAO> <SEGUNDOS_RELOAD_GER_HTML> <SEGUNDOS_REFRESH_HTML> <LOG_FULL_PATH> <LOG_LEVEL 'WWW|XXX|YYY|ZZZ'>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
 		fprintf(stderr, "Where WWW, XXX, YYY and ZZZ are a combination (surrounded by \"'\" and separated by \"|\") of: REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
@@ -297,10 +298,76 @@ int main(int argc, char *argv[])
 		return(-1);
 	}
 
-	if(logCreate(&log, argv[4], argv[5]) == LOG_NOK){
+*/
+	char *cfgLogFile       = NULL;
+	char *cfgLogLevel      = NULL;
+	char *cfgLevel = NULL;
+	char *cfgRegHTMLFile = NULL;
+	char *cfgHTMLReload = NULL;
+	cfgFile_t selHtml;
+	unsigned int cfgLineError = 0;
+
+	if(argc != 2){
+		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		fprintf(stderr, "CONFIG_FILE sample variables:\n");
+
+		fprintf(stderr, "\tLEVEL = <FUNCAO>\n");
+		fprintf(stderr, "\tREGENERATING_HTML_FILE_SECS = 5\n");
+		fprintf(stderr, "\tHTML_RELOAD = 10\n");
+
+		fprintf(stderr, "\tLOG_FILE = ncclient.log\n");
+		fprintf(stderr, "\t#Log levels:\n");
+		fprintf(stderr, "\t#REDALERT = Red alert\n");
+		fprintf(stderr, "\t#DBALERT = Database alert\n");
+		fprintf(stderr, "\t#DBMSG = Database message\n");
+		fprintf(stderr, "\t#OPALERT = Operation alert\n");
+		fprintf(stderr, "\t#OPMSG = Operation message\n");
+		fprintf(stderr, "\t#MSG = Just a message\n");
+		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
+		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
+		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+		return(-1);
+	}
+
+	if(cfgFileLoad(&selHtml, argv[1], &cfgLineError) == CFGFILE_NOK){
+		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
+		return(-2);
+	}
+
+	if(cfgFileOpt(&selHtml, "LEVEL", &cfgLevel) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label LEVEL not found into file [%s]! Exit.\n", argv[1]);
+		return(-3);
+	}
+
+	if(cfgFileOpt(&selHtml, "REGENERATING_HTML_FILE_SECS", &cfgRegHTMLFile) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label REGENERATING_HTML_FILE_SECS not found into file [%s]! Exit.\n", argv[1]);
+		return(-3);
+	}
+
+	if(cfgFileOpt(&selHtml, "HTML_RELOAD", &cfgHTMLReload) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label HTML_RELOAD not found into file [%s]! Exit.\n", argv[1]);
+		return(-4);
+	}
+
+	if(cfgFileOpt(&selHtml, "LOG_FILE", &cfgLogFile) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label LOG_FILE not found into file [%s]! Exit.\n", argv[1]);
+		return(-5);
+	}
+
+	if(cfgFileOpt(&selHtml, "LOG_LEVEL", &cfgLogLevel) == CFGFILE_NOK){
+		fprintf(stderr, "Config with label LOG_LEVEL not found into file [%s]! Exit.\n", argv[1]);
+		return(-6);
+	}
+
+	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
 
 		return(-2);
+	}
+
+	if(cfgFileFree(&nccCfg) == CFGFILE_NOK){
+		printf("Error at cfgFileFree().\n");
+		return(-11);
 	}
 
 	getLogSystem_Util(&log); /* Loading log to util functions */
