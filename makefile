@@ -74,47 +74,47 @@ cppcheck:
 wizard_by_return:
 	@echo
 	@echo "=== lib WIZARDBYRETURN ================="
-	$(CC) -c -o$(LIBS_BIN_PATH)/wizard_by_return.o $(WIZPATPATH)/wizard_by_return.c -I$(WIZPATPATH) $(CFLAGS) -Wno-int-conversion
-	$(AR) rc $(LIBS_BIN_PATH)/libwizard_by_return.a $(LIBS_BIN_PATH)/wizard_by_return.o
-	$(RANLIB) $(LIBS_BIN_PATH)/libwizard_by_return.a
-	$(CP) $(WIZPATPATH)/wizard_by_return.h $(LIBS_BIN_PATH)
-	-$(RM) $(LIBS_BIN_PATH)/wizard_by_return.o
+	$(CC) -c -o$(LIBS_BIN_PATH)/$(LIB_WIZPATPATH).o $(WIZPATPATH)/$(LIB_WIZPATPATH).c -I$(WIZPATPATH) $(CFLAGS) -Wno-int-conversion
+	$(AR) rc $(LIBS_BIN_PATH)/lib$(LIB_WIZPATPATH).a $(LIBS_BIN_PATH)/$(LIB_WIZPATPATH).o
+	$(RANLIB) $(LIBS_BIN_PATH)/lib$(LIB_WIZPATPATH).a
+	$(CP) $(WIZPATPATH)/$(LIB_WIZPATPATH).h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/$(LIB_WIZPATPATH).o
 
 llist:
 	@echo
 	@echo "=== lib LINKEDLIST ================="
-	$(CC) -c -o$(LIBS_BIN_PATH)/linkedlist.o $(LLISTPATH)/linkedlist.c -I$(LLISTPATH) $(CFLAGS)
-	$(AR) rc $(LIBS_BIN_PATH)/liblinkedlist.a $(LIBS_BIN_PATH)/linkedlist.o
-	$(RANLIB) $(LIBS_BIN_PATH)/liblinkedlist.a
-	$(CP) $(LLISTPATH)/linkedlist.h $(LIBS_BIN_PATH)
-	-$(RM) $(LIBS_BIN_PATH)/linkedlist.o
+	$(CC) -c -o$(LIBS_BIN_PATH)/$(LIB_LLIST).o $(LLISTPATH)/$(LIB_LLIST).c -I$(LLISTPATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/lib$(LIB_LLIST).a $(LIBS_BIN_PATH)/$(LIB_LLIST).o
+	$(RANLIB) $(LIBS_BIN_PATH)/lib$(LIB_LLIST).a
+	$(CP) $(LLISTPATH)/$(LIB_LLIST).h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/$(LIB_LLIST).o
 
 logtag:
 	@echo
 	@echo "=== lib LOG ================="
-	$(CC) -c -o$(LIBS_BIN_PATH)/log.o $(LOGPATH)/log.c -I$(LOGPATH) $(CFLAGS)
-	$(AR) rc $(LIBS_BIN_PATH)/liblog.a $(LIBS_BIN_PATH)/log.o
-	$(RANLIB) $(LIBS_BIN_PATH)/liblog.a
-	$(CP) $(LOGPATH)/log.h $(LIBS_BIN_PATH)
-	-$(RM) $(LIBS_BIN_PATH)/log.o
+	$(CC) -c -o$(LIBS_BIN_PATH)/$(LIB_LOG).o $(LOGPATH)/$(LIB_LOG).c -I$(LOGPATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/lib$(LIB_LOG).a $(LIBS_BIN_PATH)/$(LIB_LOG).o
+	$(RANLIB) $(LIBS_BIN_PATH)/lib$(LIB_LOG).a
+	$(CP) $(LOGPATH)/$(LIB_LOG).h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/$(LIB_LOG).o
 
 sha256:
 	@echo
 	@echo "=== lib SHA256 =============="
-	$(CC) -c -o$(LIBS_BIN_PATH)/sha-256.o $(SHA256PATH)/sha-256.c -I$(SHA256PATH) $(CFLAGS)
-	$(AR) rc $(LIBS_BIN_PATH)/libsha-256.a $(LIBS_BIN_PATH)/sha-256.o
-	$(RANLIB) $(LIBS_BIN_PATH)/libsha-256.a
-	$(CP) $(SHA256PATH)/sha-256.h $(LIBS_BIN_PATH)
-	-$(RM) $(LIBS_BIN_PATH)/sha-256.o
+	$(CC) -c -o$(LIBS_BIN_PATH)/$(LIB_SHA256).o $(SHA256PATH)/$(LIB_SHA256).c -I$(SHA256PATH) $(CFLAGS)
+	$(AR) rc $(LIBS_BIN_PATH)/lib$(LIB_SHA256).a $(LIBS_BIN_PATH)/$(LIB_SHA256).o
+	$(RANLIB) $(LIBS_BIN_PATH)/lib$(LIB_SHA256).a
+	$(CP) $(SHA256PATH)/$(LIB_SHA256).h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/$(LIB_SHA256).o
 
 cfgfile:
 	@echo
 	@echo "=== lib CFGFILE ================="
-	$(CC) -c -o$(LIBS_BIN_PATH)/cfgFile.o $(CFGFILEPATH)/cfgFile.c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS) -Wno-unused-value
-	$(AR) rc $(LIBS_BIN_PATH)/libcfgFile.a $(LIBS_BIN_PATH)/cfgFile.o
-	$(RANLIB) $(LIBS_BIN_PATH)/libcfgFile.a
-	$(CP) $(CFGFILEPATH)/cfgFile.h $(LIBS_BIN_PATH)
-	-$(RM) $(LIBS_BIN_PATH)/cfgFile.o
+	$(CC) -c -o$(LIBS_BIN_PATH)/$(LIB_CFGFILE).o $(CFGFILEPATH)/$(LIB_CFGFILE).c -I$(CFGFILEPATH) -I$(LLISTPATH) $(CFLAGS) -Wno-unused-value
+	$(AR) rc $(LIBS_BIN_PATH)/lib$(LIB_CFGFILE).a $(LIBS_BIN_PATH)/$(LIB_CFGFILE).o
+	$(RANLIB) $(LIBS_BIN_PATH)/lib$(LIB_CFGFILE).a
+	$(CP) $(CFGFILEPATH)/$(LIB_CFGFILE).h $(LIBS_BIN_PATH)
+	-$(RM) $(LIBS_BIN_PATH)/$(LIB_CFGFILE).o
 
 pingServ: logtag
 	@echo
