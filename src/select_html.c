@@ -262,33 +262,33 @@ int hmtl_constructEmptyTable(htmlFiles_t *htmls)
  */
 int main(int argc, char *argv[])
 {
-	char funcao[VALOR_FUNCAO_LEN + 1] = {'\0'};
-	char sql[SQL_COMMAND_SZ + 1] = {'\0'};
-	char fHtmlStatic[SZ_HTMLFILENAME + 1] = {'\0'};
+	char *cfgLogFile     = NULL;
+	char *cfgLogLevel    = NULL;
+	char *cfgLevel       = NULL;
+	char *cfgRegHTMLFile = NULL;
+	char *cfgHTMLReload  = NULL;
+	char funcao[VALOR_FUNCAO_LEN      + 1] = {'\0'};
+	char sql[SQL_COMMAND_SZ           + 1] = {'\0'};
+	char fHtmlStatic[SZ_HTMLFILENAME  + 1] = {'\0'};
 	char fHtmlRefresh[SZ_HTMLFILENAME + 1] = {'\0'};
-	char DBPath[DB_PATHFILE_SZ + 1] = {'\0'};
+	char DBPath[DB_PATHFILE_SZ        + 1] = {'\0'};
+	unsigned int segReaload   = 0;
+	unsigned int segRefresh   = 0;
+	unsigned int cfgLineError = 0;
 	pid_t p = (pid_t)0;
 	log_t log;
+	cfgFile_t selHtmlCfg;
 	htmlFiles_t htmls = {
 		.htmlStatic = NULL,
 		.htmlRefresh = NULL,
 		.fdStatic = 0,
 		.fdRefresh = 0
 	};
-	unsigned int segReaload = 0;
-	unsigned int segRefresh = 0;
 	pageInfos_t pageInfo = {
 		.columnsHeaders = {0},
 		.columnsTable = {0},
 		.title = {0}
 	};
-	char *cfgLogFile       = NULL;
-	char *cfgLogLevel      = NULL;
-	char *cfgLevel = NULL;
-	char *cfgRegHTMLFile = NULL;
-	char *cfgHTMLReload = NULL;
-	cfgFile_t selHtmlCfg;
-	unsigned int cfgLineError = 0;
 
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
