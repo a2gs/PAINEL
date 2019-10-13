@@ -38,7 +38,7 @@
 #include <util_network.h>
 #include <cfgFile.h>
 #include <db.h>
-#include <SG_serv.h>
+#include <BL_serv.h>
 
 #include "log.h"
 
@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
 	userIdent_t userSession = {0};
 	unsigned int cfgLineError = 0;
 	cfgFile_t servCfg;
-	SG_registroDB_t msgCleaned = {0};
+	BL_registroDB_t msgCleaned = {0};
 
 	if(argc != 2){
 		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
@@ -574,7 +574,7 @@ int main(int argc, char *argv[])
 							return(-18);
 						}
 
-						if(SG_checkLogin(userSession.username, userSession.passhash, userSession.level) == PAINEL_NOK){
+						if(BL_checkLogin(userSession.username, userSession.passhash, userSession.level) == PAINEL_NOK){
 							msgBackToClient = "ERRO|User/funcion/password didnt find into database!";
 
 							logWrite(&log, LOGOPMSG, "User [%s][%s][%s][%s] not found into database!\n", userSession.username, userSession.level, userSession.passhash, userSession.dateTime);
@@ -594,11 +594,11 @@ int main(int argc, char *argv[])
 						}else{
 							logWrite(&log, LOGOPMSG, "Login ok: [%s][%s][%s]\n", userSession.username, userSession.level, userSession.dateTime);
 
-							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+							memset(&msgCleaned, 0, sizeof(BL_registroDB_t));
 
-							SG_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+							BL_fillInDataInsertLogin(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
-							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
+							if(BL_db_inserting(&msgCleaned) == PAINEL_NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user login database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGIN INTO DATABASE (server insert error)!";
 							}else{
@@ -638,11 +638,11 @@ int main(int argc, char *argv[])
 							return(-21);
 
 						}else{
-							memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+							memset(&msgCleaned, 0, sizeof(BL_registroDB_t));
 
-							SG_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
+							BL_fillInDataInsertLogout(userSession.username, userSession.level, userSession.dateTime, clientFrom, portFrom, &msgCleaned);
 
-							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
+							if(BL_db_inserting(&msgCleaned) == PAINEL_NOK){
 								logWrite(&log, LOGDBALERT, "Error inserting user logout database register [%s:%d]: [%s][%s][%s]! But it is working (logged) at its terminal...\n", clientFrom, portFrom, userSession.username, userSession.level, userSession.dateTime);
 								msgBackToClient = "OK|BUT USER WAS NOT REGISTERED LOGOUT INTO DATABASE (server insert error)!";
 							}else{
@@ -665,9 +665,9 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_INSREG:
-						memset(&msgCleaned, 0, sizeof(SG_registroDB_t));
+						memset(&msgCleaned, 0, sizeof(BL_registroDB_t));
 
-						if(SG_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == PAINEL_NOK){
+						if(BL_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == PAINEL_NOK){
 							msgBackToClient = "ERRO|Protocol INSERT REGSITER unable to parse!";
 
 							logWrite(&log, LOGOPALERT, "ERRO: PARSING INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msgP);
@@ -685,7 +685,7 @@ int main(int argc, char *argv[])
 
 							continue;
 						}else{
-							if(SG_db_inserting(&msgCleaned) == PAINEL_NOK){
+							if(BL_db_inserting(&msgCleaned) == PAINEL_NOK){
 								msgBackToClient = "ERRO|Unable to insert register into database!";
 
 								logWrite(&log, LOGDBALERT, "ERRO: INSERT REGISTER FROM CLIENT [%s:%d]: [%s]!\n", clientFrom, portFrom, msg);
@@ -734,8 +734,8 @@ int main(int argc, char *argv[])
 						msgBackToClient = msg;
 						memset(msg, '\0', sizeof(msg));
 
-						if(SG_getUserIFace(msgBackToClient, sizeof(msg), userSession.level) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE SG_getUserIFace() error! Disconnected.\n");
+						if(BL_getUserIFace(msgBackToClient, sizeof(msg), userSession.level) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE BL_getUserIFace() error! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);
@@ -763,8 +763,8 @@ int main(int argc, char *argv[])
 						msgBackToClient = msg;
 						memset(msg, '\0', sizeof(msg));
 
-						if(SG_getLevels(msgBackToClient, sizeof(msg)) == PAINEL_NOK){
-							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS SG_getLevels() error! Disconnected.\n");
+						if(BL_getLevels(msgBackToClient, sizeof(msg)) == PAINEL_NOK){
+							logWrite(&log, LOGOPALERT, "PROT_COD_LEVELS BL_getLevels() error! Disconnected.\n");
 
 							dbClose();
 							logClose(&log);

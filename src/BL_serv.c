@@ -8,7 +8,7 @@
  */
 
 
-/* SG_serv.c
+/* BL_serv.c
  * Server side business-specific logic/stuff: protocol formatter, database operations, etc.
  *
  *  Who     | When       | What
@@ -23,7 +23,7 @@
 #include <string.h>
 #include <sqlite3.h>
 
-#include "SG_serv.h"
+#include "BL_serv.h"
 #include "util.h"
 #include "db.h"
 
@@ -31,7 +31,7 @@
 
 
 /* *** DEFINES AND LOCAL DATA TYPE DEFINATION ****************************************** */
-#define SZ_SG_SQLCMD			(2000)
+#define SZ_BL_SQLCMD			(2000)
 
 
 /* *** LOCAL PROTOTYPES (if applicable) ************************************************ */
@@ -43,7 +43,7 @@ typedef struct _getUserIFace_t{
 
 
 /* *** EXTERNS / LOCAL / GLOBALS VARIEBLES ********************************************* */
-static char SG_NOROW_RET = SQL_NO_ROW;
+static char BL_NOROW_RET = SQL_NO_ROW;
 static log_t *log = NULL;
 
 
@@ -54,32 +54,32 @@ void getLogSystem_SGServer(log_t *logClient)
 	return;
 }
 
-int SG_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColName)
+int BL_checkLogin_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
-	SG_NOROW_RET = SQL_HAS_ROW;
+	BL_NOROW_RET = SQL_HAS_ROW;
 	return(0);
 }
 
-int SG_checkLogin(char *user, char *passhash, char *func)
+int BL_checkLogin(char *user, char *passhash, char *func)
 {
-	char sql[SZ_SG_SQLCMD + 1] = {'\0'};
+	char sql[SZ_BL_SQLCMD + 1] = {'\0'};
 
-	snprintf(sql, SZ_SG_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'", DB_USERS_TABLE, user, func, passhash);
+	snprintf(sql, SZ_BL_SQLCMD, "SELECT ID FROM %s WHERE ID = '%s' AND FUNCAO = '%s' AND PASSHASH = '%s'", DB_USERS_TABLE, user, func, passhash);
 
-	SG_NOROW_RET = SQL_NO_ROW;
+	BL_NOROW_RET = SQL_NO_ROW;
 
-	if(dbSelect(sql, SG_checkLogin_callback, NULL) == PAINEL_NOK){
+	if(dbSelect(sql, BL_checkLogin_callback, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user login from table.\n");
 		return(PAINEL_NOK);
 	}
 
-	if(SG_NOROW_RET == SQL_NO_ROW)
+	if(BL_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
 
 	return(PAINEL_OK);
 }
 
-int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+int BL_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data)
 {
 	/* DRT */
 	strcpy(data->drt, user);
@@ -99,7 +99,7 @@ int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, 
 	return(PAINEL_OK);
 }
 
-int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+int BL_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data)
 {
 	/* DRT */
 	strcpy(data->drt, user);
@@ -135,7 +135,7 @@ int protocolChecking(char *msg)
 
 inline int protocolChecking(char *msg);
 
-int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
+int BL_parsingDataInsertRegistro(char *msg, char *ip, int port, BL_registroDB_t *data)
 {
 	char *p = NULL;
 
@@ -286,11 +286,11 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
 	return(PAINEL_OK);
 }
 
-int SG_db_inserting(SG_registroDB_t *data)
+int BL_db_inserting(BL_registroDB_t *data)
 {
-	char sqlCmd[sizeof(SG_registroDB_t) + 300] = {'\0'};
+	char sqlCmd[sizeof(BL_registroDB_t) + 300] = {'\0'};
 
-	memset(sqlCmd, '\0', sizeof(SG_registroDB_t) + 300);
+	memset(sqlCmd, '\0', sizeof(BL_registroDB_t) + 300);
 
 	snprintf(sqlCmd,
 	         SQL_COMMAND_SZ,
@@ -309,12 +309,12 @@ int SG_db_inserting(SG_registroDB_t *data)
 	return(PAINEL_OK);
 }
 
-int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
+int BL_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 {
 	int i = 0;
 	getUserIFace_t *data = NULL;
 
-	SG_NOROW_RET = SQL_HAS_ROW;
+	BL_NOROW_RET = SQL_HAS_ROW;
 	data = dt;
 
 	if(data->bufSzUsed != 0){
@@ -347,12 +347,12 @@ int SG_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 	return(0);
 }
 
-int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
+int BL_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
 {
-	char sqlCmd[SZ_SG_SQLCMD + 1] = {'\0'};
+	char sqlCmd[SZ_BL_SQLCMD + 1] = {'\0'};
 	getUserIFace_t data;
 
-	memset(sqlCmd, '\0', SZ_SG_SQLCMD);
+	memset(sqlCmd, '\0', SZ_BL_SQLCMD);
 	data.buf       = msgBackToClient;
 	data.bufSz     = msgBackToClientSz;
 	data.bufSzUsed = 0;
@@ -362,66 +362,66 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 				"SELECT FIELD, FTYPE, FFMT, FDESC FROM %s WHERE FUNCAO = '%s' ORDER BY FORDER ASC",
 	         DB_USRIFACE_TABLE, usrLevel);
 
-	SG_NOROW_RET = SQL_NO_ROW;
+	BL_NOROW_RET = SQL_NO_ROW;
 
 /* logWrite(log, LOGOPALERT, "aqui 11\n"); */
 
-	if(dbSelect(sqlCmd, SG_GetUserIFace_callback, &data) == PAINEL_NOK){
+	if(dbSelect(sqlCmd, BL_GetUserIFace_callback, &data) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user iface from table.\n");
 		return(PAINEL_NOK);
 	}
 
 /* logWrite(log, LOGOPALERT, "aqui 22\n"); */
 
-	if(SG_NOROW_RET == SQL_NO_ROW)
+	if(BL_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
 
 	return(PAINEL_OK);
 }
 
-int SG_GetLevels_callback(void *dt, int argc, char **argv, char **azColName)
+int BL_GetLevels_callback(void *dt, int argc, char **argv, char **azColName)
 {
 	char *data = NULL;
-#define SG_SERV_DB_LEVEL_LINE   (300)
+#define BL_SERV_DB_LEVEL_LINE   (300)
 	char *fmtMask = NULL;
-	char fmt[SG_SERV_DB_LEVEL_LINE + 1] = {'\0'};
+	char fmt[BL_SERV_DB_LEVEL_LINE + 1] = {'\0'};
 
-	SG_NOROW_RET = SQL_HAS_ROW;
+	BL_NOROW_RET = SQL_HAS_ROW;
 	data = dt;
 
-	memset(fmt, 0, SG_SERV_DB_LEVEL_LINE + 1);
+	memset(fmt, 0, BL_SERV_DB_LEVEL_LINE + 1);
 
 	if(data[0] == '\0') /* first element */
 		fmtMask = "%s:%s";
 	else
 		fmtMask = "|%s:%s";
 
-	snprintf(fmt, SG_SERV_DB_LEVEL_LINE, fmtMask, argv[0], argv[1]);
+	snprintf(fmt, BL_SERV_DB_LEVEL_LINE, fmtMask, argv[0], argv[1]);
 
 	strcat(data, fmt); /* TODO: strncat() */
 
 	return(0);
 }
 
-int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
+int BL_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
 {
-	char sqlCmd[SZ_SG_SQLCMD + 1] = {'\0'};
+	char sqlCmd[SZ_BL_SQLCMD + 1] = {'\0'};
 
-	memset(sqlCmd, '\0', SZ_SG_SQLCMD);
+	memset(sqlCmd, '\0', SZ_BL_SQLCMD);
 
 	snprintf(sqlCmd,
 	         SQL_COMMAND_SZ,
 				"SELECT FUNCAO, DESCRIPT FROM %s WHERE FUNCAO IS NOT 'All'",
 	         DB_USERLEVEL_TABLE);
 
-	SG_NOROW_RET = SQL_NO_ROW;
+	BL_NOROW_RET = SQL_NO_ROW;
 
-	if(dbSelect(sqlCmd, SG_GetLevels_callback, msgBackToClient) == PAINEL_NOK){
+	if(dbSelect(sqlCmd, BL_GetLevels_callback, msgBackToClient) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting levels from table.\n");
 		return(PAINEL_NOK);
 	}
 
-	if(SG_NOROW_RET == SQL_NO_ROW)
+	if(BL_NOROW_RET == SQL_NO_ROW)
 		return(PAINEL_NOK);
 
 	return(PAINEL_OK);

@@ -233,7 +233,7 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt)
 	int errGetAddrInfoCode = 0, errConnect = 0;
 	char strAddr[STRADDR_SZ + 1] = {'\0'};
 	struct addrinfo hints, *res = NULL, *rp = NULL;
-	char pingPongMsg[PINGPONG_MSG_SZ + 1] = {'\0'};
+	char pingPongMsg[PINGPONG_MBL_SZ + 1] = {'\0'};
 
 	memset (&hints, 0, sizeof (hints));
 	hints.ai_family = AF_UNSPEC;
@@ -277,8 +277,8 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt)
 	freeaddrinfo(res);
 
 	msgSRSz = 0; srError = 0;
-	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
-	msgSRSz = snprintf(pingPongMsg, PINGPONG_MSG_SZ, "%d|PING", PROT_COD_PING);
+	memset(pingPongMsg, '\0', PINGPONG_MBL_SZ + 1);
+	msgSRSz = snprintf(pingPongMsg, PINGPONG_MBL_SZ, "%d|PING", PROT_COD_PING);
 
 	logWrite(log, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
 
@@ -290,9 +290,9 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt)
 	}
 
 	msgSRSz = 0; srError = 0;
-	memset(pingPongMsg, '\0', PINGPONG_MSG_SZ + 1);
+	memset(pingPongMsg, '\0', PINGPONG_MBL_SZ + 1);
 
-	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MSG_SZ, &msgSRSz, &srError, NULL) == PAINEL_NOK){
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MBL_SZ, &msgSRSz, &srError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);

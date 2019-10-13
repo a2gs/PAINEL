@@ -8,7 +8,7 @@
  */
 
 
-/* SG_serv.h
+/* BL_serv.h
  * <File description>
  *
  *  Who     | When       | What
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __SG_SERV_H__
-#define __SG_SERV_H__
+#ifndef __BL_SERV_H__
+#define __BL_SERV_H__
 
 
 /* *** INCLUDES ****************************************************** */
@@ -37,7 +37,7 @@
 
 /* *** DATA TYPES **************************************************** */
 /* DATABASE SCHEMA */
-typedef struct _SG_registroDB_t{
+typedef struct _BL_registroDB_t{
 	char drt[DRT_LEN                         + 1];
 	char data[DATA_LEN                       + 1];
 	char loginout[1                          + 1];
@@ -61,7 +61,7 @@ typedef struct _SG_registroDB_t{
 	char aspecto[SUPMAQ_ASPEC_LEN            + 1];
 	char refugo[SUPMAG_REFUGO_LEN            + 1];
 	char ipport[VALOR_IPPORT_LEN             + 1];
-}SG_registroDB_t;
+}BL_registroDB_t;
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
@@ -76,7 +76,7 @@ typedef struct _SG_registroDB_t{
  */
 void getLogSystem_SGServer(log_t *logServ);
 
-/* int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data)
+/* int BL_parsingDataInsertRegistro(char *msg, char *ip, int port, BL_registroDB_t *data)
  *
  * Parses the message's data.
  *
@@ -89,9 +89,9 @@ void getLogSystem_SGServer(log_t *logServ);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Parsing error
  */
-int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t *data);
+int BL_parsingDataInsertRegistro(char *msg, char *ip, int port, BL_registroDB_t *data);
 
-/* int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+/* int BL_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data)
  *
  * Parses the logout's message data.
  *
@@ -106,9 +106,9 @@ int SG_parsingDataInsertRegistro(char *msg, char *ip, int port, SG_registroDB_t 
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Parsing error
  */
-int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
+int BL_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data);
 
-/* int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data)
+/* int BL_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data)
  *
  * Parses the login's message data.
  *
@@ -123,9 +123,9 @@ int SG_fillInDataInsertLogout(char *user, char *func, char *dateTime, char *ip, 
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Parsing error
  */
-int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, SG_registroDB_t *data);
+int BL_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, int port, BL_registroDB_t *data);
 
-/* int SG_checkLogin(char *user, char *passhash, char *func)
+/* int BL_checkLogin(char *user, char *passhash, char *func)
  *
  * Check a User ID, User Level and password (hashed).
  *
@@ -137,9 +137,9 @@ int SG_fillInDataInsertLogin(char *user, char *func, char *dateTime, char *ip, i
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error (user does not exist)
  */
-int SG_checkLogin(char *user, char *passhash, char *func);
+int BL_checkLogin(char *user, char *passhash, char *func);
 
-/* int SG_db_open_or_create(void)
+/* int BL_db_open_or_create(void)
  *
  * Create database and its objects: tables, index, etc.
  *
@@ -150,10 +150,10 @@ int SG_checkLogin(char *user, char *passhash, char *func);
  *  PAINEL_NOK - Error opening or creating database
  */
 /*
-int SG_db_open_or_create(void);
+int BL_db_open_or_create(void);
 */
 
-/* int SG_db_inserting(SG_registroDB_t *data)
+/* int BL_db_inserting(BL_registroDB_t *data)
  *
  * Insert a row into database.
  *
@@ -163,9 +163,9 @@ int SG_db_open_or_create(void);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error inserting
  */
-int SG_db_inserting(SG_registroDB_t *data);
+int BL_db_inserting(BL_registroDB_t *data);
 
-/* int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
+/* int BL_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel)
  *
  *
  * INPUT:
@@ -173,9 +173,9 @@ int SG_db_inserting(SG_registroDB_t *data);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error selecting
  */
-int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel);
+int BL_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLevel);
 
-/* int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
+/* int BL_getLevels(char *msgBackToClient, size_t msgBackToClientSz)
  *
  *
  * INPUT:
@@ -183,6 +183,6 @@ int SG_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error selecting
  */
-int SG_getLevels(char *msgBackToClient, size_t msgBackToClientSz);
+int BL_getLevels(char *msgBackToClient, size_t msgBackToClientSz);
 
 #endif

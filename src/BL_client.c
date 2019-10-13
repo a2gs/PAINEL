@@ -8,7 +8,7 @@
  */
 
 
-/* SG_client.c
+/* BL_client.c
  * Client side business-specific logic/stuff: client screen, protocol formatter, etc.
  *
  *  Who     | When       | What
@@ -31,7 +31,7 @@
 #include "util.h"
 #include "util_network.h"
 #include "client.h"
-#include "SG_client.h"
+#include "BL_client.h"
 #include "userId.h"
 
 #include <sha-256.h>
@@ -174,7 +174,7 @@ int validatingLoginServerResponse(char *servResp)
 	return(validatingDefaultServerResponse(servResp, PROT_COD_LOGIN, &msg));
 }
 
-int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
+int BL_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 {
 	int recvError = 0;
 	size_t srSz = 0;
@@ -188,7 +188,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	logWrite(log, LOGDEV, "Sending to server: [%s] [%lu]B.\n", lineToSend, srSz);
 
 	if(sendToNet(sockfd, lineToSend, srSz, &recvError, NULL) == PAINEL_NOK){
-		logWrite(log, LOGOPALERT, "ERRO: send() SG_sendLogin [%s].\n", strerror(recvError));
+		logWrite(log, LOGOPALERT, "ERRO: send() BL_sendLogin [%s].\n", strerror(recvError));
 		printf("ERRO no envio do registro [%s]!\n", strerror(recvError));
 		return(PAINEL_NOK);
 	}
@@ -217,7 +217,7 @@ int SG_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 	return(PAINEL_OK);
 }
 
-int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
+int BL_sendLogoutExit(int sockfd, char *drt, char *funcao)
 {
 	size_t msgSz = 0;
 	int srError = 0;
@@ -250,7 +250,7 @@ int SG_sendLogoutExit(int sockfd, char *drt, char *funcao)
 	return(PAINEL_OK);
 }
 
-int SG_interfaceFornoEletrico(char *drt, int socket)
+int BL_interfaceFornoEletrico(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
@@ -371,7 +371,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket)
 	return(PAINEL_OK);
 }
 
-int SG_interfaceOperadorMaquina(char *drt, int socket)
+int BL_interfaceOperadorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
@@ -525,7 +525,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket)
 	return(PAINEL_OK);
 }
 
-int SG_interfaceSupervisorMaquina(char *drt, int socket)
+int BL_interfaceSupervisorMaquina(char *drt, int socket)
 {
 	char confirmaEnvio[CONFIRMA_ENFIO_LEN + 1] = {'\0'};
 	int srError = 0;
@@ -632,7 +632,7 @@ int geraArqDRTs(void)
 	return(PAINEL_OK);
 }
 
-/* int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
+/* int BL_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
  *
  * Search the User Level (office responsability) from a DRT (User ID) reading a local file.
  *
@@ -644,7 +644,7 @@ int geraArqDRTs(void)
  *  PAINEL_NOK - User Id not located into file.
  *  PAINEL_OK - User identified
  */
-int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
+int BL_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 {
 	FILE *fDRT = NULL;
 	char line[LINE_DRT_FILE_LEN + 1] = {'\0'};
@@ -714,7 +714,7 @@ int SG_relacionaDRTTipoUsuario(char *drt, char *funcao, tipoUsuario_t *usrType)
 	return(PAINEL_OK);
 }
 
-int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
+int BL_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
 {
 	char pass[PASS_LEN + 1] = {'\0'};
 	uint8_t hash[32] = {0};
@@ -736,7 +736,7 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 		return(PAINEL_NOK);
 	}
 
-	if(SG_relacionaDRTTipoUsuario(drt, funcao, userType) == PAINEL_NOK){
+	if(BL_relacionaDRTTipoUsuario(drt, funcao, userType) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Tentativa de acesso com DRT [%s] nao reconhecida ou com funcao cadastrada invalida as [%s].\n", drt, time_DDMMYYhhmmss());
 		return(PAINEL_NOK);
 	}
@@ -754,22 +754,22 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
 	return(PAINEL_OK);
 }
 
-int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
+int BL_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
 {
 	switch(userType){
 
 		case FORNO_ELETRICO:
-			if(SG_interfaceFornoEletrico(drt, sockfd) == PAINEL_NOK)
+			if(BL_interfaceFornoEletrico(drt, sockfd) == PAINEL_NOK)
 				return(PAINEL_NOK);
 			break;
 
 		case OPERADOR_MAQUINA:
-			if(SG_interfaceOperadorMaquina(drt, sockfd) == PAINEL_NOK)
+			if(BL_interfaceOperadorMaquina(drt, sockfd) == PAINEL_NOK)
 				return(PAINEL_NOK);
 			break;
 
 		case SUPERVISOR_MAQUINA:
-			if(SG_interfaceSupervisorMaquina(drt, sockfd) == PAINEL_NOK)
+			if(BL_interfaceSupervisorMaquina(drt, sockfd) == PAINEL_NOK)
 				return(PAINEL_NOK);
 			break;
 

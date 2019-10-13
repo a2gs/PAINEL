@@ -204,12 +204,12 @@ int main(int argc, char **argv)
 		if(f == NULL){
 			logWrite(&log, LOGOPALERT, "Erro abrindo arquivo [%s] para conexao [%s:%d] as [%s]: [%s]. Sent \"PAGE NOT DEFINED!\" to client.\n", fileName, clientFrom, portFrom, time_DDMMYYhhmmss(), strerror(errno));
 
-			send(connfd, HTML_START_PROT1, sizeof(HTML_START_PROT1)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
-			send(connfd, HTML_START_PROT2, sizeof(HTML_START_PROT2)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
+			send(connfd, HTML_START_PROT1, sizeof(HTML_START_PROT1)-1, /*MBL_DONTWAIT|MBL_MORE*/0);
+			send(connfd, HTML_START_PROT2, sizeof(HTML_START_PROT2)-1, /*MBL_DONTWAIT|MBL_MORE*/0);
 
-			send(connfd, "PAGE NOT DEFINED!", sizeof("PAGE NOT DEFINED!"), /*MSG_DONTWAIT|MSG_MORE*/0);
+			send(connfd, "PAGE NOT DEFINED!", sizeof("PAGE NOT DEFINED!"), /*MBL_DONTWAIT|MBL_MORE*/0);
 
-			send(connfd, "\r\n", 2, /*MSG_DONTWAIT*/0);
+			send(connfd, "\r\n", 2, /*MBL_DONTWAIT*/0);
 
 			shutdown(connfd, SHUT_RDWR);
 			close(connfd);
@@ -242,18 +242,18 @@ int main(int argc, char **argv)
 			}
 		}
 
-		send(connfd, HTML_START_PROT1, sizeof(HTML_START_PROT1)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
-		send(connfd, HTML_START_PROT2, sizeof(HTML_START_PROT2)-1, /*MSG_DONTWAIT|MSG_MORE*/0);
+		send(connfd, HTML_START_PROT1, sizeof(HTML_START_PROT1)-1, /*MBL_DONTWAIT|MBL_MORE*/0);
+		send(connfd, HTML_START_PROT2, sizeof(HTML_START_PROT2)-1, /*MBL_DONTWAIT|MBL_MORE*/0);
 
 		while(!feof(f)){
 			memset(msg, '\0', MAXLINE);
 
 			if(fgets(msg, MAXLINE, f) == NULL) break;
 
-			send(connfd, msg, strlen(msg), /*MSG_DONTWAIT|MSG_MORE*/0);
+			send(connfd, msg, strlen(msg), /*MBL_DONTWAIT|MBL_MORE*/0);
 		}
 
-		send(connfd, "\r\n", 2, /*MSG_DONTWAIT*/0);
+		send(connfd, "\r\n", 2, /*MBL_DONTWAIT*/0);
 
 		shutdown(connfd, SHUT_RDWR);
 		close(connfd);

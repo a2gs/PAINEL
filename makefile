@@ -124,7 +124,7 @@ pingServ: logtag
 client: sha256 logtag
 	@echo
 	@echo "=== client =================="
-	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/client $(SOURCEPATH)/client.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/BL_client.c $(SOURCEPATH)/userId.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS)
 
 ncclient: sha256 logtag wizard_by_return llist cfgfile
 	@echo
@@ -139,7 +139,7 @@ sendRecvCmd:
 serv: logtag
 	@echo
 	@echo "=== serv ===================="
-	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/SG_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_CFGFILE) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/BL_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_CFGFILE) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS)
 
 select_html: logtag
 	@echo

@@ -24,7 +24,7 @@
 /* *** INCLUDES ****************************************************** */
 #include "SG.h"
 /*
-#include "SG_client.h"
+#include "BL_client.h"
 */
 
 #include <linkedlist.h>

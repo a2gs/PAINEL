@@ -8,7 +8,7 @@
  */
 
 
-/* SG_client.h
+/* BL_client.h
  * <File description>
  *
  *  Who     | When       | What
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __SG_CLIENT_H__
-#define __SG_CLIENT_H__
+#ifndef __BL_CLIENT_H__
+#define __BL_CLIENT_H__
 
 
 /* *** INCLUDES ****************************************************** */
@@ -80,7 +80,7 @@ typedef struct _supMaquina_t{
  */
 void getLogSystem_SGClient(log_t *logClient);
 
-/* int SG_sendLogoutExit(int socket, char *drt, char *funcao)
+/* int BL_sendLogoutExit(int socket, char *drt, char *funcao)
  *
  * Send logoff message to server.
  *
@@ -92,9 +92,9 @@ void getLogSystem_SGClient(log_t *logClient);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error sending (send(2))
  */
-int SG_sendLogoutExit(int socket, char *drt, char *funcao);
+int BL_sendLogoutExit(int socket, char *drt, char *funcao);
 
-/* int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao)
+/* int BL_sendLogin(int socket, char *drt, char *passhash, char *funcao)
  *
  * Send login message to server.
  *
@@ -107,9 +107,9 @@ int SG_sendLogoutExit(int socket, char *drt, char *funcao);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Error sending (send(2))
  */
-int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao);
+int BL_sendLogin(int socket, char *drt, char *passhash, char *funcao);
 
-/* int SG_interfaceSupervisorMaquina(char *drt, int socket)
+/* int BL_interfaceSupervisorMaquina(char *drt, int socket)
  *
  * SupervisorMaquina screen.
  *
@@ -120,9 +120,9 @@ int SG_sendLogin(int socket, char *drt, char *passhash, char *funcao);
  *  PAINEL_OK - Data collected
  *  PAINEL_NOK - Data did not collect
  */
-int SG_interfaceSupervisorMaquina(char *drt, int socket);
+int BL_interfaceSupervisorMaquina(char *drt, int socket);
 
-/* int SG_interfaceOperadorMaquina(char *drt, int socket)
+/* int BL_interfaceOperadorMaquina(char *drt, int socket)
  *
  * OperadorMaquina screen.
  *
@@ -133,9 +133,9 @@ int SG_interfaceSupervisorMaquina(char *drt, int socket);
  *  PAINEL_OK - Data collected
  *  PAINEL_NOK - Data did not collect
  */
-int SG_interfaceOperadorMaquina(char *drt, int socket);
+int BL_interfaceOperadorMaquina(char *drt, int socket);
 
-/* int SG_interfaceFornoEletrico(char *drt, int socket)
+/* int BL_interfaceFornoEletrico(char *drt, int socket)
  *
  * FornoEletrico screen.
  *
@@ -146,7 +146,7 @@ int SG_interfaceOperadorMaquina(char *drt, int socket);
  *  PAINEL_OK - Data collected
  *  PAINEL_NOK - Data did not collect
  */
-int SG_interfaceFornoEletrico(char *drt, int socket);
+int BL_interfaceFornoEletrico(char *drt, int socket);
 
 /* int geraArqDRTs(void)
  *
@@ -160,7 +160,7 @@ int SG_interfaceFornoEletrico(char *drt, int socket);
  */
 int geraArqDRTs(void);
 
-/* int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
+/* int BL_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType)
  *
  * Login screen.
  *
@@ -174,9 +174,9 @@ int geraArqDRTs(void);
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Login error
  */
-int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType);
+int BL_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userType);
 
-/* int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
+/* int BL_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType)
  *
  * Call the correct screen to active user.
  *
@@ -189,6 +189,6 @@ int SG_fazerLogin(char *drt, char *passhash, char *funcao, tipoUsuario_t *userTy
  *  PAINEL_OK - Ok
  *  PAINEL_NOK - Screen error
  */
-int SG_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType);
+int BL_clientScreen(int sockfd, char *drt, char *funcao, tipoUsuario_t userType);
 
 #endif
