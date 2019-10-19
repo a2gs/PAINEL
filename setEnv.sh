@@ -28,6 +28,21 @@ export PAINEL_HOME=`pwd`
 
 export PATH=$PATH:$PAINEL_HOME/scripts
 
+if [ ! -d running ]; then
+	echo 'Creating running directory.'
+	mkdir -p running
+fi
+
+if [ ! -d running/CFGs ]; then
+	echo 'Creating CFGs directory (no cfgs inside).'
+	mkdir -p running/CFGs
+fi
+
+if [ ! -d running/PIDs ]; then
+	echo 'Creating PIDs directory.'
+	mkdir -p running/PIDs
+fi
+
 ALERT_ERROR()
 {
 	ret=$?
