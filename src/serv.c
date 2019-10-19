@@ -402,7 +402,7 @@ int main(int argc, char *argv[])
 		return(-7);
 	}
 
-	if(cfgFileOpt(&servCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
+	if(cfgFileOpt(&servCfg, "NET_IV", &cfgIVKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-8);
 	}

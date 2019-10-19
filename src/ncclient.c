@@ -989,8 +989,8 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\t#DEV = Developer (DEBUG) message\n");
 		fprintf(stderr, "\tLOG_LEVEL = REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\n");
 		fprintf(stderr, "\tNET_KEY = abcdefghijlmnopqrstuvxz\n");
-		fprintf(stderr, "\t#IV_KEY (128 bits length)\n");
-		fprintf(stderr, "\tIV_KEY = 0123456789012345\n\n");
+		fprintf(stderr, "\t#KEY_IV (128 bits length)\n");
+		fprintf(stderr, "\tKEY_IV = 0123456789012345\n\n");
 		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
@@ -1025,7 +1025,7 @@ int main(int argc, char *argv[])
 		return(-7);
 	}
 
-	if(cfgFileOpt(&nccCfg, "IV_KEY", &cfgIVKey) == CFGFILE_NOK){
+	if(cfgFileOpt(&nccCfg, "KEY_IV", &cfgIVKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-8);
 	}
