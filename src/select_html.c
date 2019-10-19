@@ -366,8 +366,8 @@ int main(int argc, char *argv[])
 		return(-10);
 	}
 
-	snprintf(fHtmlStatic, SZ_HTMLFILENAME, "%s/%s/%s_Static.html", getPAINELEnvHomeVar(), HTML_PATH, argv[1]);
-	snprintf(fHtmlRefresh, SZ_HTMLFILENAME, "%s/%s/%s_Refresh.html", getPAINELEnvHomeVar(), HTML_PATH, argv[1]);
+	snprintf(fHtmlStatic, SZ_HTMLFILENAME, "%s/%s/%s_Static.html", getPAINELEnvHomeVar(), HTML_PATH, funcao);
+	snprintf(fHtmlRefresh, SZ_HTMLFILENAME, "%s/%s/%s_Refresh.html", getPAINELEnvHomeVar(), HTML_PATH, funcao);
 	snprintf(DBPath, DB_PATHFILE_SZ, "%s/%s/%s", getPAINELEnvHomeVar(), DATABASE_PATH, DATABASE_FILE);
 
 	logWrite(&log, LOGMUSTLOGIT, "Select HTML Up! Level: [%s] Generation seconds: [%d] HTML refresh seconds: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s] Files: [%s | %s].\n", funcao, segReaload, segRefresh, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar(), fHtmlStatic, fHtmlRefresh);
