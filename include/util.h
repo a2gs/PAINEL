@@ -40,7 +40,7 @@
 #define PAINEL_NOK          (-1)
 
 #define PAINEL_HOME_ENV          ("PAINEL_HOME") /* PAINEL home enviroument variable */
-#define SUBPATH_RUNNING_DATA     ("running")
+#define SUBPATH_RUNNING_DATA     ("running/PIDs")
 
 #define LOGOUT_CMD               ("exit")
 #define LOGIN_CMD                ("login")
