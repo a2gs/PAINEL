@@ -323,4 +323,16 @@ int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
 
 int calcHashedNetKey(char *plan, char*hashed);
 
+/* int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut)
+ *
+ *
+ * INPUT:
+ *  
+ * OUTPUT:
+ * PAINEL_OK - 
+ * PAINEL_NOK - 
+ * bufOut - A text (string '\0' terminated) memory hex dump
+ */
+int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut);
+
 #endif
