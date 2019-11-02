@@ -26,6 +26,7 @@
 #include <time.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <sys/stat.h>
@@ -443,6 +444,63 @@ int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
 	*plaintextSz += len;
 
 	EVP_CIPHER_CTX_free(ctx);
+
+	return(PAINEL_OK);
+}
+
+int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut)
+{
+#define DUMPBUFFER_MAX_BYTES_PER_LINE 16
+#define DUMPBUFFER_ONE_LINE_SIZE sizeof("xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx-aaaaaaaaaaaaaaaaN")
+#define DUMPBUFFER_HEX_LINE_SIZE sizeof("xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx")
+
+	char auxFmt[3] = {'\0'};
+	size_t bufOutLen = 0;
+	unsigned int newLine = 0, totalLines = 0;
+	unsigned char *bufOutWalker = NULL, *hexCode = NULL, *asciiCode = NULL, *bufInWalker = NULL;
+
+	bufInWalker = (unsigned char *)data;
+	totalLines = (int)(dataLen / DUMPBUFFER_MAX_BYTES_PER_LINE) + 1;
+	bufOutLen = totalLines * DUMPBUFFER_ONE_LINE_SIZE;
+
+	if(((*bufOut) = (unsigned char *)malloc(bufOutLen)) == NULL)
+		return(PAINEL_NOK);
+
+	bufOutWalker = (*bufOut);
+
+	memset(*bufOut, 0, bufOutLen);
+
+	for(newLine = 0; (size_t)(bufInWalker - (unsigned char *)data) < dataLen; bufInWalker++, newLine++){
+		auxFmt[0] = '\0';
+		auxFmt[1] = '\0';
+		auxFmt[2] = '\0';
+
+		if(newLine == DUMPBUFFER_MAX_BYTES_PER_LINE){
+			*bufOutWalker = '\n';
+			bufOutWalker++;
+			newLine = 0;
+		}
+
+		if(newLine == 0){
+			memset(bufOutWalker, ' ', DUMPBUFFER_ONE_LINE_SIZE);
+			hexCode = bufOutWalker;
+			asciiCode = bufOutWalker + DUMPBUFFER_HEX_LINE_SIZE - 1;
+			*asciiCode = '-';
+			asciiCode++;
+		}
+
+		snprintf(auxFmt, 3, "%02X", *bufInWalker);
+		memcpy(hexCode, auxFmt, 2);
+
+		(*asciiCode) = isprint(*bufInWalker) ? *bufInWalker : '.';
+
+		hexCode += 3;
+		asciiCode += 1;
+
+		bufOutWalker = asciiCode;
+
+	}
+	*bufOutWalker = '\0';
 
 	return(PAINEL_OK);
 }
