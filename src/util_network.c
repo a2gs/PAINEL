@@ -152,14 +152,20 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 	}
 #endif
 
+	/* 1. Encrypt */
 	if(encrypt_SHA256((unsigned char *)msg, (int) msgSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)netBuff, (int *)&srSz) == PAINEL_NOK){
 		return(PAINEL_NOK);
 	}
 
+	/* 2. Send encrypted msg size */
 	msgNetOrderSz = htonl(srSz);
 
-	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
-
+	srRet = send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+	if(srRet == -1){
+		*sendError = errno;
+		return(PAINEL_NOK);
+	}
+	
 #ifdef PAINEL_NETWORK_DUMP
 	{
 		unsigned char *dumpMsg = NULL;
@@ -176,15 +182,14 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 	}
 #endif
 
-	for(srRet = 0; srRet < (ssize_t)srSz; ){
+	/* 3. Send encrypted msg size */
+	for(srRet = 0, srRetAux = 0; srRet < (ssize_t)srSz; srRet += srRetAux){
 		srRetAux = send(sockfd, &netBuff[srRet], srSz - srRet, 0);
 
 		if(srRetAux == -1){
 			*sendError = errno;
 			return(PAINEL_NOK);
 		}
-
-		srRet += srRetAux;
 	}
 
 	return(PAINEL_OK);
@@ -203,7 +208,9 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 
 	memset(netBuff, '\0', MAXLINE + 1);
 	memset(msg,     '\0', msgSz);
+	*recvError = 0;
 
+	/* 1. Receive encrypted msg size */
 	retRecv = recv(sockfd, &msgNetOrderSz, 4, 0);
 	if(retRecv == -1){
 		*recvError = errno;
@@ -212,7 +219,8 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 
 	msgNetSz = ntohl(msgNetOrderSz);
 
-	for(retRecv = 0, totRecv = 0; totRecv < (ssize_t)msgNetSz; ){
+	/* 2. Read encrypted msg */
+	for(retRecv = 0, totRecv = 0; totRecv < (ssize_t)msgNetSz; totRecv += retRecv){
 
 		retRecv = recv(sockfd, &netBuff[totRecv], MAXLINE, 0);
 
@@ -225,8 +233,6 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 			*recvError = errno;
 			return(PAINEL_NOK);
 		}
-
-		totRecv += retRecv;
 	}
 
 #ifdef PAINEL_NETWORK_DUMP
@@ -245,6 +251,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	}
 #endif
 
+	/* 3. Decrypt */
 	if(decrypt_SHA256((unsigned char *)netBuff, msgNetSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)msg, (int *)recvSz) == PAINEL_NOK){
 		return(PAINEL_NOK);
 	}
