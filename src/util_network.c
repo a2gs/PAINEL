@@ -131,24 +131,53 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 {
 	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
-	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+	uint32_t msgNetOrderSz = 0;
 	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
 
-	/* memset(netBuff, '\0', MAXLINE + 1); */
-
-	msgHostOderSz = /*srSz =*/ msgSz;
 	*sendError = 0;
 
-	msgNetOrderSz = htonl(msgHostOderSz);
+#ifdef PAINEL_NETWORK_DUMP
+	{
+		unsigned char *dumpMsg = NULL;
 
-	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+		dumpHexBuff(&msgSz, (size_t)4, &dumpMsg);
+		logWrite(log, LOGDEV, "Sending unencrypted msg size (%ld bytes): ", msgSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+
+		dumpHexBuff(&msg, msgSz, &dumpMsg);
+		logWrite(log, LOGDEV, "Sending unencrypted msg:\n");
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+	}
+#endif
 
 	if(encrypt_SHA256((unsigned char *)msg, (int) msgSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)netBuff, (int *)&srSz) == PAINEL_NOK){
 		return(PAINEL_NOK);
 	}
 
+	msgNetOrderSz = htonl(srSz);
+
+	send(sockfd, &msgNetOrderSz, 4, 0); /* Sending the message size in binary. 4 bytes at the beginning */
+
+#ifdef PAINEL_NETWORK_DUMP
+	{
+		unsigned char *dumpMsg = NULL;
+
+		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
+		logWrite(log, LOGDEV, "Sending msg size (%ld bytes - network byte order): ", srSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+
+		dumpHexBuff(&netBuff, (size_t)srSz, &dumpMsg);
+		logWrite(log, LOGDEV, "Sending encrypted msg (%ld bytes):\n", srSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+	}
+#endif
+
 	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRetAux = send(sockfd, &msg[srRet], srSz - srRet, 0);
+		srRetAux = send(sockfd, &netBuff[srRet], srSz - srRet, 0);
 
 		if(srRetAux == -1){
 			*sendError = errno;
@@ -168,58 +197,68 @@ retornando (PAINEL_OK):
 */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase)
 {
-	size_t srSz   = 0;
-	size_t lessSz = 0;
-	ssize_t srRet = 0, srRetAux = 0;
-	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
 	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
+	uint32_t msgNetOrderSz = 0, msgNetSz = 0;
+	ssize_t retRecv = 0, totRecv = 0;
 
 	memset(netBuff, '\0', MAXLINE + 1);
 	memset(msg,     '\0', msgSz);
 
-	*recvError = 0;
-	*recvSz    = 0;
+	retRecv = recv(sockfd, &msgNetOrderSz, 4, 0);
+	if(retRecv == -1){
+		*recvError = errno;
+		return(PAINEL_NOK);
+	}
 
-	recv(sockfd, &msgNetOrderSz, 4, 0);
-	msgHostOderSz = ntohl(msgNetOrderSz);
+	msgNetSz = ntohl(msgNetOrderSz);
 
-	/* What is smallest? MAXLINE (network buffer), msgSz (user msg buffer) or size sent into protocol? */
-	lessSz = ((MAXLINE < msgSz) ? (MAXLINE < msgHostOderSz ? MAXLINE : msgHostOderSz) : (msgSz < msgHostOderSz ? msgSz : msgHostOderSz));
+	for(retRecv = 0, totRecv = 0; totRecv < (ssize_t)msgNetSz; ){
 
-	/* lessSz MUST BE the smallest size inside msg. If there will be more data (msgHostOderSz - lessSz), netBuff will be
-	 * copied to msg and the rest os bytes into socket will be burned!
-	 */
+		retRecv = recv(sockfd, &netBuff[totRecv], MAXLINE, 0);
 
-	srSz = lessSz;
-
-	for(srRet = 0; srRet < (ssize_t)srSz; ){
-		srRetAux = recv(sockfd, &netBuff[srRet], MAXLINE, 0);
-
-		if(srRetAux == 0){
+		if(retRecv == 0){
 			*recvError = 0;
 			return(PAINEL_NOK);
 		}
 
-		if(srRetAux == -1){
+		if(retRecv == -1){
 			*recvError = errno;
 			return(PAINEL_NOK);
 		}
 
-		srRet += srRetAux;
+		totRecv += retRecv;
 	}
-/*
-	*recvSz = msgHostOderSz;
-*/
 
-	/* memcpy(msg, netBuff, lessSz); */ /* Coping the safe amount of data (the rest will the burned) */
+#ifdef PAINEL_NETWORK_DUMP
+	{
+		unsigned char *dumpMsg = NULL;
 
-	if(decrypt_SHA256((unsigned char *)netBuff, srRet, (unsigned char *)hashpassphrase, iv, (unsigned char *)msg, (int *)recvSz) == PAINEL_NOK){
+		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
+		logWrite(log, LOGDEV, "Received msg size (%ld bytes - network byte order): ", msgNetSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+
+		dumpHexBuff(&netBuff, (size_t)msgNetSz, &dumpMsg);
+		logWrite(log, LOGDEV, "Received encrypted msg (%ld bytes):\n", msgNetSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+	}
+#endif
+
+	if(decrypt_SHA256((unsigned char *)netBuff, msgNetSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)msg, (int *)recvSz) == PAINEL_NOK){
 		return(PAINEL_NOK);
 	}
 
-	srSz = msgHostOderSz - lessSz;
-	if(srSz > 0)
-		recv(sockfd, netBuff, MAXLINE, 0);
+#ifdef PAINEL_NETWORK_DUMP
+	{
+		unsigned char *dumpMsg = NULL;
+
+		dumpHexBuff(&msg, msgSz, &dumpMsg);
+		logWrite(log, LOGDEV, "Received unencrypted msg (%ld bytes):\n", recvSz);
+		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		free(dumpMsg);
+	}
+#endif
 
 	return(PAINEL_OK);
 }
