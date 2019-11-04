@@ -140,14 +140,16 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 	{
 		unsigned char *dumpMsg = NULL;
 
+		/*
 		dumpHexBuff(&msgSz, (size_t)4, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending unencrypted msg size (%ld bytes): ", msgSz);
-		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		logWrite(log, LOGDEV, "\n%s\n", dumpMsg);
 		free(dumpMsg);
+		*/
 
 		dumpHexBuff(&msg, msgSz, &dumpMsg);
-		logWrite(log, LOGDEV, "Sending unencrypted msg:\n");
-		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		logWrite(log, LOGDEV, "Sending unencrypted msg (%ld bytes):\n", msgSz);
+		logWrite(log, LOGDEV, "\n%s\n", dumpMsg);
 		free(dumpMsg);
 	}
 #endif
@@ -172,12 +174,12 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 
 		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending msg size (%ld bytes - network byte order): ", srSz);
-		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		logWrite(log, LOGDEV, "\n%s\n", dumpMsg);
 		free(dumpMsg);
 
 		dumpHexBuff(&netBuff, (size_t)srSz, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending encrypted msg (%ld bytes):\n", srSz);
-		logWrite(log, LOGDEV, "%s\n", dumpMsg);
+		logWrite(log, LOGDEV, "\n%s\n", dumpMsg);
 		free(dumpMsg);
 	}
 #endif
