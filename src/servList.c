@@ -64,7 +64,7 @@
  */
 int main(int argc, char **argv)
 {
-	int listenfd = 0, connfd = 0, i = 0, retLock = 0;
+	int listenfd = 0, connfd = 0, i = 0, retLock = 0, srvListPort = 0;
 	socklen_t len;
 	struct sockaddr_in servaddr, cliaddr;
 	char addStr[255 + 1] = {'\0'};
@@ -137,6 +137,12 @@ int main(int argc, char **argv)
 		return(-7);
 	}
 
+	if(cfgServerPort == NULL || cfgServerPort[0] == '\0'){
+		fprintf(stderr, "[%s %d] Port number cannt be null value: [%s]! Exit.\n", time_DDMMYYhhmmss(), getpid(), cfgServerPort);
+		return(-9);
+	}
+	srvListPort = atoi(cfgServerPort);
+
 	if(cfgFileFree(&srvCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
 		return(-8);
@@ -153,7 +159,7 @@ int main(int argc, char **argv)
 
 	fileName = argv[2];
 
-	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", srvListPort, fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenfd == -1){
@@ -167,7 +173,7 @@ int main(int argc, char **argv)
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port        = htons(atoi(argv[1]));
+	servaddr.sin_port        = htons(srvListPort);
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s]\n", strerror(errno));
