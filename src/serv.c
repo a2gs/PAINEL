@@ -317,14 +317,14 @@ int sendClientResponse(int connfd, int ProtCode, void *data)
  * Server starts.
  *
  * INPUT:
- *  argv[1] - Server port
+ *  argv[1] - Server cfg file
  * OUTPUT (to SO):
  *  0 - Ok
  *  !0 - Error (see log)
  */
 int main(int argc, char *argv[])
 {
-	int listenfd = 0, connfd = 0/*, readRet = 0*/;
+	int listenfd = 0, connfd = 0, servPort = 0/*, readRet = 0*/;
 	int recvError = 0;
 	char addStr[255 + 1]           = {'\0'};
 	char msg[MAXLINE + 1]          = {'\0'} /*, *endLine = NULL*/;
@@ -422,6 +422,12 @@ int main(int argc, char *argv[])
 		return(-9);
 	}
 
+	if(cfgServerPort == NULL || cfgServerPort[0] == '\0'){
+		fprintf(stderr, "[%s %d] Port number cannt be null value: [%s]! Exit.\n", time_DDMMYYhhmmss(), getpid(), cfgServerPort);
+		return(-9);
+	}
+	servPort = atoi(cfgServerPort);
+
 	if(cfgFileFree(&servCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
 		return(-10);
@@ -440,7 +446,7 @@ int main(int argc, char *argv[])
 		return(-11);
 	}
 
-	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", servPort, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	/* colocar aqui:
 	 * if(abrir arquivo servlock) == PAINEL_OK
@@ -469,7 +475,7 @@ int main(int argc, char *argv[])
 	memset(&servaddr, 0, sizeof(servaddr));
 	servaddr.sin_family      = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servaddr.sin_port        = htons(atoi(argv[1]));
+	servaddr.sin_port        = htons(servPort);
 
 	if(bind(listenfd, (const struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
 		logWrite(&log, LOGOPALERT, "Erro bind: [%s].\n", strerror(errno));
