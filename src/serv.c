@@ -446,7 +446,7 @@ int main(int argc, char *argv[])
 		return(-13);
 	}
 
-	logWrite(&log, LOGMUSTLOGIT, "Server Up! Port: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", servPort, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "Server Up! Cfg File: [%s] Port: [%d] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], servPort, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	/* colocar aqui:
 	 * if(abrir arquivo servlock) == PAINEL_OK

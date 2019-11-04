@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 
 	fileName = argv[2];
 
-	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Port: [%s] File: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", srvListPort, fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
+	logWrite(&log, LOGMUSTLOGIT, "Server List Up! Cfg file: [%s] Port: [%s] Msg file: [%s] PID: [%d] Date: [%s] PAINEL Home: [%s].\n", argv[1], srvListPort, fileName, p, time_DDMMYYhhmmss(), getPAINELEnvHomeVar());
 
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listenfd == -1){
