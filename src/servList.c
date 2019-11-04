@@ -139,13 +139,13 @@ int main(int argc, char **argv)
 
 	if(cfgServerPort == NULL || cfgServerPort[0] == '\0'){
 		fprintf(stderr, "[%s %d] Port number cannt be null value: [%s]! Exit.\n", time_DDMMYYhhmmss(), getpid(), cfgServerPort);
-		return(-9);
+		return(-8);
 	}
 	srvListPort = atoi(cfgServerPort);
 
 	if(cfgFileFree(&srvCfg) == CFGFILE_NOK){
 		printf("Error at cfgFileFree().\n");
-		return(-8);
+		return(-9);
 	}
 
 	p = daemonizeWithoutLock(/*&log*/);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-9);
+		return(-10);
 	}
 
 	fileName = argv[2];
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-10);
+		return(-11);
 	}
 
 	memset(&servaddr, 0, sizeof(servaddr));
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-11);
+		return(-12);
 	}
 
 	if(listen(listenfd, 250) != 0){
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
 		logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 		logClose(&log);
-		return(-12);
+		return(-13);
 	}
 
 	for(;;){
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 			logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 			logClose(&log);
-			return(-13);
+			return(-14);
 		}
 
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
-				return(-14);
+				return(-15);
 			}
 
 			retLock = html_testHtmlLock(f);
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 				logWrite(&log, LOGREDALERT, "Terminating application!\n\n");
 
 				logClose(&log);
-				return(-15);
+				return(-16);
 			}
 		}
 
