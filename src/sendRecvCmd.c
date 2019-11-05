@@ -125,9 +125,9 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGTERM, SIG_IGN);
 
-	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), argv[1], argv[2], argv[3], getPAINELEnvHomeVar());
+	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] Cfg file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, argv[2], argv[1], getPAINELEnvHomeVar());
 
-	if(connectSrvPainel(argv[1], argv[2]) == PAINEL_NOK){
+	if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
 		logWrite(NULL, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", argv[1], argv[2]);
 		return(-8);
 	}
