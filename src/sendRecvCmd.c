@@ -47,8 +47,8 @@ static netpass_t netcrypt = {{'\0'}, {'\0'}};
 /* int main(int argc, char *argv[])
  *
  * INPUT:
- *  argv[1] - Server IP address
- *  argv[2] - Server port
+ *  argv[1] - Cfg file
+ *  argv[2] - Command file
  * OUTPUT (to SO):
  *  0 - Ok
  *  !0 - Error (see log)
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] Cfg file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, argv[2], argv[1], getPAINELEnvHomeVar());
 
 	if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
-		logWrite(NULL, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", argv[1], argv[2]);
+		logWrite(NULL, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", serverAddress, serverPort);
 		return(-8);
 	}
 
