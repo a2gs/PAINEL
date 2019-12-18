@@ -433,9 +433,10 @@ int main(int argc, char *argv[])
 		return(-12);
 	}
 
-	getLogSystem_SGServer(&log); /* Loading log to business rules */
-	getLogSystem_Util(&log);     /* Loading log to util functions */
-	getLogSystem_DB(&log);       /* Loading log to DB functions */
+	getLogSystem_SGServer(&log);    /* Loading log to business rules */
+	getLogSystem_Util(&log);        /* Loading log to util functions */
+	getLogSystem_UtilNetwork(&log); /* Loading log to util network functions */
+	getLogSystem_DB(&log);          /* Loading log to DB functions */
 
 	p = daemonize();
 	if(p == (pid_t)PAINEL_NOK){
