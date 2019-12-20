@@ -310,7 +310,6 @@ int dbOpen(char *userDBPath, int flags)
 {
 	int rc = 0;
 
-	log = NULL;
 	db = NULL;
 
 	if(userDBPath == NULL)
