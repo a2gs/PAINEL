@@ -127,12 +127,12 @@ int connectSrvPainel(char *srvAdd, char *srvPort)
 	return(PAINEL_OK);
 }
 
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase) /* TODO: receber size_t * indicando o quanto foi enviado */
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase, unsigned char *iv) /* TODO: receber size_t * indicando o quanto foi enviado */
 {
 	ssize_t srRet = 0, srRetAux = 0;
 	size_t srSz = 0;
 	uint32_t msgNetOrderSz = 0;
-	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
+	/* unsigned char *iv = (unsigned char *)"0123456789012345"; */ /* TODO */
 
 	*sendError = 0;
 
@@ -140,16 +140,23 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
 	{
 		unsigned char *dumpMsg = NULL;
 
+		logWrite(log, LOGDEV, "Raw msg to send: [%s]\n", msg);
+
 		dumpHexBuff(&msg, msgSz, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending unencrypted msg (%ld bytes):\n%s\n", msgSz, dumpMsg);
 		free(dumpMsg);
 	}
+
+	logWrite(log, LOGDEV, "Starting encrypton...\nmsg[%s]\nmsgSz[%d]\nhashpassphrase[%s]\niv[%s]\nnetBuff[%s]\nsrSz[%ld]", msg, msgSz, hashpassphrase, iv, netBuff, srSz);
 #endif
 
 	/* 1. Encrypt */
 	if(encrypt_SHA256((unsigned char *)msg, (int) msgSz, (unsigned char *)hashpassphrase, iv, (unsigned char *)netBuff, (int *)&srSz) == PAINEL_NOK){
+		logWrite(log, LOGDEV, "ERROR: encrypt_SHA256() returned error!\n");
 		return(PAINEL_NOK);
 	}
+
+	logWrite(log, LOGDEV, "Encrypted! Sending size: [%ld]\n", srSz);
 
 	/* 2. Send encrypted msg size */
 	msgNetOrderSz = htonl(srSz);
@@ -192,9 +199,9 @@ retornando (PAINEL_NOK && recvError == 0): recv erro: Connection close unexpecte
 retornando (PAINEL_NOK && recvError != 0): recv erro. recvError mesmo valor de errno
 retornando (PAINEL_OK): 
 */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase)
+int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase, unsigned char *iv)
 {
-	unsigned char *iv = (unsigned char *)"0123456789012345"; /* TODO */
+	/* unsigned char *iv = (unsigned char *)"0123456789012345"; */ /* TODO */
 	uint32_t msgNetOrderSz = 0, msgNetSz = 0;
 	ssize_t retRecv = 0, totRecv = 0;
 
@@ -320,7 +327,7 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt)
 
 	logWrite(log, LOGOPMSG, "Ping sending to server: [%s].\n", pingPongMsg);
 
-	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError, NULL) == PAINEL_NOK){
+	if(sendToNet(sockfd, pingPongMsg, msgSRSz, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO PING: Unable to SEND ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);
@@ -330,7 +337,7 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt)
 	msgSRSz = 0; srError = 0;
 	memset(pingPongMsg, '\0', PINGPONG_MBL_SZ + 1);
 
-	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MBL_SZ, &msgSRSz, &srError, NULL) == PAINEL_NOK){
+	if(recvFromNet(sockfd, pingPongMsg, PINGPONG_MBL_SZ, &msgSRSz, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO PING: Unable to RECV ping: [%s].\n", strerror(srError));
 		shutdown(sockfd, SHUT_RDWR);
 		close(sockfd);

@@ -331,12 +331,12 @@ int getUserIFace(char *level)
 		return(PAINEL_NOK);
 	}
 
-	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError, NULL) == PAINEL_NOK){
+	if(sendToNet(getSocket(), msgIFace, msgSzOut, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_IFACE: [%s].\n", strerror(srError));
 		return(PAINEL_NOK);
 	}
 
-	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError, NULL) == PAINEL_NOK){
+	if(recvFromNet(getSocket(), msgIFace, MAXLINE, &msgSzOut, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_IFACE: [%s].\n", ((srError == 0) ? "PAINEL_NOK" : strerror(srError)));
 		return(PAINEL_NOK);
 	}
@@ -387,12 +387,12 @@ int sendLoginCmd(char *login, char *pass, char *level)
 		return(PAINEL_NOK);
 	}
 
-	if(sendToNet(getSocket(), msg, msgSzOut, &srError, NULL) == PAINEL_NOK){
+	if(sendToNet(getSocket(), msg, msgSzOut, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro enviando requisicao PROT_COD_LOGIN: [%s].\n", strerror(srError));
 		return(PAINEL_NOK);
 	}
 
-	if(recvFromNet(getSocket(), msg, MAXLINE, &msgSzOut, &srError, NULL) == PAINEL_NOK){
+	if(recvFromNet(getSocket(), msg, MAXLINE, &msgSzOut, &srError, NULL, NULL) == PAINEL_NOK){
 		logWrite(&log, LOGOPALERT, "Erro recebendo requisicao PROT_COD_LOGIN: [%s].\n", ((srError == 0) ? "PAINEL_NOK" : strerror(srError)));
 		return(PAINEL_NOK);
 	}

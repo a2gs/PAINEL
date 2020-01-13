@@ -413,8 +413,10 @@ int main(int argc, char *argv[])
 		return(-9);
 	}
 
+	/* TODO whyy??? to pass netcrypt to SEND/RECV function. TODO: remove comments and reactive this code later.... change send/recv parameters
 	memset(cfgNetKey, 0, strlen(cfgNetKey));
 	memset(cfgIVKey,  0, strlen(cfgIVKey ));
+	*/
 
 	if(logCreate(&log, cfgLogFile, cfgLogLevel) == LOG_NOK){                                                         
 		fprintf(stderr, "[%s %d] Erro criando log! [%s]. Terminating application with ERRO.\n", time_DDMMYYhhmmss(), getpid(), (errno == 0 ? "Level parameters error" : strerror(errno)));
@@ -521,7 +523,7 @@ int main(int argc, char *argv[])
 				msgBackToClient = NULL;
 
 				/* Reading the message */
-				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, NULL) == PAINEL_NOK){
+				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, cfgNetKey, (unsigned char *)cfgIVKey) == PAINEL_NOK){
 					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
 					break;
 				}
