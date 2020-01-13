@@ -187,7 +187,7 @@ int BL_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 
 	logWrite(log, LOGDEV, "Sending to server: [%s] [%lu]B.\n", lineToSend, srSz);
 
-	if(sendToNet(sockfd, lineToSend, srSz, &recvError, NULL, NULL) == PAINEL_NOK){
+	if(sendToNet(sockfd, lineToSend, srSz, &recvError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() BL_sendLogin [%s].\n", strerror(recvError));
 		printf("ERRO no envio do registro [%s]!\n", strerror(recvError));
 		return(PAINEL_NOK);
@@ -202,7 +202,7 @@ int BL_sendLogin(int sockfd, char *drt, char *passhash, char *funcao)
 		1|ERRO|User/funcion/password didnt find into database!
 	*/
 
-	if(recvFromNet(sockfd, lineToSend, MAXLINE, &srSz, &recvError, NULL, NULL) == PAINEL_NOK){
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &srSz, &recvError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(recvError), drt);
 		return(PAINEL_NOK);
 	}
@@ -228,7 +228,7 @@ int BL_sendLogoutExit(int sockfd, char *drt, char *funcao)
 	msgSz = snprintf(lineToSend, MAXLINE, "%d|%s|%s|%s", PROT_COD_LOGOUT, drt, time_DDMMYYhhmmss(), funcao);
 	logWrite(log, LOGDEV, "Enviando logout [%s] [%lu].\n", lineToSend, msgSz);
 
-	if(sendToNet(sockfd, lineToSend, msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+	if(sendToNet(sockfd, lineToSend, msgSz, &srError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
 		printf("ERRO no envio de exit motivo [%s]!\n", strerror(srError));
 		return(PAINEL_NOK);
@@ -236,7 +236,7 @@ int BL_sendLogoutExit(int sockfd, char *drt, char *funcao)
 
 	logWrite(log, LOGDEV, "Aguardando logout...\n");
 	memset(lineToSend, '\0', MAXLINE);
-	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+	if(recvFromNet(sockfd, lineToSend, MAXLINE, &msgSz, &srError, NULL) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "ERRO: send() exit [%s].\n", strerror(srError));
 		return(PAINEL_NOK);
 	}
@@ -345,12 +345,12 @@ int BL_interfaceFornoEletrico(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s].\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
 				return(PAINEL_NOK);
 			}
@@ -499,12 +499,12 @@ int BL_interfaceOperadorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
 				return(PAINEL_NOK);
 			}
@@ -586,12 +586,12 @@ int BL_interfaceSupervisorMaquina(char *drt, int socket)
 
 			logWrite(log, LOGOPMSG, "Mensagem [%s] enviada [%lu]B.\n", lineToSend, msgSz);
 
-			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(sendToNet(socket, lineToSend, msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: send() [%s]: [%s]\n", lineToSend, strerror(srError));
 				printf("ERRO no envio desta mensagem [%s] motivo [%s]!\n", lineToSend, strerror(srError));
 			}
 
-			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL, NULL) == PAINEL_NOK){
+			if(recvFromNet(socket, lineToSend, MAXLINE, &msgSz, &srError, NULL) == PAINEL_NOK){
 				logWrite(log, LOGOPALERT, "ERRO: receiving server response [%s] for [%s].\n", strerror(srError), drt);
 				return(PAINEL_NOK);
 			}

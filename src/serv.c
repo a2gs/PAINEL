@@ -406,9 +406,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-8);
 	}
-	strncpy(netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
+	strncpy((char *)netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
 
-	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
+	if(calcHashedNetKey(cfgNetKey, (char *)netcrypt.key) == PAINEL_NOK){
 		fprintf(stderr, "Fail to hash netkey! Exit.\n");
 		return(-9);
 	}
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 				msgBackToClient = NULL;
 
 				/* Reading the message */
-				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, cfgNetKey, (unsigned char *)cfgIVKey) == PAINEL_NOK){
+				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, &netcrypt) == PAINEL_NOK){
 					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
 					break;
 				}

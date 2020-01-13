@@ -106,17 +106,17 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-6);
 	}
-	strncpy(netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
+	strncpy((char *)netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
 
+	/* TODO ..... whyyy???
 	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
 		fprintf(stderr, "Fail to hash netkey! Exit.\n");
 		return(-7);
 	}
+	*/
 
-	/* TODO ..... whyyy??? to pass netcrypt to SEND/RECV function. TODO: remove this comment and reactive this code later.... change send/recv parameters
 	memset(cfgNetKey, 0, strlen(cfgNetKey));
 	memset(cfgIVKey,  0, strlen(cfgIVKey ));
-	*/
 
 	strncpy(serverAddress, cfgServerAddress, SERVERADDRESS_SZ);
 	strncpy(serverPort,    cfgServerPort,    SERVERPORT_SZ   );
@@ -150,12 +150,12 @@ int main(int argc, char *argv[])
 		if(c != NULL) *c = '\0';
 
 		fprintf(stderr, "Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
-		if(sendToNet(getSocket(), line, strlen(line), &srError, cfgNetKey, (unsigned char *)cfgIVKey) == PAINEL_NOK){
+		if(sendToNet(getSocket(), line, strlen(line), &srError, &netcrypt) == PAINEL_NOK){
 			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
 
-		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError, NULL, NULL) == PAINEL_NOK){
+		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError, &netcrypt) == PAINEL_NOK){
 			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
