@@ -105,7 +105,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort);
  */
 int pingServer(char *ip, char *port, netpass_t *netcrypt);
 
-/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError, char *hashpassphrase)
+/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError, char *hashpassphrase, unsigned char *iv)
  *
  * PAINEL Oficial network send. It adds 4 bytes (binary) in front of msg.
  *
@@ -118,9 +118,9 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt);
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase);
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase, unsigned char *iv);
 
-/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase)
+/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase, unsigned char *iv)
  *
  * PAINEL Oficial network receive. It reads 4 bytes (binary) in front of msg.
  *
@@ -134,6 +134,6 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase);
+int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase, unsigned char *iv);
 
 #endif
