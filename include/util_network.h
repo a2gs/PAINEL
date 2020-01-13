@@ -35,6 +35,10 @@
 
 
 /* *** DATA TYPES **************************************************** */
+typedef struct _netpass_t{
+	unsigned char key[PASS_SHA256_ASCII_LEN + 1];
+	unsigned char IV[IV_SHA256_LEN          + 1];
+}netpass_t;
 
 
 /* *** INTERFACES / PROTOTYPES *************************************** */
@@ -105,7 +109,7 @@ int connectSrvPainel(char *srvAdd, char *srvPort);
  */
 int pingServer(char *ip, char *port, netpass_t *netcrypt);
 
-/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError, char *hashpassphrase, unsigned char *iv)
+/* int sendToNet(int sockfd, char *msg, size_t msgSz, int *recvError, netpass_t *netctx)
  *
  * PAINEL Oficial network send. It adds 4 bytes (binary) in front of msg.
  *
@@ -118,9 +122,9 @@ int pingServer(char *ip, char *port, netpass_t *netcrypt);
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpassphrase, unsigned char *iv);
+int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *netctx);
 
-/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase, unsigned char *iv)
+/* int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, netpass_t *netctx)
  *
  * PAINEL Oficial network receive. It reads 4 bytes (binary) in front of msg.
  *
@@ -134,6 +138,6 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, char *hashpas
  *  PAINEL_OK - 
  *  PAINEL_NOK - 
  */
-int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, char *hashpassphrase, unsigned char *iv);
+int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, netpass_t *netctx);
 
 #endif

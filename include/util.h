@@ -74,11 +74,6 @@
 
 
 /* *** DATA TYPES **************************************************** */
-typedef struct _netpass_t{
-	char key[PASS_SHA256_ASCII_LEN + 1];
-	char IV[IV_SHA256_LEN          + 1];
-}netpass_t;
-
 typedef struct _htmlFiles_t{
 	FILE *htmlStatic;
 	FILE *htmlRefresh;
@@ -321,7 +316,7 @@ int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *k
  */
 int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *plaintextSz);
 
-int calcHashedNetKey(char *plan, char*hashed);
+int calcHashedNetKey(char *plan, char* hashed);
 
 /* int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut)
  *
