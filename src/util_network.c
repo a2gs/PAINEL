@@ -148,7 +148,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		free(dumpMsg);
 	}
 
-	logWrite(log, LOGDEV, "Starting encrypton...\nmsg[%s]\nmsgSz[%d]\nhashpassphrase[%s]\niv[%s]\nnetBuff[%s]\nsrSz[%ld]", msg, msgSz, netctx->key, netctx->IV, netBuff, srSz);
+	logWrite(log, LOGDEV, "Starting encryption...\nmsg[%s]\nmsgSz[%d]\nhashpassphrase[%s]\niv[%s]\nnetBuff[%s]\nsrSz[%ld]\n", msg, msgSz, netctx->key, netctx->IV, netBuff, srSz);
 #endif
 
 	/* 1. Encrypt */
@@ -172,6 +172,8 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 #ifdef PAINEL_NETWORK_DUMP
 	{
 		unsigned char *dumpMsg = NULL;
+		unsigned char check[300] = {0};
+		int sz = 0;
 
 		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending msg size (%ld bytes - network byte order):\n%s\n", srSz, dumpMsg);
@@ -180,6 +182,12 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		dumpHexBuff(netBuff, (size_t)srSz, &dumpMsg);
 		logWrite(log, LOGDEV, "Sending encrypted msg (%ld bytes):\n%s\n", srSz, dumpMsg);
 		free(dumpMsg);
+
+		if(decrypt_SHA256((unsigned char *)netBuff, srSz, netctx->key, netctx->IV, check, &sz) == PAINEL_NOK){
+			logWrite(log, LOGDEV, "ERRO ENCRYPTED MSG\n");
+		}else{
+			logWrite(log, LOGDEV, "ENCRYPTED MSG TEST %d: [%s]\n", sz, check);
+		}
 	}
 #endif
 
@@ -248,6 +256,8 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 		logWrite(log, LOGDEV, "Received encrypted msg (%ld bytes):\n%s\n", msgNetSz, dumpMsg);
 		free(dumpMsg);
 	}
+
+	logWrite(log, LOGDEV, "Starting dencryption...\nhashpassphrase[%s]\niv[%s]\n", netctx->key, netctx->IV);
 #endif
 
 	/* 3. Decrypt */

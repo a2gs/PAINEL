@@ -409,12 +409,12 @@ int main(int argc, char *argv[])
 	}
 	strncpy((char *)netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
 
+	/* TODO whyy??? to pass netcrypt to SEND/RECV function. TODO: remove comments and reactive this code later.... change send/recv parameters
 	if(calcHashedNetKey(cfgNetKey, (char *)netcrypt.key) == PAINEL_NOK){
 		fprintf(stderr, "Fail to hash netkey! Exit.\n");
 		return(-9);
 	}
 
-	/* TODO whyy??? to pass netcrypt to SEND/RECV function. TODO: remove comments and reactive this code later.... change send/recv parameters
 	memset(cfgNetKey, 0, strlen(cfgNetKey));
 	memset(cfgIVKey,  0, strlen(cfgIVKey ));
 	*/
