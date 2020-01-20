@@ -451,7 +451,7 @@ int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char 
 int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut)
 {
 #define DUMPBUFFER_MAX_BYTES_PER_LINE 16
-#define DUMPBUFFER_ONE_LINE_SIZE sizeof("xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx-aaaaaaaaaaaaaaaaN")
+#define DUMPBUFFER_ONE_LINE_SIZE sizeof("xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx aaaaaaaaaaaaaaaaN")
 #define DUMPBUFFER_HEX_LINE_SIZE sizeof("xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx")
 
 	char auxFmt[3] = {'\0'};
@@ -485,7 +485,7 @@ int dumpHexBuff(void *data, size_t dataLen, unsigned char **bufOut)
 			memset(bufOutWalker, ' ', DUMPBUFFER_ONE_LINE_SIZE);
 			hexCode = bufOutWalker;
 			asciiCode = bufOutWalker + DUMPBUFFER_HEX_LINE_SIZE - 1;
-			*asciiCode = '-';
+			*asciiCode = ' ';
 			asciiCode++;
 		}
 
