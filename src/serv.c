@@ -266,44 +266,41 @@ int parsingPing(char *msg)
 int sendClientResponse(int connfd, int ProtCode, void *data)
 {
 	char msg[MAXLINE + 1] = {'\0'};
-	uint32_t msgNetOrderSz = 0, msgHostOderSz = 0;
+	/* uint32_t msgNetOrderSz = 0, msgHostOderSz = 0; */
+	size_t msgSz  = 0;
+	int sendError = 0;
 
 	switch(ProtCode){
 		case PROT_COD_PING:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_PING, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_PING, (char *)data);
 			break;
 
 		case PROT_COD_LOGIN:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGIN, (char *)data);
 			break;
 
 		case PROT_COD_LOGOUT:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGOUT, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LOGOUT, (char *)data);
 			break;
 
 		case PROT_COD_IFACE:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_IFACE, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_IFACE, (char *)data);
 			break;
 
 		case PROT_COD_LEVELS:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LEVELS, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_LEVELS, (char *)data);
 			break;
 
 		case PROT_COD_INSREG:
-			msgHostOderSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_INSREG, (char *)data);
+			msgSz = snprintf(msg, MAXLINE, "%d|%s", PROT_COD_INSREG, (char *)data);
 			break;
 
 		default:
 			return(PAINEL_NOK);
 	}
 
-	msgNetOrderSz = htonl(msgHostOderSz);
-	send(connfd, &msgNetOrderSz, 4, 0); /* Sending the message size. 4 bytes at the begin */
-
-	logWrite(&log, LOGDEV, "Sending response to client: [%s][%lu].\n", msg, msgHostOderSz);
-
-	if(send(connfd, msg, msgHostOderSz, 0) == -1){
-		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(errno));
+	if(sendToNet(connfd, msg, msgSz, &sendError, &netcrypt) == PAINEL_NOK){
+		logWrite(&log, LOGREDALERT, "ERRO: sendClientResponse(send()) [%s]: [%s].\n", msg, strerror(sendError));
 		return(PAINEL_NOK);
 	}
 

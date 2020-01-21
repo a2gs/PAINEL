@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
-		fprintf(stderr, "Received: [%s] Bytes: [%ld].\n", line, recvSz);
+		fprintf(stderr, "Received: [%.*s] Bytes: [%ld].\n", (int)recvSz, line, recvSz);
 
 	}
 

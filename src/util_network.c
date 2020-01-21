@@ -186,7 +186,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		if(decrypt_SHA256((unsigned char *)netBuff, srSz, netctx->key, netctx->IV, check, &sz) == PAINEL_NOK){
 			logWrite(log, LOGDEV, "ERRO ENCRYPTED MSG\n");
 		}else{
-			logWrite(log, LOGDEV, "ENCRYPTED MSG TEST %d: [%s]\n", sz, check);
+			logWrite(log, LOGDEV, "ENCRYPTED MSG TEST %d: [%.*s]\n", sz, sz, check);
 		}
 	}
 #endif
@@ -211,7 +211,6 @@ retornando (PAINEL_OK):
 */
 int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvError, netpass_t *netctx)
 {
-	/* unsigned char *iv = (unsigned char *)"0123456789012345"; */ /* TODO */
 	uint32_t msgNetOrderSz = 0, msgNetSz = 0;
 	ssize_t retRecv = 0, totRecv = 0;
 
@@ -270,8 +269,8 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 	{
 		unsigned char *dumpMsg = NULL;
 
-		dumpHexBuff(msg, msgSz, &dumpMsg);
-		logWrite(log, LOGDEV, "Received unencrypted msg (%ld bytes):\n%s\n", recvSz, dumpMsg);
+		dumpHexBuff(msg, *recvSz, &dumpMsg);
+		logWrite(log, LOGDEV, "Received unencrypted msg (%ld bytes):\n%s\n", *recvSz, dumpMsg);
 		free(dumpMsg);
 	}
 #endif
