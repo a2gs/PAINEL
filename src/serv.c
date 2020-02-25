@@ -547,6 +547,8 @@ int main(int argc, char *argv[])
 				switch(atoi(msgCod)){
 
 					case PROT_COD_PING:
+						logWrite(&log, LOGDEV, "--- PROT_COD_PING ----------------------------\n");
+
 						msgBackToClient = "PONG";
 
 						if(parsingPing(msgP) == PAINEL_NOK){
@@ -570,6 +572,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_LOGIN:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_PING ----------------------------\n");
 
 						if(parsingLogin(msgP, &userSession) == PAINEL_NOK){
 							/* Bad formmated protocol */
@@ -634,6 +637,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_LOGOUT:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_LOGOUT ----------------------------\n");
 
 						if(parsingLogout(msgP, &userSession) == PAINEL_NOK){
 							/* Bad formmated protocol */
@@ -679,6 +683,8 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_INSREG:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_INSREG ----------------------------\n");
+
 						memset(&msgCleaned, 0, sizeof(BL_registroDB_t));
 
 						if(BL_parsingDataInsertRegistro(msgP, clientFrom, portFrom, &msgCleaned) == PAINEL_NOK){
@@ -733,6 +739,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_IFACE:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_IFACE ----------------------------\n");
 
 						if(strcmp(userSession.username, "") == 0){ /* Session/user not logged */
 							logWrite(&log, LOGOPALERT, "PROT_COD_IFACE with user not logged! Disconnected.\n");
@@ -773,6 +780,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_LEVELS:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_LEVELS ----------------------------\n");
 
 						msgBackToClient = msg;
 						memset(msg, '\0', sizeof(msg));
@@ -802,14 +810,20 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_SERCMD:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_SERCMD ----------------------------\n");
+
 						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					case PROT_COD_CLICMD:
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_CLICMD ----------------------------\n");
+
 						logWrite(&log, LOGOPALERT, "Codigo [%s] ainda nao implementado!\n", msgCod);
 						break;
 
 					default:
+						logWrite(&log, LOGDEV, "--- cmd UNKNOW ----------------------------\n");
+
 						logWrite(&log, LOGOPALERT, "Nao ha implementacao de tratamento para codigo de mensagem: [%s]!\n", msgCod);
 						break;
 				}

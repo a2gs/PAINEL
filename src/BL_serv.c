@@ -322,18 +322,18 @@ int BL_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 		data->buf[data->bufSzUsed]   = '\0';
 	}
 
-/* logWrite(log, LOGOPALERT, "aqui 111 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz); */
+logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 1 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz);
 
 	for(i = 0; i < argc; i++){
 
-/* logWrite(log, LOGOPALERT, "aqui 2222 [%s][%d]", argv[i], i); */
+logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 2 [%s][%d]", argv[i], i);
 
 		if(data->bufSzUsed >= data->bufSz)
 			return(0); /* error: small buffer */
 
 		data->bufSzUsed += n_strncpy(&data->buf[data->bufSzUsed], argv[i], data->bufSz - data->bufSzUsed);
 
-/* logWrite(log, LOGOPALERT, " ----- [%s]\n", data->buf); */
+logWrite(log, LOGDEV, "DEBUG: ----- [%s]\n", data->buf);
 
 		if(i < argc - 1){
 			data->buf[data->bufSzUsed++] = ':';
@@ -341,8 +341,6 @@ int BL_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 		}
 
 	}
-
-/* logWrite(log, LOGOPALERT, "aqui 333 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz); */
 
 	return(0);
 }
@@ -364,18 +362,21 @@ int BL_getUserIFace(char *msgBackToClient, size_t msgBackToClientSz, char *usrLe
 
 	BL_NOROW_RET = SQL_NO_ROW;
 
-/* logWrite(log, LOGOPALERT, "aqui 11\n"); */
+logWrite(log, LOGDEV, "BL_getUserIFace 1\n");
 
 	if(dbSelect(sqlCmd, BL_GetUserIFace_callback, &data) == PAINEL_NOK){
 		logWrite(log, LOGOPALERT, "Error selecting user iface from table.\n");
 		return(PAINEL_NOK);
 	}
 
-/* logWrite(log, LOGOPALERT, "aqui 22\n"); */
+logWrite(log, LOGDEV, "BL_getUserIFace 2\n");
 
-	if(BL_NOROW_RET == SQL_NO_ROW)
+	if(BL_NOROW_RET == SQL_NO_ROW){
+logWrite(log, LOGDEV, "BL_getUserIFace 3\n");
 		return(PAINEL_NOK);
+	}
 
+logWrite(log, LOGDEV, "BL_getUserIFace 4\n");
 	return(PAINEL_OK);
 }
 

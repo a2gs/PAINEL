@@ -70,48 +70,48 @@ int main(int argc, char *argv[])
 	char *cfgIVKey         = NULL;
 
 	if(argc != 3){
-		fprintf(stderr, "[%s %d] Usage:\n%s <CONFIG_FILE> <FILE_CMDs>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
-		fprintf(stderr, "CONFIG_FILE sample variables:\n");
-		fprintf(stderr, "\t#PAINEL_SERVER_ADDRESS = 123.123.123.123\n");
-		fprintf(stderr, "\tPAINEL_SERVER_ADDRESS = painel.servers\n");
-		fprintf(stderr, "\tPAINEL_SERVER_PORT = 9998\n");
-		fprintf(stderr, "\tNET_KEY = abcdefghijlmnopqrstuvxz\n");
-		fprintf(stderr, "\t#KEY_IV (128 bits length)\n");
-		fprintf(stderr, "\tKEY_IV = 0123456789012345\n\n");
-		fprintf(stderr, "PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
+		printf("[%s %d] Usage:\n%s <CONFIG_FILE> <FILE_CMDs>\n\n", time_DDMMYYhhmmss(), getpid(), argv[0]);
+		printf("CONFIG_FILE sample variables:\n");
+		printf("\t#PAINEL_SERVER_ADDRESS = 123.123.123.123\n");
+		printf("\tPAINEL_SERVER_ADDRESS = painel.servers\n");
+		printf("\tPAINEL_SERVER_PORT = 9998\n");
+		printf("\tNET_KEY = abcdefghijlmnopqrstuvxz\n");
+		printf("\t#KEY_IV (128 bits length)\n");
+		printf("\tKEY_IV = 0123456789012345\n\n");
+		printf("PAINEL Home: [%s]\n", getPAINELEnvHomeVar());
 		return(-1);
 	}
 
 	if(cfgFileLoad(&srcmdCfg, argv[1], &cfgLineError) == CFGFILE_NOK){
-		fprintf(stderr, "Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
+		printf("Error open/loading (at line: [%d]) configuration file [%s]: [%s].\n", cfgLineError, argv[1], strerror(errno));
 		return(-2);
 	}
 
 	if(cfgFileOpt(&srcmdCfg, "PAINEL_SERVER_ADDRESS", &cfgServerAddress) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label PAINEL_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
+		printf("Config with label PAINEL_SERVER_ADDRESS not found into file [%s]! Exit.\n", argv[1]);
 		return(-3);
 	}
 
 	if(cfgFileOpt(&srcmdCfg, "PAINEL_SERVER_PORT", &cfgServerPort) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
+		printf("Config with label PAINEL_SERVER_PORT not found into file [%s]! Exit.\n", argv[1]);
 		return(-4);
 	}
 
 	if(cfgFileOpt(&srcmdCfg, "NET_KEY", &cfgNetKey) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
+		printf("Config with label NET_KEY not found into file [%s]! Exit.\n", argv[1]);
 		return(-5);
 	}
 	strncpy((char *)netcrypt.key, cfgNetKey, PASS_SHA256_ASCII_LEN);
 
 	if(cfgFileOpt(&srcmdCfg, "NET_IV", &cfgIVKey) == CFGFILE_NOK){
-		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
+		printf("Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-6);
 	}
 	strncpy((char *)netcrypt.IV, cfgIVKey, IV_SHA256_LEN);
 
 	/* TODO ..... whyyy???
 	if(calcHashedNetKey(cfgNetKey, netcrypt.key) == PAINEL_NOK){
-		fprintf(stderr, "Fail to hash netkey! Exit.\n");
+		printf("Fail to hash netkey! Exit.\n");
 		return(-7);
 	}
 	*/
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGTERM, SIG_IGN);
 
-	fprintf(stderr, "StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] Cfg file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, argv[2], argv[1], getPAINELEnvHomeVar());
+	printf("StartUp Client [%s]! Server: [%s] Port: [%s] Cmd file: [%s] Cfg file: [%s] PAINEL Home: [%s].\n", time_DDMMYYhhmmss(), serverAddress, serverPort, argv[2], argv[1], getPAINELEnvHomeVar());
 
 	if(connectSrvPainel(serverAddress, serverPort) == PAINEL_NOK){
 		logWrite(NULL, LOGOPALERT, "Erro conetando ao servidor PAINEL [%s:%s].\n", serverAddress, serverPort);
@@ -150,23 +150,23 @@ int main(int argc, char *argv[])
 		c = strchr(line, '\n');
 		if(c != NULL) *c = '\0';
 
-		fprintf(stderr, "Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
+		printf("Sending: [%s] Bytes: [%ld]\n", line, strlen(line));
 		if(sendToNet(getSocket(), line, strlen(line), &srError, &netcrypt) == PAINEL_NOK){
-			fprintf(stderr, "sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
+			printf("sendToNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
 
 		if(recvFromNet(getSocket(), line, MAXLINE, &recvSz, &srError, &netcrypt) == PAINEL_NOK){
-			fprintf(stderr, "recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
+			printf("recvFromNet() error to line [%s]: [%s].\n", line, strerror(srError));
 			break;
 		}
-		fprintf(stderr, "Received: [%.*s] Bytes: [%ld].\n", (int)recvSz, line, recvSz);
+		printf("Received: [%.*s] Bytes: [%ld].\n\n", (int)recvSz, line, recvSz);
 
 	}
 
 	fclose(f);
 
-	fprintf(stderr, "Terminating application with sucessfully!\n");
+	printf("Terminating application with sucessfully!\n");
 
 	disconnectSrvPainel();
 

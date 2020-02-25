@@ -141,6 +141,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 	{
 		unsigned char *dumpMsg = NULL;
 
+		logWrite(log, LOGDEV, "\\/  \\/  \\/  \\/  \\/ SEND \\/  \\/  \\/  \\/  \\/\n");
 		logWrite(log, LOGDEV, "Raw msg to send: [%s]\n", msg);
 
 		dumpHexBuff(msg, msgSz, &dumpMsg);
@@ -158,7 +159,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		return(PAINEL_NOK);
 	}
 
-	logWrite(log, LOGDEV, "Encrypted! Sending size: [%ld]\n", srSz);
+	logWrite(log, LOGDEV, "NET: Encrypted! Sending size: [%ld]\n", srSz);
 
 	/* 2. Send encrypted msg size */
 	msgNetOrderSz = htonl(srSz);
@@ -188,6 +189,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		}else{
 			logWrite(log, LOGDEV, "ENCRYPTED MSG TEST %d: [%.*s]\n", sz, sz, check);
 		}
+		logWrite(log, LOGDEV, "/\\  /\\  /\\  /\\  /\\ SEND /\\  /\\  /\\  /\\  /\\\n");
 	}
 #endif
 
@@ -246,6 +248,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 #ifdef PAINEL_NETWORK_DUMP
 	{
 		unsigned char *dumpMsg = NULL;
+		logWrite(log, LOGDEV, "\\/  \\/  \\/  \\/  \\/ RECV \\/  \\/  \\/  \\/  \\/\n");
 
 		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
 		logWrite(log, LOGDEV, "Received msg size (%ld bytes - network byte order):\n%s\n", msgNetSz, dumpMsg);
@@ -272,6 +275,7 @@ int recvFromNet(int sockfd, char *msg, size_t msgSz, size_t *recvSz, int *recvEr
 		dumpHexBuff(msg, *recvSz, &dumpMsg);
 		logWrite(log, LOGDEV, "Received unencrypted msg (%ld bytes):\n%s\n", *recvSz, dumpMsg);
 		free(dumpMsg);
+		logWrite(log, LOGDEV, "/\\  /\\  /\\  /\\  /\\ RECV /\\  /\\  /\\  /\\  /\\\n");
 	}
 #endif
 
