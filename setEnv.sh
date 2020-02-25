@@ -64,4 +64,4 @@ alias servtest="./serv ../running/CFGs/server.cfg"
 alias clitest="./client localhost 9998 $PAINEL_HOME/log/client_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
 alias ncclitest="./ncclient localhost 9998 $PAINEL_HOME/log/ncclient_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
 
-alias cmdtest='./sendRecvCmd ../running/CFGs/sendRecvCmd.cfg ../running/sendRecvCmd_10_IFace_111111.text'
+alias cmdtest='./sendRecvCmd ../running/CFGs/sendRecvCmd.cfg ../running/sendRecvCmd_10_IFace_111111.text 2>/dev/null'
