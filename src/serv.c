@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
 					break;
 				}
 
-				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%s] [%lu]B.\n", clientFrom, portFrom, msg, srSz);
+				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%.*s] [%lu]B.\n", clientFrom, portFrom, srSz, msg, srSz);
 
 				/* Capturando o CODIGO da mensagem */
 				msgP = msg;
@@ -572,7 +572,7 @@ int main(int argc, char *argv[])
 						break;
 
 					case PROT_COD_LOGIN:
-						logWrite(&log, LOGDEV, "--- cmd PROT_COD_PING ----------------------------\n");
+						logWrite(&log, LOGDEV, "--- cmd PROT_COD_LOGIN ----------------------------\n");
 
 						if(parsingLogin(msgP, &userSession) == PAINEL_NOK){
 							/* Bad formmated protocol */
