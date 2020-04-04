@@ -173,7 +173,7 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 #ifdef PAINEL_NETWORK_DUMP
 	{
 		unsigned char *dumpMsg = NULL;
-		unsigned char check[300] = {0};
+		unsigned char check[500] = {0};
 		int sz = 0;
 
 		dumpHexBuff(&msgNetOrderSz, (size_t)4, &dumpMsg);
