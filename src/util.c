@@ -412,7 +412,12 @@ int encrypt_SHA256(unsigned char *plaintext, int plaintext_len, unsigned char *k
 	return(PAINEL_OK);
 }
 
-int decrypt_SHA256(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv, unsigned char *plaintext, int *plaintextSz)
+int decrypt_SHA256(unsigned char *ciphertext,
+                   int            ciphertext_len,
+                   unsigned char *key,
+                   unsigned char *iv,
+                   unsigned char *plaintext,
+                   int           *plaintextSz)
 {
 	EVP_CIPHER_CTX *ctx = NULL;
 	int len = 0;

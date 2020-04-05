@@ -322,18 +322,18 @@ int BL_GetUserIFace_callback(void *dt, int argc, char **argv, char **azColName)
 		data->buf[data->bufSzUsed]   = '\0';
 	}
 
-logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 1 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz);
+/*logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 1 [%s][%d][%d]\n", data->buf, data->bufSzUsed, data->bufSz);*/
 
 	for(i = 0; i < argc; i++){
 
-logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 2 [%s][%d]", argv[i], i);
+/*logWrite(log, LOGDEV, "DEBUG: BL_GetUserIFace_callback 2 [%s][%d]", argv[i], i);*/
 
 		if(data->bufSzUsed >= data->bufSz)
 			return(0); /* error: small buffer */
 
 		data->bufSzUsed += n_strncpy(&data->buf[data->bufSzUsed], argv[i], data->bufSz - data->bufSzUsed);
 
-logWrite(log, LOGDEV, "DEBUG: ----- [%s]\n", data->buf);
+/*logWrite(log, LOGDEV, "DEBUG: ----- [%s]\n", data->buf);*/
 
 		if(i < argc - 1){
 			data->buf[data->bufSzUsed++] = ':';

@@ -433,6 +433,7 @@ int main(int argc, char *argv[])
 		return(-12);
 	}
 
+#ifndef PAINEL_DONOT_FORK
 	p = daemonize();
 	if(p == (pid_t)PAINEL_NOK){
 		logWrite(&log, LOGMUSTLOGIT, "Cannt daemonize server!\n");
@@ -441,6 +442,7 @@ int main(int argc, char *argv[])
 		logClose(&log);
 		return(-13);
 	}
+#endif
 
 	getLogSystem_SGServer(&log);    /* Loading log to business rules */
 	getLogSystem_Util(&log);        /* Loading log to util functions */
@@ -511,7 +513,11 @@ int main(int argc, char *argv[])
 		strcpy(clientFrom, inet_ntop(AF_INET, &cliaddr.sin_addr, addStr, sizeof(addStr)));
 		portFrom = ntohs(cliaddr.sin_port);
 		logWrite(&log, LOGOPMSG, "Connection from [%s], port [%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+#ifndef PAINEL_DONOT_FORK
 		p = fork();
+#else
+		p = 0;
+#endif
 
 		if(p == 0){ /* child */
 			while(1){
@@ -520,8 +526,17 @@ int main(int argc, char *argv[])
 				srSz = 0; recvError = 0;
 				msgBackToClient = NULL;
 
+				logWrite(&log, LOGDEV, "##################################################################\n");
+				logWrite(&log, LOGDEV, "##################################################################\n");
+
 				/* Reading the message */
 				if(recvFromNet(connfd, msg, MAXLINE, &srSz, &recvError, &netcrypt) == PAINEL_NOK){
+
+					if(srSz == 0){
+						logWrite(&log, LOGOPMSG, "End of data from [%s:%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
+						break;
+					}
+
 					logWrite(&log, LOGOPALERT, "Erro server receving(): [%s].\n", strerror(recvError));
 					logWrite(&log, LOGREDALERT, "DROPPING MESSAGE! Terminating application!\n\n");
 
@@ -531,11 +546,6 @@ int main(int argc, char *argv[])
 					logClose(&log);
 
 					return(-19);
-				}
-
-				if(srSz == 0){
-					logWrite(&log, LOGOPMSG, "End of data from [%s:%d] at [%s].\n", clientFrom, portFrom, time_DDMMYYhhmmss());
-					break;
 				}
 
 				logWrite(&log, LOGDEV, "Msg from [%s:%d]: Raw msg [%.*s] [%lu]B.\n", clientFrom, portFrom, srSz, msg, srSz);
