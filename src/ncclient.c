@@ -1026,7 +1026,7 @@ int main(int argc, char *argv[])
 	}
 	strncpy((char *)netcrypt.key, cfgNetKey, PASS_SHA256_ASCII_LEN);
 
-	if(cfgFileOpt(&nccCfg, "KEY_IV", &cfgIVKey) == CFGFILE_NOK){
+	if(cfgFileOpt(&nccCfg, "NET_IV", &cfgIVKey) == CFGFILE_NOK){
 		fprintf(stderr, "Config with label NET_IV not found into file [%s]! Exit.\n", argv[1]);
 		return(-8);
 	}
