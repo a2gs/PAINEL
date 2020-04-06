@@ -149,7 +149,8 @@ int sendToNet(int sockfd, char *msg, size_t msgSz, int *sendError, netpass_t *ne
 		free(dumpMsg);
 	}
 
-	logWrite(log, LOGDEV, "SEND     Starting encryption...\nmsg[%s]\nmsgSz[%d]\nhashpassphrase[%s]\niv[%s]\nnetBuff[%s]\nsrSz[%ld]\n", msg, msgSz, netctx->key, netctx->IV, netBuff, srSz);
+	logWrite(log, LOGDEV, "SEND     Starting encryption...\nmsg[%s]\nmsgSz[%lu]\nhashpassphrase[%s]\niv[%s]\nnetBuff[%s]\nsrSz[%lu]\n",
+	         msg, msgSz, netctx->key, netctx->IV, netBuff, srSz);
 #endif
 
 	/* 1. Encrypt */
