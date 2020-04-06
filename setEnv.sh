@@ -26,7 +26,7 @@ DATE=`date +%Y%m%d_%H%M%S`
 
 export PAINEL_HOME=`pwd`
 
-export PATH=$PATH:$PAINEL_HOME/scripts
+export PATH=$PATH:$PAINEL_HOME/scripts/:$PAINEL_HOME/bin/
 
 if [ ! -d 'running' ]; then
 	echo 'Creating running directory.'
@@ -60,8 +60,8 @@ export -f ALERT_ERROR
 chmod +x ./scripts/*
 
 # Some helper alias
-alias servtest="./serv ../running/CFGs/server.cfg"
-alias clitest="./client localhost 9998 $PAINEL_HOME/log/client_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
-alias ncclitest="./ncclient localhost 9998 $PAINEL_HOME/log/ncclient_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
+alias servtest="serv $PAINEL_HOME/running/CFGs/server.cfg"
+alias clitest="client localhost 9998 $PAINEL_HOME/log/client_$DATE.log \"REDALERT|DBALERT|DBMSG|OPALERT|OPMSG|MSG|DEV\""
+alias ncclitest="ncclient $PAINEL_HOME/running/CFGs/ncclient.cfg"
 
-alias cmdtest='./sendRecvCmd ../running/CFGs/sendRecvCmd.cfg ../running/sendRecvCmd_10_IFace_111111.text 2>/dev/null'
+alias cmdtest="sendRecvCmd $PAINEL_HOME/running/CFGs/sendRecvCmd.cfg $PAINEL_HOME/running/sendRecvCmd_10_IFace_111111.text 2>/dev/null"
