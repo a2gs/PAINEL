@@ -119,10 +119,10 @@ cfgfile:
 	$(CP) $(CFGFILEPATH)/$(LIB_CFGFILE).h $(LIBS_BIN_PATH)
 	-$(RM) $(LIBS_BIN_PATH)/$(LIB_CFGFILE).o
 
-pingServ: logtag
+pingServ: logtag cfgfile llist cfgfile
 	@echo
 	@echo "=== pingServ =================="
-	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) $(CFLAGS)
+	$(CC) -o $(BINPATH)/pingServ $(SOURCEPATH)/pingServ.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) -l$(LIB_CFGFILE) -l$(LIB_LLIST) $(CFLAGS)
 
 client: sha256 logtag
 	@echo
@@ -139,7 +139,7 @@ sendRecvCmd:
 	@echo "=== sendRecvCmd =================="
 	$(CC) -o $(BINPATH)/sendRecvCmd $(SOURCEPATH)/sendRecvCmd.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_SHA256) -l$(LIB_CFGFILE) -l$(LIB_LLIST) $(CFLAGS)
 
-serv: logtag
+serv: logtag cfgfile llist sha256
 	@echo
 	@echo "=== serv ===================="
 	$(CC) -o $(BINPATH)/serv $(SOURCEPATH)/serv.c $(SOURCEPATH)/util.c $(SOURCEPATH)/util_network.c $(SOURCEPATH)/BL_serv.c $(SOURCEPATH)/db.c $(INCLUDEPATH) -L$(LIBS_BIN_PATH) $(LIBS) -l$(LIB_CFGFILE) -l$(LIB_LLIST) -l$(LIB_SHA256) $(CFLAGS)
