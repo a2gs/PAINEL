@@ -20,7 +20,8 @@
 # C flags:
 CFLAGS_OPTIMIZATION = -g
 #CFLAGS_OPTIMIZATION = -O3
-CFLAGS_VERSION = -std=c11
+CVERSION = c11
+CFLAGS_VERSION = -std=$(CVERSION)
 CFLAGS_WARNINGS = -Wall -Wextra -Wno-unused-parameter -Wno-unused-but-set-parameter
 #CFLAGS_DEFINES = -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -D_POSIX_SOURCE=1 -D_DEFAULT_SOURCE=1 -D_GNU_SOURCE=1 -DPAINEL_NETWORK_DUMP=1 -DPAINEL_DONOT_FORK=1
 CFLAGS_DEFINES = -D_XOPEN_SOURCE=700 -D_POSIX_C_SOURCE=200809L -D_POSIX_SOURCE=1 -D_DEFAULT_SOURCE=1 -D_GNU_SOURCE=1 -DPAINEL_NETWORK_DUMP=1
@@ -59,7 +60,7 @@ AR = ar
 RANLIB = ranlib
 CPPCHECK = cppcheck
 
-CPPCHECK_OPTS = --enable=all --std=c11 --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
+CPPCHECK_OPTS = --enable=all --std=$(CVERSION) --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem
 
 all: clean logtag sha256 llist cfgfile wizard_by_return client ncclient sendRecvCmd serv select_html select_Excel servList create_db userIdDB pingServ cppcheck
 	@echo
